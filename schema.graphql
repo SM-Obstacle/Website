@@ -1,0 +1,92 @@
+type QueryRoot {
+        players(after: String, before: String, first: Int, last: Int): PlayerConnection!
+        maps(after: String, before: String, first: Int, last: Int): MapConnection!
+        node(id: ID!): Node
+        logins(logins: [String!]!): [Node]!
+}
+type PlayerConnection {
+        """
+        Information to aid in pagination.
+        """
+        pageInfo: PageInfo!
+        """
+        A list of edges.
+        """
+        edges: [PlayerEdge]
+}
+"""
+Information about pagination in a connection
+"""
+type PageInfo {
+        """
+        When paginating backwards, are there more items?
+        """
+        hasPreviousPage: Boolean!
+        """
+        When paginating forwards, are there more items?
+        """
+        hasNextPage: Boolean!
+        """
+        When paginating backwards, the cursor to continue.
+        """
+        startCursor: String
+        """
+        When paginating forwards, the cursor to continue.
+        """
+        endCursor: String
+}
+"""
+An edge in a connection.
+"""
+type PlayerEdge {
+        """
+        The item at the end of the edge
+        """
+        node: Player!
+        """
+        A cursor for use in pagination
+        """
+        cursor: String!
+}
+type Player implements Node {
+        id: ID!
+        login: String!
+        nickname: String!
+        maps(after: String, before: String, first: Int, last: Int): MapConnection!
+}
+type MapConnection {
+        """
+        Information to aid in pagination.
+        """
+        pageInfo: PageInfo!
+        """
+        A list of edges.
+        """
+        edges: [MapEdge]
+}
+"""
+An edge in a connection.
+"""
+type MapEdge {
+        """
+        The item at the end of the edge
+        """
+        node: Map!
+        """
+        A cursor for use in pagination
+        """
+        cursor: String!
+}
+type Map implements Node {
+        id: ID!
+        gameId: String!
+        playerId: ID!
+        player: Player!
+        name: String!
+}
+interface Node {
+        id: ID!
+}
+schema {
+        query: QueryRoot
+}
