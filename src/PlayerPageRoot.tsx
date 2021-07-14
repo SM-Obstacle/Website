@@ -49,7 +49,7 @@ export default function PlayerPageRoot(props: any) {
                 </tr>
             </thead>
             <tbody>
-                {data.map.records.map((record, i) =>
+                {data.player.records.map((record, i) =>
                     <RecordRowComponent key={i} record={record} />
                 )}
             </tbody>
