@@ -19,7 +19,7 @@ async function fetchRelay(
     _cacheConfig: CacheConfig
 ) {
     // Fetch data from GitHub's GraphQL API:
-    const response = await fetch("http://localhost:8000/graphql", {
+    const response = await fetch("http://api.obstacle.ovh/graphql", {
         method: "POST",
         headers: {
             Accept: "application/json",
