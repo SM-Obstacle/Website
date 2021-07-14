@@ -29,7 +29,7 @@ const RecordRowComponent = ({ record }: { record: Record }) => (
                 {record.player ? <td data-label="Player"><a href={`/player/${record.player.login}`}><MPFormattingcomponent name={record.player.name}/></a></td> : null}
                 {record.map ? <td data-label="Map"><a href={`/map/${record.map.gameId}`}><MPFormattingcomponent name={record.map.name} /></a></td> : null}
                 <td data-label="Time"><TimeComponent time={record.time}/></td>
-                <td data-label="Date"><TimeAgoComponent date={record.updatedAt}/></td>
+                { record.updatedAt ? <td data-label="Date"><TimeAgoComponent date={record.updatedAt}/></td> : null }
                 <td data-label="PvP Weapons">{(record.flags >> 0) & 0b00000011}</td>
                 <td data-label="PvP Clisions">{(record.flags >> 2) & 0b00000011}</td>
                 <td data-label="Alt glitch">{(record.flags >> 4) & 0b00000011}</td>

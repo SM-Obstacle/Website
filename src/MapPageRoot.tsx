@@ -28,6 +28,7 @@ export default function MapPageRoot(props: any) {
             time,
             respawnCount,
             tryCount,
+            updatedAt,
             flags
           }
         }

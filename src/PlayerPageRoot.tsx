@@ -25,6 +25,7 @@ export default function PlayerPageRoot(props: any) {
               }
               respawnCount,
               tryCount,
+              updatedAt,
               flags
             }
         }
