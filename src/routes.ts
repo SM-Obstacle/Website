@@ -6,18 +6,7 @@ const routes = [
     {
         component: JSResource('Root', () => import('./Root')),
         prepare: params => {
-            const RootQuery = require('./__generated__/RootQuery.graphql');
-            return {
-                rootQuery: loadQuery(
-                    RelayEnvironment,
-                    RootQuery,
-                    {},
-                    // The fetchPolicy allows us to specify whether to render from cached
-                    // data if possible (store-or-network) or only fetch from network
-                    // (network-only).
-                    { fetchPolicy: 'store-or-network' },
-                ),
-            };
+            return {};
         },
         routes: [
             {
@@ -30,7 +19,7 @@ const routes = [
                  * especially useful with nested routes, where React.lazy would not fetch the
                  * component until its parents code/data had loaded.
                  */
-                component: JSResource('HomeRoot', () => import('./HomeRoot')),
+                component: JSResource('LatestRecordsPage', () => import('./LatestRecordsPage')),
                 /**
                  * A function to prepare the data for the `component` in parallel with loading
                  * that component code. The actual data to fetch is defined by the component
@@ -38,11 +27,11 @@ const routes = [
                  * query.
                  */
                 prepare: params => {
-                    const IssuesQuery = require('./__generated__/HomeRootTestQuery.graphql');
+                    const LatestRecordsQuery = require('./__generated__/LatestRecordsPageQuery.graphql');
                     return {
-                        issuesQuery: loadQuery(
+                        latestRecordsQuery: loadQuery(
                             RelayEnvironment,
-                            IssuesQuery,
+                            LatestRecordsQuery,
                             {},
                             // The fetchPolicy allows us to specify whether to render from cached
                             // data if possible (store-or-network) or only fetch from network
@@ -51,28 +40,41 @@ const routes = [
                         ),
                     };
                 },
-            }
-            /*,
+            },
             {
-                path: '/issue/:id',
-                component: JSResource('IssueDetailRoot', () =>
-                    import('./IssueDetailRoot'),
-                ),
+                path: '/player/:login',
+                component: JSResource('PlayerPageRoot', () => import('./PlayerPageRoot')),
                 prepare: params => {
-                    const IssueDetailQuery = require('./__generated__/IssueDetailRootQuery.graphql');
+                    const PlayerPageQuery = require('./__generated__/PlayerPageRootQuery.graphql');
                     return {
-                        issueDetailQuery: loadQuery(
+                        playerQuery: loadQuery(
                             RelayEnvironment,
-                            IssueDetailQuery,
+                            PlayerPageQuery,
                             {
-                                id: params.id,
+                                login: params.login,
                             },
                             { fetchPolicy: 'store-or-network' },
                         ),
                     };
                 },
             },
-            */
+            {
+                path: '/map/:gameId',
+                component: JSResource('MapPageRoot', () => import('./MapPageRoot')),
+                prepare: params => {
+                    const MapPageQuery = require('./__generated__/MapPageRootQuery.graphql');
+                    return {
+                        mapQuery: loadQuery(
+                            RelayEnvironment,
+                            MapPageQuery,
+                            {
+                                gameId: params.gameId,
+                            },
+                            { fetchPolicy: 'store-or-network' },
+                        ),
+                    };
+                },
+            },
         ],
     },
 ];

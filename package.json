@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "dayjs": "^1.10.6",
     "history": "^5.0.0",
     "react": "^18.0.0-alpha-e6be2d531",
     "react-dom": "^18.0.0-alpha-e6be2d531",
@@ -16,7 +17,7 @@
   "scripts": {
     "start": "npm run relay --watch && react-scripts start",
     "build": "npm run relay && react-scripts build",
-    "relay": "npx relay-compiler --language typescript --schema schema.graphql --src ./src/ --artifactDirectory ./src/__generated__ --watchman false $@",
+    "relay": "npx relay-compiler --language typescript --schema schema.graphql --src ./src/ --artifactDirectory ./src/__generated__ --watchman true $@",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

@@ -17,7 +17,7 @@ export default function RouterRenderer() {
   // Improve the route transition UX by delaying transitions: show the previous route entry
   // for a brief period while the next route is being prepared. See
   // https://reactjs.org/docs/concurrent-mode-patterns.html#transitions
-  const [startTransition, isPending] = useTransition(SUSPENSE_CONFIG);
+  const [isPending, startTransition] = useTransition(SUSPENSE_CONFIG);
 
   // Store the active entry in state - this allows the renderer to use features like
   // useTransition to delay when state changes become visible to the user.
@@ -97,7 +97,7 @@ export default function RouterRenderer() {
   // Routes can suspend, so wrap in <Suspense>
   return (
     <ErrorBoundary>
-      <Suspense fallback={'Loading fallback...'}>
+      <Suspense fallback={'Loading route...'}>
         {/* Indicate to the user that a transition is pending, even while showing the previous UI */}
         {isPending ? (
           <div className="RouteRenderer-pending">Loading pending...</div>

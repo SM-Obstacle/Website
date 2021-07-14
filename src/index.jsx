@@ -7,19 +7,22 @@ import RoutingContext from './routing/RoutingContext';
 import createRouter from './routing/createRouter';
 import RouterRenderer from './routing/RouteRenderer';
 
+import "./index.css";
+
 import reportWebVitals from './reportWebVitals';
 
 // Uses the custom router setup to define a router instanace that we can pass through context
 const router: { cleanup: any, context: any } = createRouter(routes);
 
-ReactDOM.render(
+ReactDOM.createRoot(document.getElementById('root')).render(
+<React.StrictMode>
     <RelayEnvironmentProvider environment={RelayEnvironment}>
         <RoutingContext.Provider value={router.context}>
             {/* Render the active route */}
             <RouterRenderer />
         </RoutingContext.Provider>
-    </RelayEnvironmentProvider>,
-    document.getElementById('root')
+    </RelayEnvironmentProvider>
+</React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

@@ -2,7 +2,9 @@ type QueryRoot {
         players(after: String, before: String, first: Int, last: Int): PlayerConnection!
         maps(after: String, before: String, first: Int, last: Int): MapConnection!
         node(id: ID!): Node
-        logins(logins: [String!]!): [Node]!
+        map(gameId: String!): Map!
+        player(login: String!): Player!
+        records: [RankedRecord!]!
 }
 type PlayerConnection {
         """
@@ -51,8 +53,9 @@ type PlayerEdge {
 type Player implements Node {
         id: ID!
         login: String!
-        nickname: String!
+        name: String!
         maps(after: String, before: String, first: Int, last: Int): MapConnection!
+        records: [RankedRecord!]!
 }
 type MapConnection {
         """
@@ -83,7 +86,20 @@ type Map implements Node {
         playerId: ID!
         player: Player!
         name: String!
+        records: [RankedRecord!]!
 }
+type RankedRecord {
+        rank: Int!
+        map: Map!
+        player: Player!
+        time: Int!
+        respawnCount: Int!
+        tryCount: Int!
+        createdAt: NaiveDateTime!
+        updatedAt: NaiveDateTime!
+        flags: Int!
+}
+scalar NaiveDateTime
 interface Node {
         id: ID!
 }
