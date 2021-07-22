@@ -43,10 +43,10 @@ export default function LatestRecordsPage(props: any) {
             <th>Map</th>
             <th>Time</th>
             <th>Date</th>
-            <th>PvP Weapons</th>
-            <th>PvP Colisions</th>
-            <th>Alt glitch</th>
             <th>RS bug</th>
+            <th>Alt glitch</th>
+            <th>PvP Weapons</th>
+            <th>PvP Collisions</th>
           </tr>
           </thead>
           <tbody>
