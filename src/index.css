@@ -3,7 +3,6 @@
   --main-fg-color: white;
 
   --link-color: #49C6E5;
-  --link-visited-color: #00BD9D;
   --link-hover-color: #54DEFD;
   --link-active-color: #8BD7D2;
 
@@ -156,14 +155,9 @@ a {
     text-decoration: none;
 }
 
-/* unvisited link */
-a:link {
+/* link */
+a {
     color: var(--link-color);
-}
-
-/* visited link */
-a:visited {
-    color: var(--link-visited-color);
 }
 
 /* mouse over link */
