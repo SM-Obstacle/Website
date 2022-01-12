@@ -9,9 +9,9 @@ export default function Root(props) {
             <header className="header">
                 <h1>Obstacle</h1>
                 <ul className="menu">
-                    <!--li><input type="text" name="search" placeholder="Search a player or a map..." /></li-->
+                    {/*<li><input type="text" name="search" placeholder="Search a player or a map..." /></li>*/} 
                     <li><a href="/">Home</a></li>
-                    <!--li><a href="/servers/">Servers</a></li-->
+                    {/*<li><a href="/servers/">Servers</a></li>*/}
                     <li><a href="https://obstacle.fandom.com/wiki/ShootMania_Obstacle_Wiki">Wiki</a></li>
                     <li><a href="https://discord.gg/R4ZS23aS9c">Discord</a></li>
                 </ul>
