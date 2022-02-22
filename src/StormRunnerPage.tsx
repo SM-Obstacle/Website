@@ -30,11 +30,6 @@ export default function StormRunnerPage(props: any) {
 
 	const [active, setActive] = useState(0);
 
-	type StormRecord = {
-		rank: number;
-		map_record_count: number;
-	};
-
 	let players = [];
 
 	// Get all the unique players of each map
