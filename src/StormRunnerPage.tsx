@@ -12,17 +12,17 @@ export default function StormRunnerPage(props: any) {
 	const data: any = usePreloadedQuery(
 		graphql`
 	  query StormRunnerPageQuery {
-		  map0: map(gameId: "DmxfMk0gebxmrBzC8GniCvpzocf") { name, records { rank, player { id, login, name } } }
-		  map1: map(gameId: "ViILpz0CS0i87hUTjcZbDXOn_1c") { name, records { rank, player { id, login, name } } }
-		  map2: map(gameId: "BbhSJcUjjJ_0BPsoPWpg6O8IUQk") { name, records { rank, player { id, login, name } } }
+		  map0: map(gameId: "DmxfMk0gebxmrBzC8GniCvpzocf") { id, name, records { rank, player { id, login, name } } }
+		  map1: map(gameId: "ViILpz0CS0i87hUTjcZbDXOn_1c") { id, name, records { rank, player { id, login, name } } }
+		  map2: map(gameId: "BbhSJcUjjJ_0BPsoPWpg6O8IUQk") { id, name, records { rank, player { id, login, name } } }
 
-		  map3: map(gameId: "AX4ksxLixAo15Nwnnmahr7Cc3u7") { name, records { rank, player { id, login, name } } }
-		  map4: map(gameId: "FP9_OxlDlTfOAtJ802IivbIT1B4") { name, records { rank, player { id, login, name } } }
-		  map5: map(gameId: "kiL06IMGUEe0syqYfIH0sWC2w_b") { name, records { rank, player { id, login, name } } }
+		  map3: map(gameId: "AX4ksxLixAo15Nwnnmahr7Cc3u7") { id, name, records { rank, player { id, login, name } } }
+		  map4: map(gameId: "FP9_OxlDlTfOAtJ802IivbIT1B4") { id, name, records { rank, player { id, login, name } } }
+		  map5: map(gameId: "kiL06IMGUEe0syqYfIH0sWC2w_b") { id, name, records { rank, player { id, login, name } } }
 
-		  map6: map(gameId: "620n4zRgE8APuKiDrWepWIxdC49") { name, records { rank, player { id, login, name } } }
-		  map7: map(gameId: "07EcTsJILmBI_2aeI4aG3PcL5_7") { name, records { rank, player { id, login, name } } }
-		  map8: map(gameId: "42CFscE_gb68PNzDwgVWKQomYe5") { name, records { rank, player { id, login, name } } }
+		  map6: map(gameId: "620n4zRgE8APuKiDrWepWIxdC49") { id, name, records { rank, player { id, login, name } } }
+		  map7: map(gameId: "07EcTsJILmBI_2aeI4aG3PcL5_7") { id, name, records { rank, player { id, login, name } } }
+		  map8: map(gameId: "42CFscE_gb68PNzDwgVWKQomYe5") { id, name, records { rank, player { id, login, name } } }
 	  }
 	`,
 		props.prepared.stormRunnerQuery,
