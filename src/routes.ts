@@ -75,6 +75,21 @@ const routes = [
                     };
                 },
             },
+            {
+                path: '/storm',
+                component: JSResource('StormRunnerPage', () => import('./StormRunnerPage')),
+                prepare: params => {
+                    const StormRunnerPageQuery = require('./__generated__/StormRunnerPageQuery.graphql');
+                    return {
+                        stormRunnerQuery: loadQuery(
+                            RelayEnvironment,
+                            StormRunnerPageQuery,
+                            {},
+                            { fetchPolicy: 'store-or-network' },
+                        ),
+                    };
+                },
+            }
         ],
     },
 ];
