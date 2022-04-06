@@ -47,6 +47,7 @@ export default function PlayerPageRoot(props: any) {
                     <th>Alt glitch</th>
                     <th>PvP Weapons</th>
                     <th>PvP Collisions</th>
+                    <th>SH</th>
                 </tr>
             </thead>
             <tbody>
