@@ -51,6 +51,7 @@ export default function MapPageRoot(props: any) {
                     <th>Alt glitch</th>
                     <th>PvP Weapons</th>
                     <th>PvP Collisions</th>
+                    <th>SH</th>
                 </tr>
             </thead>
             <tbody>
