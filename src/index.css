@@ -32,7 +32,7 @@ body {
     max-width: 1600px;
 }
 
-body:not(.sh) th:last-of-type, body:not(.sh) td:last-of-type, th.sh, td.sh {
+th.sh, td.sh {
   display: none;
 }
 
