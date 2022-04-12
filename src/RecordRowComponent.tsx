@@ -45,7 +45,7 @@ const RecordRowComponent = ({ record }: { record: Record }) => (
                 <td data-label="Alt glitch">{formatFlag(record.flags >> 2)}</td>
                 <td data-label="PvP Weapons">{formatFlag(record.flags >> 4)}</td>
                 <td data-label="PvP Collisions">{formatFlag(record.flags >> 6)}</td>
-                <td data-label="SH">{formatFlag(record.flags >> 8)}</td>
+                <td data-label="SH" class="sh">{formatFlag(record.flags >> 8)}</td>
             </tr>
 );
 
