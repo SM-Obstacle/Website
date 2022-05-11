@@ -5,11 +5,10 @@ function trimMPFormating(formated) {
     return formated.replace(/\$(i(\[[^\]]*\]?)?|[oswnlhpzmg<>]|[0123456789abcdef]{1,3})/gi, '');
 }
 function MPHtml(name) {
-    let html = window.MPStyle.Parser.toHTML(trimMPFormatingLinks(name));
-    if (/^\s*$/.test(trimMPFormating(name))) {
-        html = '<del>(unnamed)</del>';
-    }
-    return { __html:  html};
+    if (/^\s*$/.test(trimMPFormating(name)))
+        return { __html:  '<i><del>unnamed</del></i>'};
+    
+    return { __html:  window.MPStyle.Parser.toHTML(trimMPFormatingLinks(name))};
 }
 
 const MPFormattingComponent = ({ name }: { name: string }) => {
