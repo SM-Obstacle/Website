@@ -1,8 +1,8 @@
 function trimMPFormatingLinks(formated) {
-    return formated.replace(/\$i(\[[^\]]*\]?)?/gi, '');
+    return formated.replace(/\$lhp(\[[^\]]*\]?)?/gi, '');
 }
 function trimMPFormating(formated) {
-    return formated.replace(/\$(i(\[[^\]]*\]?)?|[oswnlhpzmg<>]|[0123456789abcdef]{1,3})/gi, '');
+    return formated.replace(/\$(lhp(\[[^\]]*\]?)?|[ioswnzmg<>]|[0123456789abcdef]{1,3})/gi, '');
 }
 function MPHtml(name) {
     if (/^\s*$/.test(trimMPFormating(name)))
