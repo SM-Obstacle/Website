@@ -18,6 +18,7 @@ export default function MapPageRoot(props: any) {
           name,
           player {
             name,
+            login
           }
           records {
             rank,
@@ -39,7 +40,7 @@ export default function MapPageRoot(props: any) {
 
     return <div>
         <h1><span className="outline"><MPFormattingcomponent name={data.map.name} /></span></h1>
-        <p>Made by <span className="outline"><MPFormattingcomponent name={data.map.player.name} /></span></p>
+        <p>Made by <a href={`/player/${data.map.player.login}`} className="outline"><MPFormattingcomponent name={data.map.player.name} /></a></p>
         <table>
             <thead>
                 <tr>
