@@ -112,7 +112,7 @@ export default function StormRunnerPage(props: any) {
 								   }}>
 								   <td className="rank">{player.rank}</td>
 								   <td className="score">{player.score.toFixed(2)}</td>
-								   <td className="name"><a href={`/player/${player.login}`}>{<MPFormattingcomponent name={player.name}/>}</a></td>
+								   <td className="name"><a href={`/player/${player.login}`}>{<MPFormattingcomponent name={player.name} placeholder={player.login}/>}</a></td>
 								   <td className="worst">{player.worst.rank}</td>
 							   </tr>
 						   );
