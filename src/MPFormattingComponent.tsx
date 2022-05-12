@@ -5,14 +5,16 @@ function trimMPFormating(formated) {
     return formated.replace(/\$([lhp](\[[^\]]*\]?)?|[ioswnzmg<>]|[0123456789abcdef]{1,3})/gi, '');
 }
 function MPHtml(name) {
-    if (/^\s*$/.test(trimMPFormating(name)))
-        return { __html:  '<i><del>unnamed</del></i>'};
-    
-    return { __html:  window.MPStyle.Parser.toHTML(trimMPFormatingLinks(name))};
+    return window.MPStyle.Parser.toHTML(name);
 }
 
-const MPFormattingComponent = ({ name }: { name: string }) => {
-    return <span className="mp-element" dangerouslySetInnerHTML={MPHtml(name)}></span>;
+const MPFormattingComponent = ({ name, placeholder = '$i(unnamed)' }: { name: string; placeholder?: string }) => {
+    let sanitized_name = trimMPFormatingLinks(name);
+    
+    if (/^\s*$/.test(trimMPFormating(name)))
+        sanitized_name += placeholder;
+    
+    return <span className="mp-element" dangerouslySetInnerHTML={ __html: MPHtml(sanitized_name)}></span>;
 }
 
 export default MPFormattingComponent;
