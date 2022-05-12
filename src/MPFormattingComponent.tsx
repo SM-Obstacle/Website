@@ -8,7 +8,7 @@ function MPHtml(name) {
     return window.MPStyle.Parser.toHTML(name);
 }
 
-const MPFormattingComponent = ({ name, placeholder = '$i(unnamed)' }: { name: string; placeholder?: string }) => {
+const MPFormattingComponent = ({ name, placeholder = '(unnamed)' }: { name: string; placeholder?: string }) => {
     let sanitized_name = trimMPFormatingLinks(name);
     
     if (/^\s*$/.test(trimMPFormating(name)))
