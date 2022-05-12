@@ -37,7 +37,7 @@ function formatFlag(flag: number): string {
 const RecordRowComponent = ({ record }: { record: Record }) => (
             <tr>
                 <td data-label="Rank">{record.rank}</td>
-                {record.player ? <td data-label="Player"><a href={`/player/${record.player.login}`}><MPFormattingcomponent name={record.player.name}/></a></td> : null}
+                {record.player ? <td data-label="Player"><a href={`/player/${record.player.login}`}><MPFormattingcomponent name={record.player.name} placeholder={record.player.login}/></a></td> : null}
                 {record.map ? <td data-label="Map"><a href={`/map/${record.map.gameId}`}><MPFormattingcomponent name={record.map.name} /></a></td> : null}
                 <td data-label="Time"><TimeComponent time={record.time}/></td>
                 { record.updatedAt ? <td data-label="Date"><TimeAgoComponent date={record.updatedAt}/></td> : null }
