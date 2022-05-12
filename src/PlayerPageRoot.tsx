@@ -35,7 +35,7 @@ export default function PlayerPageRoot(props: any) {
     );
 
     return <div>
-        <h1><span className="outline"><MPFormattingcomponent name={data.player.name} placeholder={player.login} /></span></h1>
+        <h1><span className="outline"><MPFormattingcomponent name={data.player.name} placeholder={data.player.login} /></span></h1>
         <table>
             <thead>
                 <tr>
