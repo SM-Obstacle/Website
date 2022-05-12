@@ -14,7 +14,7 @@ const MPFormattingComponent = ({ name, placeholder = '$i(unnamed)' }: { name: st
     if (/^\s*$/.test(trimMPFormating(name)))
         sanitized_name += placeholder;
     
-    return <span className="mp-element" dangerouslySetInnerHTML={ __html: MPHtml(sanitized_name)}></span>;
+    return <span className="mp-element" dangerouslySetInnerHTML={ { __html: MPHtml(sanitized_name) } }></span>;
 }
 
 export default MPFormattingComponent;
