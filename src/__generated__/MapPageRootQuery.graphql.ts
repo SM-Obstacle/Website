@@ -11,6 +11,7 @@ export type MapPageRootQueryResponse = {
         readonly name: string;
         readonly player: {
             readonly name: string;
+            readonly login: string;
         };
         readonly records: ReadonlyArray<{
             readonly rank: number;
@@ -21,6 +22,7 @@ export type MapPageRootQueryResponse = {
             readonly time: number;
             readonly respawnCount: number;
             readonly tryCount: number;
+            readonly updatedAt: unknown;
             readonly flags: number;
         }>;
     };
@@ -40,6 +42,7 @@ query MapPageRootQuery(
     name
     player {
       name
+      login
       id
     }
     records {
@@ -52,6 +55,7 @@ query MapPageRootQuery(
       time
       respawnCount
       tryCount
+      updatedAt
       flags
     }
     id
@@ -85,14 +89,14 @@ v3 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "rank",
+  "name": "login",
   "storageKey": null
 },
 v4 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "login",
+  "name": "rank",
   "storageKey": null
 },
 v5 = {
@@ -120,10 +124,17 @@ v8 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "flags",
+  "name": "updatedAt",
   "storageKey": null
 },
 v9 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "flags",
+  "storageKey": null
+},
+v10 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -154,7 +165,8 @@ return {
             "name": "player",
             "plural": false,
             "selections": [
-              (v2/*: any*/)
+              (v2/*: any*/),
+              (v3/*: any*/)
             ],
             "storageKey": null
           },
@@ -166,7 +178,7 @@ return {
             "name": "records",
             "plural": true,
             "selections": [
-              (v3/*: any*/),
+              (v4/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -175,7 +187,7 @@ return {
                 "name": "player",
                 "plural": false,
                 "selections": [
-                  (v4/*: any*/),
+                  (v3/*: any*/),
                   (v2/*: any*/)
                 ],
                 "storageKey": null
@@ -183,7 +195,8 @@ return {
               (v5/*: any*/),
               (v6/*: any*/),
               (v7/*: any*/),
-              (v8/*: any*/)
+              (v8/*: any*/),
+              (v9/*: any*/)
             ],
             "storageKey": null
           }
@@ -218,7 +231,8 @@ return {
             "plural": false,
             "selections": [
               (v2/*: any*/),
-              (v9/*: any*/)
+              (v3/*: any*/),
+              (v10/*: any*/)
             ],
             "storageKey": null
           },
@@ -230,7 +244,7 @@ return {
             "name": "records",
             "plural": true,
             "selections": [
-              (v3/*: any*/),
+              (v4/*: any*/),
               {
                 "alias": null,
                 "args": null,
@@ -239,34 +253,35 @@ return {
                 "name": "player",
                 "plural": false,
                 "selections": [
-                  (v4/*: any*/),
+                  (v3/*: any*/),
                   (v2/*: any*/),
-                  (v9/*: any*/)
+                  (v10/*: any*/)
                 ],
                 "storageKey": null
               },
               (v5/*: any*/),
               (v6/*: any*/),
               (v7/*: any*/),
-              (v8/*: any*/)
+              (v8/*: any*/),
+              (v9/*: any*/)
             ],
             "storageKey": null
           },
-          (v9/*: any*/)
+          (v10/*: any*/)
         ],
         "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "1f2d49f1c97ff9f88ffc9c07a27bcf3e",
+    "cacheID": "57fff716648e2a4f0ce8d3a778b73faa",
     "id": null,
     "metadata": {},
     "name": "MapPageRootQuery",
     "operationKind": "query",
-    "text": "query MapPageRootQuery(\n  $gameId: String!\n) {\n  map(gameId: $gameId) {\n    name\n    player {\n      name\n      id\n    }\n    records {\n      rank\n      player {\n        login\n        name\n        id\n      }\n      time\n      respawnCount\n      tryCount\n      flags\n    }\n    id\n  }\n}\n"
+    "text": "query MapPageRootQuery(\n  $gameId: String!\n) {\n  map(gameId: $gameId) {\n    name\n    player {\n      name\n      login\n      id\n    }\n    records {\n      rank\n      player {\n        login\n        name\n        id\n      }\n      time\n      respawnCount\n      tryCount\n      updatedAt\n      flags\n    }\n    id\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = 'f2609340b5066a9b7abdcc74ec613657';
+(node as any).hash = 'd9eef804284c690dd3cbdde17d98171a';
 export default node;

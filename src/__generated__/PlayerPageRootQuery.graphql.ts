@@ -19,6 +19,7 @@ export type PlayerPageRootQueryResponse = {
             };
             readonly respawnCount: number;
             readonly tryCount: number;
+            readonly updatedAt: unknown;
             readonly flags: number;
         }>;
     };
@@ -47,6 +48,7 @@ query PlayerPageRootQuery(
       }
       respawnCount
       tryCount
+      updatedAt
       flags
     }
     id
@@ -122,10 +124,17 @@ v9 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "flags",
+  "name": "updatedAt",
   "storageKey": null
 },
 v10 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "flags",
+  "storageKey": null
+},
+v11 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
@@ -174,7 +183,8 @@ return {
               },
               (v7/*: any*/),
               (v8/*: any*/),
-              (v9/*: any*/)
+              (v9/*: any*/),
+              (v10/*: any*/)
             ],
             "storageKey": null
           }
@@ -221,31 +231,32 @@ return {
                 "selections": [
                   (v6/*: any*/),
                   (v3/*: any*/),
-                  (v10/*: any*/)
+                  (v11/*: any*/)
                 ],
                 "storageKey": null
               },
               (v7/*: any*/),
               (v8/*: any*/),
-              (v9/*: any*/)
+              (v9/*: any*/),
+              (v10/*: any*/)
             ],
             "storageKey": null
           },
-          (v10/*: any*/)
+          (v11/*: any*/)
         ],
         "storageKey": null
       }
     ]
   },
   "params": {
-    "cacheID": "5729ed3fa9b39cf105340c1ae6b944f3",
+    "cacheID": "6ea5a2bc83ab2edd9117e673254926e6",
     "id": null,
     "metadata": {},
     "name": "PlayerPageRootQuery",
     "operationKind": "query",
-    "text": "query PlayerPageRootQuery(\n  $login: String!\n) {\n  player(login: $login) {\n    login\n    name\n    records {\n      rank\n      time\n      map {\n        gameId\n        name\n        id\n      }\n      respawnCount\n      tryCount\n      flags\n    }\n    id\n  }\n}\n"
+    "text": "query PlayerPageRootQuery(\n  $login: String!\n) {\n  player(login: $login) {\n    login\n    name\n    records {\n      rank\n      time\n      map {\n        gameId\n        name\n        id\n      }\n      respawnCount\n      tryCount\n      updatedAt\n      flags\n    }\n    id\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = '55b69f6f3c644c659588d73981e73f51';
+(node as any).hash = '1684ed0be7b2278ad43651e709ee9477';
 export default node;

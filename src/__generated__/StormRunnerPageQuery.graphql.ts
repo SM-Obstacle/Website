@@ -6,6 +6,7 @@ import { ConcreteRequest } from "relay-runtime";
 export type StormRunnerPageQueryVariables = {};
 export type StormRunnerPageQueryResponse = {
     readonly map0: {
+        readonly gameId: string;
         readonly name: string;
         readonly records: ReadonlyArray<{
             readonly rank: number;
@@ -17,6 +18,7 @@ export type StormRunnerPageQueryResponse = {
         }>;
     };
     readonly map1: {
+        readonly gameId: string;
         readonly name: string;
         readonly records: ReadonlyArray<{
             readonly rank: number;
@@ -28,6 +30,7 @@ export type StormRunnerPageQueryResponse = {
         }>;
     };
     readonly map2: {
+        readonly gameId: string;
         readonly name: string;
         readonly records: ReadonlyArray<{
             readonly rank: number;
@@ -39,6 +42,7 @@ export type StormRunnerPageQueryResponse = {
         }>;
     };
     readonly map3: {
+        readonly gameId: string;
         readonly name: string;
         readonly records: ReadonlyArray<{
             readonly rank: number;
@@ -50,6 +54,7 @@ export type StormRunnerPageQueryResponse = {
         }>;
     };
     readonly map4: {
+        readonly gameId: string;
         readonly name: string;
         readonly records: ReadonlyArray<{
             readonly rank: number;
@@ -61,6 +66,7 @@ export type StormRunnerPageQueryResponse = {
         }>;
     };
     readonly map5: {
+        readonly gameId: string;
         readonly name: string;
         readonly records: ReadonlyArray<{
             readonly rank: number;
@@ -72,6 +78,7 @@ export type StormRunnerPageQueryResponse = {
         }>;
     };
     readonly map6: {
+        readonly gameId: string;
         readonly name: string;
         readonly records: ReadonlyArray<{
             readonly rank: number;
@@ -83,6 +90,7 @@ export type StormRunnerPageQueryResponse = {
         }>;
     };
     readonly map7: {
+        readonly gameId: string;
         readonly name: string;
         readonly records: ReadonlyArray<{
             readonly rank: number;
@@ -94,6 +102,19 @@ export type StormRunnerPageQueryResponse = {
         }>;
     };
     readonly map8: {
+        readonly gameId: string;
+        readonly name: string;
+        readonly records: ReadonlyArray<{
+            readonly rank: number;
+            readonly player: {
+                readonly id: string;
+                readonly login: string;
+                readonly name: string;
+            };
+        }>;
+    };
+    readonly map9: {
+        readonly gameId: string;
         readonly name: string;
         readonly records: ReadonlyArray<{
             readonly rank: number;
@@ -114,7 +135,8 @@ export type StormRunnerPageQuery = {
 
 /*
 query StormRunnerPageQuery {
-  map0: map(gameId: "DmxfMk0gebxmrBzC8GniCvpzocf") {
+  map0: map(gameId: "hUcGBFdXJTA03VFZnLrrpoOEGgc") {
+    gameId
     name
     records {
       rank
@@ -126,7 +148,8 @@ query StormRunnerPageQuery {
     }
     id
   }
-  map1: map(gameId: "ViILpz0CS0i87hUTjcZbDXOn_1c") {
+  map1: map(gameId: "8qYEIn3yGy4icr6q2ia8naZ6Xce") {
+    gameId
     name
     records {
       rank
@@ -138,7 +161,8 @@ query StormRunnerPageQuery {
     }
     id
   }
-  map2: map(gameId: "BbhSJcUjjJ_0BPsoPWpg6O8IUQk") {
+  map2: map(gameId: "3xMI2Myl3fIumVwGdv8ye7Q3tf3") {
+    gameId
     name
     records {
       rank
@@ -150,7 +174,8 @@ query StormRunnerPageQuery {
     }
     id
   }
-  map3: map(gameId: "AX4ksxLixAo15Nwnnmahr7Cc3u7") {
+  map3: map(gameId: "wVdm82BaI4zrD7PUT9GgLsElCl6") {
+    gameId
     name
     records {
       rank
@@ -162,7 +187,8 @@ query StormRunnerPageQuery {
     }
     id
   }
-  map4: map(gameId: "FP9_OxlDlTfOAtJ802IivbIT1B4") {
+  map4: map(gameId: "Oz_nFUwrWKYxqqh7wqwuZ87B78a") {
+    gameId
     name
     records {
       rank
@@ -174,7 +200,8 @@ query StormRunnerPageQuery {
     }
     id
   }
-  map5: map(gameId: "kiL06IMGUEe0syqYfIH0sWC2w_b") {
+  map5: map(gameId: "NRb9oc0GXy7v3Np7JKu8e7JiKcl") {
+    gameId
     name
     records {
       rank
@@ -186,7 +213,8 @@ query StormRunnerPageQuery {
     }
     id
   }
-  map6: map(gameId: "620n4zRgE8APuKiDrWepWIxdC49") {
+  map6: map(gameId: "Wg_ueBq7ovovY1z2PGJsguwNf_9") {
+    gameId
     name
     records {
       rank
@@ -198,7 +226,8 @@ query StormRunnerPageQuery {
     }
     id
   }
-  map7: map(gameId: "07EcTsJILmBI_2aeI4aG3PcL5_7") {
+  map7: map(gameId: "IyyNms4JhN1BCvoltgli4tgllL6") {
+    gameId
     name
     records {
       rank
@@ -210,7 +239,21 @@ query StormRunnerPageQuery {
     }
     id
   }
-  map8: map(gameId: "42CFscE_gb68PNzDwgVWKQomYe5") {
+  map8: map(gameId: "bveb4HoqLZSW1nsmyGRYe1a6I4c") {
+    gameId
+    name
+    records {
+      rank
+      player {
+        id
+        login
+        name
+      }
+    }
+    id
+  }
+  map9: map(gameId: "Zgx3JW9sICQaw_ZTwa_akbSb597") {
+    gameId
     name
     records {
       rank
@@ -230,24 +273,31 @@ var v0 = [
   {
     "kind": "Literal",
     "name": "gameId",
-    "value": "DmxfMk0gebxmrBzC8GniCvpzocf"
+    "value": "hUcGBFdXJTA03VFZnLrrpoOEGgc"
   }
 ],
 v1 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "name",
+  "name": "gameId",
   "storageKey": null
 },
 v2 = {
   "alias": null,
   "args": null,
   "kind": "ScalarField",
-  "name": "id",
+  "name": "name",
   "storageKey": null
 },
 v3 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+},
+v4 = {
   "alias": null,
   "args": null,
   "concreteType": "RankedRecord",
@@ -270,7 +320,7 @@ v3 = {
       "name": "player",
       "plural": false,
       "selections": [
-        (v2/*: any*/),
+        (v3/*: any*/),
         {
           "alias": null,
           "args": null,
@@ -278,77 +328,86 @@ v3 = {
           "name": "login",
           "storageKey": null
         },
-        (v1/*: any*/)
+        (v2/*: any*/)
       ],
       "storageKey": null
     }
   ],
   "storageKey": null
 },
-v4 = [
-  (v1/*: any*/),
-  (v3/*: any*/)
-],
 v5 = [
-  {
-    "kind": "Literal",
-    "name": "gameId",
-    "value": "ViILpz0CS0i87hUTjcZbDXOn_1c"
-  }
+  (v1/*: any*/),
+  (v2/*: any*/),
+  (v4/*: any*/)
 ],
 v6 = [
   {
     "kind": "Literal",
     "name": "gameId",
-    "value": "BbhSJcUjjJ_0BPsoPWpg6O8IUQk"
+    "value": "8qYEIn3yGy4icr6q2ia8naZ6Xce"
   }
 ],
 v7 = [
   {
     "kind": "Literal",
     "name": "gameId",
-    "value": "AX4ksxLixAo15Nwnnmahr7Cc3u7"
+    "value": "3xMI2Myl3fIumVwGdv8ye7Q3tf3"
   }
 ],
 v8 = [
   {
     "kind": "Literal",
     "name": "gameId",
-    "value": "FP9_OxlDlTfOAtJ802IivbIT1B4"
+    "value": "wVdm82BaI4zrD7PUT9GgLsElCl6"
   }
 ],
 v9 = [
   {
     "kind": "Literal",
     "name": "gameId",
-    "value": "kiL06IMGUEe0syqYfIH0sWC2w_b"
+    "value": "Oz_nFUwrWKYxqqh7wqwuZ87B78a"
   }
 ],
 v10 = [
   {
     "kind": "Literal",
     "name": "gameId",
-    "value": "620n4zRgE8APuKiDrWepWIxdC49"
+    "value": "NRb9oc0GXy7v3Np7JKu8e7JiKcl"
   }
 ],
 v11 = [
   {
     "kind": "Literal",
     "name": "gameId",
-    "value": "07EcTsJILmBI_2aeI4aG3PcL5_7"
+    "value": "Wg_ueBq7ovovY1z2PGJsguwNf_9"
   }
 ],
 v12 = [
   {
     "kind": "Literal",
     "name": "gameId",
-    "value": "42CFscE_gb68PNzDwgVWKQomYe5"
+    "value": "IyyNms4JhN1BCvoltgli4tgllL6"
   }
 ],
 v13 = [
+  {
+    "kind": "Literal",
+    "name": "gameId",
+    "value": "bveb4HoqLZSW1nsmyGRYe1a6I4c"
+  }
+],
+v14 = [
+  {
+    "kind": "Literal",
+    "name": "gameId",
+    "value": "Zgx3JW9sICQaw_ZTwa_akbSb597"
+  }
+],
+v15 = [
   (v1/*: any*/),
-  (v3/*: any*/),
-  (v2/*: any*/)
+  (v2/*: any*/),
+  (v4/*: any*/),
+  (v3/*: any*/)
 ];
 return {
   "fragment": {
@@ -364,88 +423,98 @@ return {
         "kind": "LinkedField",
         "name": "map",
         "plural": false,
-        "selections": (v4/*: any*/),
-        "storageKey": "map(gameId:\"DmxfMk0gebxmrBzC8GniCvpzocf\")"
+        "selections": (v5/*: any*/),
+        "storageKey": "map(gameId:\"hUcGBFdXJTA03VFZnLrrpoOEGgc\")"
       },
       {
         "alias": "map1",
-        "args": (v5/*: any*/),
-        "concreteType": "Map",
-        "kind": "LinkedField",
-        "name": "map",
-        "plural": false,
-        "selections": (v4/*: any*/),
-        "storageKey": "map(gameId:\"ViILpz0CS0i87hUTjcZbDXOn_1c\")"
-      },
-      {
-        "alias": "map2",
         "args": (v6/*: any*/),
         "concreteType": "Map",
         "kind": "LinkedField",
         "name": "map",
         "plural": false,
-        "selections": (v4/*: any*/),
-        "storageKey": "map(gameId:\"BbhSJcUjjJ_0BPsoPWpg6O8IUQk\")"
+        "selections": (v5/*: any*/),
+        "storageKey": "map(gameId:\"8qYEIn3yGy4icr6q2ia8naZ6Xce\")"
       },
       {
-        "alias": "map3",
+        "alias": "map2",
         "args": (v7/*: any*/),
         "concreteType": "Map",
         "kind": "LinkedField",
         "name": "map",
         "plural": false,
-        "selections": (v4/*: any*/),
-        "storageKey": "map(gameId:\"AX4ksxLixAo15Nwnnmahr7Cc3u7\")"
+        "selections": (v5/*: any*/),
+        "storageKey": "map(gameId:\"3xMI2Myl3fIumVwGdv8ye7Q3tf3\")"
       },
       {
-        "alias": "map4",
+        "alias": "map3",
         "args": (v8/*: any*/),
         "concreteType": "Map",
         "kind": "LinkedField",
         "name": "map",
         "plural": false,
-        "selections": (v4/*: any*/),
-        "storageKey": "map(gameId:\"FP9_OxlDlTfOAtJ802IivbIT1B4\")"
+        "selections": (v5/*: any*/),
+        "storageKey": "map(gameId:\"wVdm82BaI4zrD7PUT9GgLsElCl6\")"
       },
       {
-        "alias": "map5",
+        "alias": "map4",
         "args": (v9/*: any*/),
         "concreteType": "Map",
         "kind": "LinkedField",
         "name": "map",
         "plural": false,
-        "selections": (v4/*: any*/),
-        "storageKey": "map(gameId:\"kiL06IMGUEe0syqYfIH0sWC2w_b\")"
+        "selections": (v5/*: any*/),
+        "storageKey": "map(gameId:\"Oz_nFUwrWKYxqqh7wqwuZ87B78a\")"
       },
       {
-        "alias": "map6",
+        "alias": "map5",
         "args": (v10/*: any*/),
         "concreteType": "Map",
         "kind": "LinkedField",
         "name": "map",
         "plural": false,
-        "selections": (v4/*: any*/),
-        "storageKey": "map(gameId:\"620n4zRgE8APuKiDrWepWIxdC49\")"
+        "selections": (v5/*: any*/),
+        "storageKey": "map(gameId:\"NRb9oc0GXy7v3Np7JKu8e7JiKcl\")"
       },
       {
-        "alias": "map7",
+        "alias": "map6",
         "args": (v11/*: any*/),
         "concreteType": "Map",
         "kind": "LinkedField",
         "name": "map",
         "plural": false,
-        "selections": (v4/*: any*/),
-        "storageKey": "map(gameId:\"07EcTsJILmBI_2aeI4aG3PcL5_7\")"
+        "selections": (v5/*: any*/),
+        "storageKey": "map(gameId:\"Wg_ueBq7ovovY1z2PGJsguwNf_9\")"
       },
       {
-        "alias": "map8",
+        "alias": "map7",
         "args": (v12/*: any*/),
         "concreteType": "Map",
         "kind": "LinkedField",
         "name": "map",
         "plural": false,
-        "selections": (v4/*: any*/),
-        "storageKey": "map(gameId:\"42CFscE_gb68PNzDwgVWKQomYe5\")"
+        "selections": (v5/*: any*/),
+        "storageKey": "map(gameId:\"IyyNms4JhN1BCvoltgli4tgllL6\")"
+      },
+      {
+        "alias": "map8",
+        "args": (v13/*: any*/),
+        "concreteType": "Map",
+        "kind": "LinkedField",
+        "name": "map",
+        "plural": false,
+        "selections": (v5/*: any*/),
+        "storageKey": "map(gameId:\"bveb4HoqLZSW1nsmyGRYe1a6I4c\")"
+      },
+      {
+        "alias": "map9",
+        "args": (v14/*: any*/),
+        "concreteType": "Map",
+        "kind": "LinkedField",
+        "name": "map",
+        "plural": false,
+        "selections": (v5/*: any*/),
+        "storageKey": "map(gameId:\"Zgx3JW9sICQaw_ZTwa_akbSb597\")"
       }
     ],
     "type": "QueryRoot",
@@ -464,100 +533,110 @@ return {
         "kind": "LinkedField",
         "name": "map",
         "plural": false,
-        "selections": (v13/*: any*/),
-        "storageKey": "map(gameId:\"DmxfMk0gebxmrBzC8GniCvpzocf\")"
+        "selections": (v15/*: any*/),
+        "storageKey": "map(gameId:\"hUcGBFdXJTA03VFZnLrrpoOEGgc\")"
       },
       {
         "alias": "map1",
-        "args": (v5/*: any*/),
-        "concreteType": "Map",
-        "kind": "LinkedField",
-        "name": "map",
-        "plural": false,
-        "selections": (v13/*: any*/),
-        "storageKey": "map(gameId:\"ViILpz0CS0i87hUTjcZbDXOn_1c\")"
-      },
-      {
-        "alias": "map2",
         "args": (v6/*: any*/),
         "concreteType": "Map",
         "kind": "LinkedField",
         "name": "map",
         "plural": false,
-        "selections": (v13/*: any*/),
-        "storageKey": "map(gameId:\"BbhSJcUjjJ_0BPsoPWpg6O8IUQk\")"
+        "selections": (v15/*: any*/),
+        "storageKey": "map(gameId:\"8qYEIn3yGy4icr6q2ia8naZ6Xce\")"
       },
       {
-        "alias": "map3",
+        "alias": "map2",
         "args": (v7/*: any*/),
         "concreteType": "Map",
         "kind": "LinkedField",
         "name": "map",
         "plural": false,
-        "selections": (v13/*: any*/),
-        "storageKey": "map(gameId:\"AX4ksxLixAo15Nwnnmahr7Cc3u7\")"
+        "selections": (v15/*: any*/),
+        "storageKey": "map(gameId:\"3xMI2Myl3fIumVwGdv8ye7Q3tf3\")"
       },
       {
-        "alias": "map4",
+        "alias": "map3",
         "args": (v8/*: any*/),
         "concreteType": "Map",
         "kind": "LinkedField",
         "name": "map",
         "plural": false,
-        "selections": (v13/*: any*/),
-        "storageKey": "map(gameId:\"FP9_OxlDlTfOAtJ802IivbIT1B4\")"
+        "selections": (v15/*: any*/),
+        "storageKey": "map(gameId:\"wVdm82BaI4zrD7PUT9GgLsElCl6\")"
       },
       {
-        "alias": "map5",
+        "alias": "map4",
         "args": (v9/*: any*/),
         "concreteType": "Map",
         "kind": "LinkedField",
         "name": "map",
         "plural": false,
-        "selections": (v13/*: any*/),
-        "storageKey": "map(gameId:\"kiL06IMGUEe0syqYfIH0sWC2w_b\")"
+        "selections": (v15/*: any*/),
+        "storageKey": "map(gameId:\"Oz_nFUwrWKYxqqh7wqwuZ87B78a\")"
       },
       {
-        "alias": "map6",
+        "alias": "map5",
         "args": (v10/*: any*/),
         "concreteType": "Map",
         "kind": "LinkedField",
         "name": "map",
         "plural": false,
-        "selections": (v13/*: any*/),
-        "storageKey": "map(gameId:\"620n4zRgE8APuKiDrWepWIxdC49\")"
+        "selections": (v15/*: any*/),
+        "storageKey": "map(gameId:\"NRb9oc0GXy7v3Np7JKu8e7JiKcl\")"
       },
       {
-        "alias": "map7",
+        "alias": "map6",
         "args": (v11/*: any*/),
         "concreteType": "Map",
         "kind": "LinkedField",
         "name": "map",
         "plural": false,
-        "selections": (v13/*: any*/),
-        "storageKey": "map(gameId:\"07EcTsJILmBI_2aeI4aG3PcL5_7\")"
+        "selections": (v15/*: any*/),
+        "storageKey": "map(gameId:\"Wg_ueBq7ovovY1z2PGJsguwNf_9\")"
       },
       {
-        "alias": "map8",
+        "alias": "map7",
         "args": (v12/*: any*/),
         "concreteType": "Map",
         "kind": "LinkedField",
         "name": "map",
         "plural": false,
-        "selections": (v13/*: any*/),
-        "storageKey": "map(gameId:\"42CFscE_gb68PNzDwgVWKQomYe5\")"
+        "selections": (v15/*: any*/),
+        "storageKey": "map(gameId:\"IyyNms4JhN1BCvoltgli4tgllL6\")"
+      },
+      {
+        "alias": "map8",
+        "args": (v13/*: any*/),
+        "concreteType": "Map",
+        "kind": "LinkedField",
+        "name": "map",
+        "plural": false,
+        "selections": (v15/*: any*/),
+        "storageKey": "map(gameId:\"bveb4HoqLZSW1nsmyGRYe1a6I4c\")"
+      },
+      {
+        "alias": "map9",
+        "args": (v14/*: any*/),
+        "concreteType": "Map",
+        "kind": "LinkedField",
+        "name": "map",
+        "plural": false,
+        "selections": (v15/*: any*/),
+        "storageKey": "map(gameId:\"Zgx3JW9sICQaw_ZTwa_akbSb597\")"
       }
     ]
   },
   "params": {
-    "cacheID": "6c7e69afb5a2bd55ae811c1cb25f5036",
+    "cacheID": "fc958e74ae975efa434a870046b62398",
     "id": null,
     "metadata": {},
     "name": "StormRunnerPageQuery",
     "operationKind": "query",
-    "text": "query StormRunnerPageQuery {\n  map0: map(gameId: \"DmxfMk0gebxmrBzC8GniCvpzocf\") {\n    name\n    records {\n      rank\n      player {\n        id\n        login\n        name\n      }\n    }\n    id\n  }\n  map1: map(gameId: \"ViILpz0CS0i87hUTjcZbDXOn_1c\") {\n    name\n    records {\n      rank\n      player {\n        id\n        login\n        name\n      }\n    }\n    id\n  }\n  map2: map(gameId: \"BbhSJcUjjJ_0BPsoPWpg6O8IUQk\") {\n    name\n    records {\n      rank\n      player {\n        id\n        login\n        name\n      }\n    }\n    id\n  }\n  map3: map(gameId: \"AX4ksxLixAo15Nwnnmahr7Cc3u7\") {\n    name\n    records {\n      rank\n      player {\n        id\n        login\n        name\n      }\n    }\n    id\n  }\n  map4: map(gameId: \"FP9_OxlDlTfOAtJ802IivbIT1B4\") {\n    name\n    records {\n      rank\n      player {\n        id\n        login\n        name\n      }\n    }\n    id\n  }\n  map5: map(gameId: \"kiL06IMGUEe0syqYfIH0sWC2w_b\") {\n    name\n    records {\n      rank\n      player {\n        id\n        login\n        name\n      }\n    }\n    id\n  }\n  map6: map(gameId: \"620n4zRgE8APuKiDrWepWIxdC49\") {\n    name\n    records {\n      rank\n      player {\n        id\n        login\n        name\n      }\n    }\n    id\n  }\n  map7: map(gameId: \"07EcTsJILmBI_2aeI4aG3PcL5_7\") {\n    name\n    records {\n      rank\n      player {\n        id\n        login\n        name\n      }\n    }\n    id\n  }\n  map8: map(gameId: \"42CFscE_gb68PNzDwgVWKQomYe5\") {\n    name\n    records {\n      rank\n      player {\n        id\n        login\n        name\n      }\n    }\n    id\n  }\n}\n"
+    "text": "query StormRunnerPageQuery {\n  map0: map(gameId: \"hUcGBFdXJTA03VFZnLrrpoOEGgc\") {\n    gameId\n    name\n    records {\n      rank\n      player {\n        id\n        login\n        name\n      }\n    }\n    id\n  }\n  map1: map(gameId: \"8qYEIn3yGy4icr6q2ia8naZ6Xce\") {\n    gameId\n    name\n    records {\n      rank\n      player {\n        id\n        login\n        name\n      }\n    }\n    id\n  }\n  map2: map(gameId: \"3xMI2Myl3fIumVwGdv8ye7Q3tf3\") {\n    gameId\n    name\n    records {\n      rank\n      player {\n        id\n        login\n        name\n      }\n    }\n    id\n  }\n  map3: map(gameId: \"wVdm82BaI4zrD7PUT9GgLsElCl6\") {\n    gameId\n    name\n    records {\n      rank\n      player {\n        id\n        login\n        name\n      }\n    }\n    id\n  }\n  map4: map(gameId: \"Oz_nFUwrWKYxqqh7wqwuZ87B78a\") {\n    gameId\n    name\n    records {\n      rank\n      player {\n        id\n        login\n        name\n      }\n    }\n    id\n  }\n  map5: map(gameId: \"NRb9oc0GXy7v3Np7JKu8e7JiKcl\") {\n    gameId\n    name\n    records {\n      rank\n      player {\n        id\n        login\n        name\n      }\n    }\n    id\n  }\n  map6: map(gameId: \"Wg_ueBq7ovovY1z2PGJsguwNf_9\") {\n    gameId\n    name\n    records {\n      rank\n      player {\n        id\n        login\n        name\n      }\n    }\n    id\n  }\n  map7: map(gameId: \"IyyNms4JhN1BCvoltgli4tgllL6\") {\n    gameId\n    name\n    records {\n      rank\n      player {\n        id\n        login\n        name\n      }\n    }\n    id\n  }\n  map8: map(gameId: \"bveb4HoqLZSW1nsmyGRYe1a6I4c\") {\n    gameId\n    name\n    records {\n      rank\n      player {\n        id\n        login\n        name\n      }\n    }\n    id\n  }\n  map9: map(gameId: \"Zgx3JW9sICQaw_ZTwa_akbSb597\") {\n    gameId\n    name\n    records {\n      rank\n      player {\n        id\n        login\n        name\n      }\n    }\n    id\n  }\n}\n"
   }
 };
 })();
-(node as any).hash = '0148ff6363d5d230f22dd9d13f22f205';
+(node as any).hash = '3ad5aec7fe3a1722927675225e69147f';
 export default node;
