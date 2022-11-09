@@ -54,7 +54,7 @@ export default function StormRunnerPage(props: any) {
 			players[idx].ranks.push({rank: record.rank, map: data[map_id].name, map_id: data[map_id].gameId});
 		}
 
-		const last_rank = data[map_id].records[data[map_id].records.length - 1].rank;
+		const last_rank = data[map_id].records.length > 0 ? data[map_id].records[data[map_id].records.length - 1].rank : 99;
 
 		for (let player in players) {
 			if (players[player].ranks.length < map_number) {
