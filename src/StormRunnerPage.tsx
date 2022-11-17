@@ -12,7 +12,7 @@ export default function StormRunnerPage(props: any) {
 	const data: any = usePreloadedQuery(
 		graphql`
 	  query StormRunnerPageQuery {
-		map0: map(gameId: "hUcGBFdXJTA03VFZnLrrpoOEGgc") { gameId, name, records { rank, player { id, login, name } } }
+		map0: map(gameId: "AJUMu8dNAI9fXkHaaodLRQWb0i5") { gameId, name, records { rank, player { id, login, name } } }
 		map1: map(gameId: "8qYEIn3yGy4icr6q2ia8naZ6Xce") { gameId, name, records { rank, player { id, login, name } } }
 		map2: map(gameId: "3xMI2Myl3fIumVwGdv8ye7Q3tf3") { gameId, name, records { rank, player { id, login, name } } }
 		map3: map(gameId: "wVdm82BaI4zrD7PUT9GgLsElCl6") { gameId, name, records { rank, player { id, login, name } } }
