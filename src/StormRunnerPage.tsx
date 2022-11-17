@@ -14,7 +14,7 @@ export default function StormRunnerPage(props: any) {
 	  query StormRunnerPageQuery {
 		map0: map(gameId: "AJUMu8dNAI9fXkHaaodLRQWb0i5") { gameId, name, records { rank, player { id, login, name } } }
 		map1: map(gameId: "8qYEIn3yGy4icr6q2ia8naZ6Xce") { gameId, name, records { rank, player { id, login, name } } }
-		map2: map(gameId: "3xMI2Myl3fIumVwGdv8ye7Q3tf3") { gameId, name, records { rank, player { id, login, name } } }
+		map2: map(gameId: "m94pYMVmW7fdnVdpBbK8ns7j__d") { gameId, name, records { rank, player { id, login, name } } }
 		map3: map(gameId: "wVdm82BaI4zrD7PUT9GgLsElCl6") { gameId, name, records { rank, player { id, login, name } } }
 		map4: map(gameId: "Oz_nFUwrWKYxqqh7wqwuZ87B78a") { gameId, name, records { rank, player { id, login, name } } }
 		map5: map(gameId: "NRb9oc0GXy7v3Np7JKu8e7JiKcl") { gameId, name, records { rank, player { id, login, name } } }
