@@ -122,7 +122,7 @@ export default function StormRunnerPage(props: any) {
 									   }
 								   }}>
 								   <td className="rank">{player.rank}</td>
-								   <td className="finishes">{player.maps_finished}/<small>{map_number}</small></td>
+								   <td className="finishes">{player.maps_finished}<small>/{map_number}</small></td>
 								   <td className="score">{player.score.toFixed(2)}</td>
 								   <td className="name"><a href={`/player/${player.login}`}>{<MPFormattingcomponent name={player.name} placeholder={player.login}/>}</a></td>
 								   <td className="worst">{player.worst.rank}</td>
@@ -136,7 +136,7 @@ export default function StormRunnerPage(props: any) {
 							   <tr key={players.length + pindex * player.ranks.length + rindex}>
 								   <td></td>
 								   <td></td>
-								   <td className="rank">{rank.rank}/<small>{rank.last_rank}</small></td>
+								   <td className="rank">{rank.rank}<small>/{rank.last_rank}</small></td>
 								   <td><a href={`/map/${rank.map_id}`}>{<MPFormattingcomponent name={rank.map}/>}</a></td>
 								   <td></td>
 							   </tr>
