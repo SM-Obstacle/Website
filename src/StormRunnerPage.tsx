@@ -49,16 +49,16 @@ export default function StormRunnerPage(props: any) {
 
 	let map_number = 1;
 	for (let map_id in data) {
+		const last_rank = data[map_id].records.length > 0 ? data[map_id].records[data[map_id].records.length - 1].rank : 99;
+		
 		for (let record of data[map_id].records) {
 			let idx = players.findIndex((p) => p.login === record.player.login);
-			players[idx].ranks.push({rank: record.rank, map: data[map_id].name, map_id: data[map_id].gameId});
+			players[idx].ranks.push({rank: record.rank, last_rank: last_rank, map: data[map_id].name, map_id: data[map_id].gameId});
 		}
-
-		const last_rank = data[map_id].records.length > 0 ? data[map_id].records[data[map_id].records.length - 1].rank : 99;
 
 		for (let player in players) {
 			if (players[player].ranks.length < map_number) {
-				players[player].ranks.push({rank: last_rank, map: data[map_id].name, map_id: data[map_id].gameId});
+				players[player].ranks.push({rank: last_rank+1, last_rank: last_rank, map: data[map_id].name, map_id: data[map_id].gameId});
 			}
 		}
 		map_number++;
@@ -122,7 +122,7 @@ export default function StormRunnerPage(props: any) {
 						   const subranks = player.ranks.map((rank, rindex) => (
 							   <tr key={players.length + pindex * player.ranks.length + rindex}>
 								   <td></td>
-								   <td className="rank">{rank.rank}</td>
+								   <td className="rank">{rank.rank}/{rank.last_rank}</td>
 								   <td><a href={`/map/${rank.map_id}`}>{<MPFormattingcomponent name={rank.map}/>}</a></td>
 								   <td></td>
 							   </tr>
