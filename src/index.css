@@ -46,6 +46,10 @@ td small {
   font-size: smaller;
 }
 
+td.finishes_all {
+  color: lime;
+}
+
 .app {
     display: flex;
     flex-wrap: wrap;
