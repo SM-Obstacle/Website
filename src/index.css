@@ -41,6 +41,10 @@ body.sh th.sh, body.sh td.sh {
   display: table-cell;
 }
 
+td small {
+  opacity: 0.6;
+}
+
 .app {
     display: flex;
     flex-wrap: wrap;
