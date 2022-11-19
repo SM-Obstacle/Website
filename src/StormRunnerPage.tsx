@@ -86,13 +86,15 @@ export default function StormRunnerPage(props: any) {
 
 	let rank = 0;
 	let old_score = 0;
+	let old_finishes = 0;
 	let old_rank = 0;
 	for (let player of players) {
 		rank += 1;
 
-		player.rank = old_score === player.score ? old_rank : rank;
+		player.rank = old_score === player.score && old_finishes === player.map_finishes ? old_rank : rank;
 
 		old_score = player.score;
+		old_finishes = player.map_finishes;
 		old_rank = player.rank;
 	}
 
