@@ -65,6 +65,7 @@ export default function StormRunnerPage(props: any) {
 		}
 		++map_number;
 	}
+	--map_number;
 
 	for (let player in players) {
 		if (players[player].ranks.length < map_number - 1) {
@@ -121,7 +122,7 @@ export default function StormRunnerPage(props: any) {
 									   }
 								   }}>
 								   <td className="rank">{player.rank}</td>
-								   <td className="finishes">{player.maps_finished}/<small>{player.ranks.lenth}</small></td>
+								   <td className="finishes">{player.maps_finished}/<small>{map_number}</small></td>
 								   <td className="score">{player.score.toFixed(2)}</td>
 								   <td className="name"><a href={`/player/${player.login}`}>{<MPFormattingcomponent name={player.name} placeholder={player.login}/>}</a></td>
 								   <td className="worst">{player.worst.rank}</td>
