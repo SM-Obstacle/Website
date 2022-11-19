@@ -13,15 +13,15 @@ export default function StormRunnerPage(props: any) {
 		graphql`
 	  query StormRunnerPageQuery {
 		map0: map(gameId: "AJUMu8dNAI9fXkHaaodLRQWb0i5") { gameId, name, records { rank, player { id, login, name } } }
-		map1: map(gameId: "8qYEIn3yGy4icr6q2ia8naZ6Xce") { gameId, name, records { rank, player { id, login, name } } }
+		map1: map(gameId: "VTDeDSyoLphHbg4xpKgJPjCULu2") { gameId, name, records { rank, player { id, login, name } } }
 		map2: map(gameId: "m94pYMVmW7fdnVdpBbK8ns7j__d") { gameId, name, records { rank, player { id, login, name } } }
 		map3: map(gameId: "wVdm82BaI4zrD7PUT9GgLsElCl6") { gameId, name, records { rank, player { id, login, name } } }
-		map4: map(gameId: "Oz_nFUwrWKYxqqh7wqwuZ87B78a") { gameId, name, records { rank, player { id, login, name } } }
-		map5: map(gameId: "NRb9oc0GXy7v3Np7JKu8e7JiKcl") { gameId, name, records { rank, player { id, login, name } } }
+		map4: map(gameId: "wi5t9nsWrFsUdW9TVrpNkOHZVEh") { gameId, name, records { rank, player { id, login, name } } }
+		map5: map(gameId: "p4ZBFCtaFT_LQscpCi3J0IZqiG2") { gameId, name, records { rank, player { id, login, name } } }
 		map6: map(gameId: "Wg_ueBq7ovovY1z2PGJsguwNf_9") { gameId, name, records { rank, player { id, login, name } } }
 		map7: map(gameId: "IyyNms4JhN1BCvoltgli4tgllL6") { gameId, name, records { rank, player { id, login, name } } }
-		map8: map(gameId: "bveb4HoqLZSW1nsmyGRYe1a6I4c") { gameId, name, records { rank, player { id, login, name } } }
-		map9: map(gameId: "Zgx3JW9sICQaw_ZTwa_akbSb597") { gameId, name, records { rank, player { id, login, name } } }
+		map8: map(gameId: "LPOsdLqT5NKvefQT6y_vzZXsf23") { gameId, name, records { rank, player { id, login, name } } }
+		map9: map(gameId: "bveb4HoqLZSW1nsmyGRYe1a6I4c") { gameId, name, records { rank, player { id, login, name } } }
 	  }
 	`,
 		props.prepared.stormRunnerQuery,
