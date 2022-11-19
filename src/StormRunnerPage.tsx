@@ -41,6 +41,7 @@ export default function StormRunnerPage(props: any) {
 					name: record.player.name,
 					ranks: [],
 					score: 0,
+					maps_finished: 0,
 					rank: 0
 				});
 			}
@@ -54,6 +55,7 @@ export default function StormRunnerPage(props: any) {
 		for (let record of data[map_id].records) {
 			let idx = players.findIndex((p) => p.login === record.player.login);
 			players[idx].ranks.push({rank: record.rank, last_rank: last_rank, map: data[map_id].name, map_id: data[map_id].gameId});
+			++players[idx].maps_finished;
 		}
 
 		for (let player in players) {
@@ -61,7 +63,7 @@ export default function StormRunnerPage(props: any) {
 				players[player].ranks.push({rank: last_rank+1, last_rank: last_rank, map: data[map_id].name, map_id: data[map_id].gameId});
 			}
 		}
-		map_number++;
+		++map_number;
 	}
 
 	for (let player in players) {
@@ -74,7 +76,13 @@ export default function StormRunnerPage(props: any) {
 		players[player].score = ranks.reduce(( acc, rank ) => acc + rank.rank, 0) / ranks.length;
 	}
 
-	players.sort((a, b) => (a.score - b.score));
+	players.sort((a, b) => {
+		if (a.maps_finished !== b.maps_finished) {
+			return b.maps_finished - a.maps_finished;
+		} else {
+			return a.score - b.score;
+		}
+	});
 
 	let rank = 0;
 	let old_score = 0;
@@ -96,6 +104,7 @@ export default function StormRunnerPage(props: any) {
 						   <th>Rank</th>
 						   <th>Score</th>
 						   <th>Player</th>
+						   <th>Maps finished</th>
 						   <th>Worst rank</th>
 					   </tr>
 				   </thead>
@@ -112,6 +121,7 @@ export default function StormRunnerPage(props: any) {
 								   <td className="rank">{player.rank}</td>
 								   <td className="score">{player.score.toFixed(2)}</td>
 								   <td className="name"><a href={`/player/${player.login}`}>{<MPFormattingcomponent name={player.name} placeholder={player.login}/>}</a></td>
+								   <td className="finishes">{player.maps_finished}</td>
 								   <td className="worst">{player.worst.rank}</td>
 							   </tr>
 						   );
@@ -124,6 +134,7 @@ export default function StormRunnerPage(props: any) {
 								   <td></td>
 								   <td className="rank">{rank.rank}/<small>{rank.last_rank}</small></td>
 								   <td><a href={`/map/${rank.map_id}`}>{<MPFormattingcomponent name={rank.map}/>}</a></td>
+								   <td></td>
 								   <td></td>
 							   </tr>
 						   ));
