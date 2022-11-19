@@ -122,7 +122,7 @@ export default function StormRunnerPage(props: any) {
 						   const subranks = player.ranks.map((rank, rindex) => (
 							   <tr key={players.length + pindex * player.ranks.length + rindex}>
 								   <td></td>
-								   <td className="rank">{rank.rank}/{rank.last_rank}</td>
+								   <td className="rank">{rank.rank}/<small>{rank.last_rank}</small></td>
 								   <td><a href={`/map/${rank.map_id}`}>{<MPFormattingcomponent name={rank.map}/>}</a></td>
 								   <td></td>
 							   </tr>
