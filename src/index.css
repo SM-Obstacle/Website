@@ -43,6 +43,7 @@ body.sh th.sh, body.sh td.sh {
 
 td small {
   opacity: 0.6;
+  font-size: smaller;
 }
 
 .app {
