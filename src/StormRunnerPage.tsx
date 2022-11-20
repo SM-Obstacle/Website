@@ -105,7 +105,7 @@ export default function StormRunnerPage(props: any) {
 				   <thead>
 					   <tr>
 						   <th>Rank</th>
-						   <th>Maps finished</th>
+						   <th>Map finished</th>
 						   <th>Rank Average</th>
 						   <th>Player</th>
 						   <th>Worst rank</th>
