@@ -72,7 +72,7 @@ export default function StormRunnerPage(props: any) {
 			console.error(player, players[player]);
 		}
 
-		const ranks = players[player].ranks.sort((a, b) => a.rank - b.rank);
+		const ranks = players[player].ranks.sort((a, b) => a.rank / a.last_rank - b.rank / b.last_rank);
 		players[player].worst = ranks[ranks.length-1];
 		players[player].score = ranks.reduce(( acc, rank ) => acc + rank.rank, 0) / ranks.length;
 	}
