@@ -23,12 +23,12 @@ type Record = {
   flags: number;
 };
 
-function formatFlag(flag: number): string {
+function formatFlag(flag: number, bool: sure = true): string {
   switch(flag & 0b00000011) {
     case 1:
       return "✔️";
     case 2:
-      return "no";
+      return sure ? "no" : "?";
     default:
       return "?";
   }
@@ -42,7 +42,7 @@ const RecordRowComponent = ({ record }: { record: Record }) => (
                 <td data-label="Time"><TimeComponent time={record.time}/></td>
                 { record.updatedAt ? <td data-label="Date"><TimeAgoComponent date={record.updatedAt}/></td> : null }
                 <td data-label="RS bug">{formatFlag(record.flags >> 0)}</td>
-                <td data-label="Alt glitch">{formatFlag(record.flags >> 2)}</td>
+                <td data-label="Alt glitch">{formatFlag(record.flags >> 2, false)}</td>
                 <td data-label="PvP Weapons">{formatFlag(record.flags >> 4)}</td>
                 <td data-label="PvP Collisions">{formatFlag(record.flags >> 6)}</td>
                 <td data-label="SH" class="sh">{formatFlag(record.flags >> 8)}</td>
