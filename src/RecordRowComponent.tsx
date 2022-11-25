@@ -23,7 +23,7 @@ type Record = {
   flags: number;
 };
 
-function formatFlag(flag: number, bool: sure = true): string {
+function formatFlag(flag: number, sure: boolean = true): string {
   switch(flag & 0b00000011) {
     case 1:
       return "✔️";
