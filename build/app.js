@@ -166,7 +166,7 @@ const routes = {
     links: () => {
         const content = document.createElement('div')
         content.innerHTML = `
-<h1>Ressources</h1>
+<h1>Resources</h1>
 <ul>
     <li>
         <a href="https://obstacle.fandom.com/wiki/ShootMania_Obstacle_Wiki" target="_blank">Obstacle Wiki</a>: Explanations of moves and techniques
