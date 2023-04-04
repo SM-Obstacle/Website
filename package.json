@@ -6,7 +6,8 @@
   },
   "scripts": {
     "start": "node index.js",
-    "watch": "nodemon index.js"
+    "watch": "nodemon index.js",
+    "build": "echo no need :)"
   },
   "type": "module"
 }
