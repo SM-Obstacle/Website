@@ -162,11 +162,22 @@ nav a.active {
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-end;
 
     padding: 20px 30px;
     background-color: #2c2e3188;
     border-radius: 10px 10px 0 0;
+}
+
+#toolbar_wrapper h1 {
+    flex-grow: 1;
+}
+
+#toolbar_wrapper > span {
+    padding: 1em;
+}
+#toolbar_wrapper > span.mpstring::before {
+    content: 'by ';
 }
 
 #toolbar_wrapper input[type=image] {

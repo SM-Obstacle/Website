@@ -75,7 +75,7 @@ const routes = {
     
     map: (map_id) => {
         tools.graphql_callback(
-            `{ map (gameId: "${tools.sanitize_graphql_string(map_id)}") { gameId name records { rank updatedAt time player { login name } } } }`,
+            `{ map (gameId: "${tools.sanitize_graphql_string(map_id)}") { gameId name player { name, login } records { rank updatedAt time player { login name } } } }`,
             (data) => {
                 document_updated_hook(tools.generate_table(
                     [
@@ -102,7 +102,9 @@ const routes = {
                     ],
                     data.map.records.map(d => [[d.rank, [d.player.name, d.player.login], d.time, d.updatedAt]])
                 ))
-                tools.generate_title(data.map.name, [tools.get_mx_button(data.map.gameId)])
+                const mapper_span = document.createElement('span')
+                tools.set_content(mapper_span, [data.map.player.name, data.map.player.login], 'player')
+                tools.generate_title(data.map.name, [mapper_span, tools.get_mx_button(data.map.gameId)])
             }
         )
     },
@@ -192,7 +194,7 @@ function navigate (path) {
         routes[current_page[1]](...current_page.slice(2))
     } catch (TypeError) {
         if (current_page[1] === 'maps')
-            tools.generate_404('The /maps/ route is outdated, please try /map/ instead.')
+            tools.generate_404(`The /maps/ route is outdated, please try <a href="/map/${path.replace('/maps', '/map')}">/map/</a> instead.`)
         else
             tools.generate_404()
     }
