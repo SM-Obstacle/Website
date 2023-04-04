@@ -22,6 +22,10 @@
     font-family: "ForkAwesome";
     src: local("ForkAwesome"), url("/fonts/forkawesome-maniaicons.woff2");
 }
+@font-face {
+    font-family: "KenneyIcons";
+    src: local("KenneyIcons"), url("/fonts/kenney-icon-font.ttf");
+}
 
 @supports (overflow-y: overlay) {
     main table tbody {
@@ -70,7 +74,7 @@ body, html {
     min-width: 390px;
     min-height: 390px;
 
-    font-family: Lato, 'Trebuchet MS', ForkAwesome, sans-serif;
+    font-family: Lato, 'Trebuchet MS', sans-serif, ForkAwesome, KenneyIcons;
     color: white;
     overflow: overlay;
 }
@@ -321,16 +325,16 @@ main table .worst_rank {
 main table td.player,
 main table td.time,
 main table td.map_finished {
-    font-family: 'Lato Bold', ForkAwesome;
+    font-family: 'Lato Bold', sans-serif, ForkAwesome, KenneyIcons;
 }
 main table td.rank,
 main table td.date,
 main table td.worst_rank {
-    font-family: 'Lato BoldItalic', ForkAwesome;
+    font-family: 'Lato BoldItalic', sans-serif, ForkAwesome, KenneyIcons;
 }
 main table td.map,
 main table td.rank_avg {
-    font-family: 'Lato Italic', ForkAwesome;
+    font-family: 'Lato Italic', sans-serif, ForkAwesome, KenneyIcons;
 }
 main table a.mpstring {
     text-decoration: none;
