@@ -181,9 +181,11 @@ nav a.active {
     padding: 1em;
     font-style: italic;
 }
-#toolbar_wrapper > span .mpstring::before {
-    content: 'by ';
+#toolbar_wrapper > span a.mpstring {
     text-decoration: none;
+}
+#toolbar_wrapper > span a.mpstring::before {
+    content: 'by ';
 }
 
 #toolbar_wrapper input[type=image] {
