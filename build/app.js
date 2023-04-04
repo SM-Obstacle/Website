@@ -178,7 +178,7 @@ const routes = {
         <a href="https://sm.mania-exchange.com/" target="_blank">ShootMania Exchange</a>: Hosting of ShootMania maps
     </li>
     <li>
-        <a href="https://aurel.obstacle.ovh/wordpress/" target="_blank">Aurel's blog</a>: Tutorials and ressources about Obstacle
+        <a href="https://aurel.obstacle.ovh/wordpress/" target="_blank">Aurel's blog</a>: Tutorials and resources about Obstacle
     </li>
 </ul>`
         tools.generate_content(content)
