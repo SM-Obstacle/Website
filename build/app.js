@@ -189,7 +189,7 @@ const routes = {
 
 function navigate (path) {
     const current_page = path.split('/')
-    console.log(current_page)
+    
     try {
         routes[current_page[1]](...current_page.slice(2))
     } catch (TypeError) {
@@ -204,7 +204,6 @@ function navigate (path) {
     
     for (const link of document.querySelectorAll(`nav ul a[href="${path}"]`)) {
         link.classList.add('active')
-        console.log(link)
     }
 
     document.querySelector('tbody')?.addEventListener('scroll', _ => {
@@ -232,6 +231,7 @@ function document_updated_hook (chunk) {
 
 document.addEventListener('DOMContentLoaded', _ => {
     navigate(document.location.pathname)
+    history.pushState({ pathname: document.location.pathname, title: document.title }, document.title, document.location.href)
     document_updated_hook(document.body)
 
     const chkbox_menu = document.querySelector('#menu_opened')
