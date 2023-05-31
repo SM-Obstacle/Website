@@ -231,7 +231,7 @@ function document_updated_hook (chunk) {
 
 document.addEventListener('DOMContentLoaded', _ => {
     navigate(document.location.pathname)
-    history.pushState({ pathname: document.location.pathname, title: document.title }, document.title, document.location.href)
+    history.replaceState({ pathname: document.location.pathname, title: document.title }, document.title)
     document_updated_hook(document.body)
 
     const chkbox_menu = document.querySelector('#menu_opened')
