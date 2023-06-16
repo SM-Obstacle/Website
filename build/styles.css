@@ -27,47 +27,6 @@
     src: local("KenneyIcons"), url("/fonts/kenney-icon-font.ttf");
 }
 
-@supports (overflow-y: overlay) {
-    main table tbody {
-        overflow-y: overlay!important;
-    }
-    main table tbody:not(:hover)::-webkit-scrollbar-thumb {
-        visibility: hidden;
-    }
-
-    ::-webkit-scrollbar {
-        width: 35px;
-    }
-    
-    ::-webkit-scrollbar-track {
-        opacity: 0;
-    }
-    
-    ::-webkit-scrollbar-thumb {
-        background: #ddd;
-        background-clip: content-box;
-    
-        border-radius: 17.5px;
-        border: 14px solid transparent;
-    }
-    
-    ::-webkit-scrollbar-thumb:hover {
-        background: #eee;
-        background-clip: content-box;
-    
-        border-radius: 17.5px;
-        border: 14px solid transparent;
-    }
-    
-    ::-webkit-scrollbar-thumb:active {
-        background: #fff;
-        background-clip: content-box;
-    
-        border-radius: 17.5px;
-        border: 14px solid transparent;
-    }
-}
-
 body, html {
     margin: 0;
     height: 100%;
