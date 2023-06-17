@@ -3,7 +3,7 @@ import * as tools from './toolbox.js'
 const routes = {
     ['']: () => {
         tools.graphql_callback(
-            `{ records { rank player { login name } map { gameId name } time updatedAt } }`,
+            `{ records { rank player { login name } map { gameId name } time recordDate } }`,
             (data) => {
                 document_updated_hook(tools.generate_table(
                     [
@@ -33,7 +33,7 @@ const routes = {
                             'type': 'date'
                         }
                     ],
-                    data.records.map(d => [[d.rank, [d.player.name, d.player.login], [d.map.name, d.map.gameId], d.time, d.updatedAt]])
+                    data.records.map(d => [[d.rank, [d.player.name, d.player.login], [d.map.name, d.map.gameId], d.time, d.recordDate]])
                 ))
             }
         )
@@ -41,7 +41,7 @@ const routes = {
 
     player: (player_id) => {
         tools.graphql_callback(
-            `{ player (login: "${tools.sanitize_graphql_string(player_id)}") { login name records { rank map { gameId name } updatedAt time }} }`,
+            `{ player (login: "${tools.sanitize_graphql_string(player_id)}") { login name records { rank map { gameId name } recordDate time }} }`,
             (data) => {
                 document_updated_hook(tools.generate_table(
                     [
@@ -66,7 +66,7 @@ const routes = {
                             'type': 'date'
                         }
                     ],
-                    data.player.records.map(d => [[d.rank, [d.map.name, d.map.gameId], d.time, d.updatedAt]])
+                    data.player.records.map(d => [[d.rank, [d.map.name, d.map.gameId], d.time, d.recordDate]])
                 ))
                 tools.generate_title(data.player.name)
             }
@@ -75,7 +75,7 @@ const routes = {
     
     map: (map_id) => {
         tools.graphql_callback(
-            `{ map (gameId: "${tools.sanitize_graphql_string(map_id)}") { gameId name player { name, login } records { rank updatedAt time player { login name } } } }`,
+            `{ map (gameId: "${tools.sanitize_graphql_string(map_id)}") { gameId name player { name, login } records { rank recordDate time player { login name } } } }`,
             (data) => {
                 document_updated_hook(tools.generate_table(
                     [
@@ -100,7 +100,7 @@ const routes = {
                             'type': 'date'
                         }
                     ],
-                    data.map.records.map(d => [[d.rank, [d.player.name, d.player.login], d.time, d.updatedAt]])
+                    data.map.records.map(d => [[d.rank, [d.player.name, d.player.login], d.time, d.recordDate]])
                 ))
                 const mapper_span = document.createElement('span')
                 tools.set_content(mapper_span, [data.map.player.name, data.map.player.login], 'player')

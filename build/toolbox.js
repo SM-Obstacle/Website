@@ -127,7 +127,7 @@ export const get_mx_button = uid => {
 }
 
 export const graphql_callback = (query, callback, variables = {}) => {
-    fetch('https://api.obstacle.ovh/graphql', {
+    fetch('http://obstacle.titlepack.io/api/graphql', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

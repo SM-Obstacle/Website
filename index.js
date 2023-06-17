@@ -6,4 +6,4 @@ const app = express()
 app.use(express.static('./build'))
 app.use(obstacle_router)
 
-app.listen('8000')
+app.listen(process.env.WEBSITE_PORT)
