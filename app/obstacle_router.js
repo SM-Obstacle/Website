@@ -23,6 +23,10 @@ router.route('edit')
   .get(function (req, res, next) {
     res.sendFile(path.resolve('./build/index.html'))
   })
+router.route('/give_token')
+  .get(function (req, res, next) {
+    res.sendFile(path.resolve('./build/index.html'))
+  })
 router.route('*')
   .get(function (req, res, next) {
     res.sendFile(path.resolve('./build/index.html'))

@@ -41,7 +41,7 @@ const routes = {
 
     player: (player_id) => {
         tools.graphql_callback(
-            `{ player (login: "${tools.sanitize_graphql_string(player_id)}") { login name records { rank map { gameId name } recordDate time }} }`,
+            `{ player (login: "${tools.sanitize_graphql_string(player_id)}") { login name zonePath role records { rank map { gameId name } recordDate time }} }`,
             (data) => {
                 document_updated_hook(tools.generate_table(
                     [
@@ -68,14 +68,18 @@ const routes = {
                     ],
                     data.player.records.map(d => [[d.rank, [d.map.name, d.map.gameId], d.time, d.recordDate]])
                 ))
-                tools.generate_title(data.player.name)
+                const zone_path = document.createElement('span')
+                const role = document.createElement('span')
+                zone_path.innerText = data.player.zonePath
+                role.innerText = data.player.role[0] + data.player.role.slice(1).toLowerCase()
+                tools.generate_title(data.player.name, [zone_path, role])
             }
         )
     },
     
     map: (map_id) => {
         tools.graphql_callback(
-            `{ map (gameId: "${tools.sanitize_graphql_string(map_id)}") { gameId name player { name, login } records { rank recordDate time player { login name } } } }`,
+            `{ map (gameId: "${tools.sanitize_graphql_string(map_id)}") { gameId cpsNumber name player { name, login } records { rank recordDate time player { login name } } } }`,
             (data) => {
                 document_updated_hook(tools.generate_table(
                     [
@@ -103,8 +107,13 @@ const routes = {
                     data.map.records.map(d => [[d.rank, [d.player.name, d.player.login], d.time, d.recordDate]])
                 ))
                 const mapper_span = document.createElement('span')
+                const cps_number = document.createElement('span')
+                const cpsNumber = data.map.cpsNumber;
+                if (cpsNumber !== null) {
+                    cps_number.innerText = `${cpsNumber} cp${cpsNumber > 1 ? 's':''}`
+                }
                 tools.set_content(mapper_span, [data.map.player.name, data.map.player.login], 'player')
-                tools.generate_title(data.map.name, [mapper_span, tools.get_mx_button(data.map.gameId)])
+                tools.generate_title(data.map.name, [cps_number, mapper_span, tools.get_mx_button(data.map.gameId)])
             }
         )
     },
@@ -184,6 +193,38 @@ const routes = {
     </li>
 </ul>`
         tools.generate_content(content)
+    },
+
+    give_token: () => {
+        const content = document.createElement('div')
+        content.innerHTML = `<h1 class="status-msg">Loading...</h1>`
+        tools.generate_content(content)
+
+        const loading = document.querySelector('h1.status-msg');
+
+        const params = document.location.hash.slice(1).split('&').reduce((acc, cur) => {
+            const [key, value] = cur.split('=');
+            acc[key] = value;
+            return acc;
+        }, {});
+
+        fetch('http://192.168.1.30:3001/player/give_token', {
+            method: 'post',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(params),
+        }).then(async res => {
+            if (res.ok) {
+                loading.innerText = 'You are all set! You can close this tab now.'
+                const response = await res.json();
+                localStorage.setItem('__obs_web_token_login', response.login)
+                localStorage.setItem('__obs_web_token_value', response.token)
+            } else {
+                loading.innerText = 'Something went wrong. Please contact the developers (e.g. @ahmadbky or @MiLTanT on discord).'
+                console.log(await res.text())
+            }
+        })
     }
 }
 
