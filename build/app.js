@@ -208,7 +208,7 @@ const routes = {
             return acc;
         }, {});
 
-        fetch('http://192.168.1.30:3001/player/give_token', {
+        fetch('https://obstacle.titlepack.io/api/player/give_token', {
             method: 'post',
             headers: {
                 'Content-Type': 'application/json',
