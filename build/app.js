@@ -213,13 +213,11 @@ const routes = {
             headers: {
                 'Content-Type': 'application/json',
             },
+            credentials: 'include',
             body: JSON.stringify(params),
         }).then(async res => {
             if (res.ok) {
                 loading.innerText = 'You are all set! You can close this tab now.'
-                const response = await res.json();
-                localStorage.setItem('__obs_web_token_login', response.login)
-                localStorage.setItem('__obs_web_token_value', response.token)
             } else {
                 loading.innerText = 'Something went wrong. Please contact the developers (e.g. @ahmadbky or @MiLTanT on discord).'
                 console.log(await res.text())

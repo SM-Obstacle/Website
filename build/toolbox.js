@@ -133,6 +133,7 @@ export const graphql_callback = (query, callback, variables = {}) => {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({
             variables: variables,
             query: query
