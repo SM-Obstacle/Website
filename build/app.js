@@ -202,11 +202,12 @@ const routes = {
 
         const loading = document.querySelector('h1.status-msg');
 
-        const params = document.location.hash.slice(1).split('&').reduce((acc, cur) => {
-            const [key, value] = cur.split('=');
-            acc[key] = value;
-            return acc;
-        }, {});
+        const params = ((entries) => {
+            const result = {}
+            for (const [key, value] of entries)
+                result[key] = value
+            return result
+        })(new URLSearchParams(document.location.search).entries())
 
         fetch('https://obstacle.titlepack.io/api/player/give_token', {
             method: 'post',
