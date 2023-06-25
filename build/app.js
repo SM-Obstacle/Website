@@ -217,6 +217,7 @@ const routes = {
             credentials: 'include',
             body: JSON.stringify(params),
         }).then(async res => {
+            window.history.replaceState({}, "", "/")
             if (res.ok) {
                 loading.innerText = 'You are all set! You can close this tab now.'
             } else {
