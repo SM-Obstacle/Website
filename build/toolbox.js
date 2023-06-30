@@ -127,12 +127,13 @@ export const get_mx_button = uid => {
 }
 
 export const graphql_callback = (query, callback, variables = {}) => {
-    fetch('http://192.168.1.30:3001/graphql', {
+    fetch('https://obstacle.titlepack.io/api/graphql', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify({
             variables: variables,
             query: query

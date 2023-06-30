@@ -280,24 +280,24 @@ const routes = {
 
         const loading = document.querySelector('h1.status-msg');
 
-        const params = document.location.hash.slice(1).split('&').reduce((acc, cur) => {
-            const [key, value] = cur.split('=');
-            acc[key] = value;
-            return acc;
-        }, {});
+        const params = ((entries) => {
+            const result = {}
+            for (const [key, value] of entries)
+                result[key] = value
+            return result
+        })(new URLSearchParams(document.location.search).entries())
 
-        fetch('http://192.168.1.30:3001/player/give_token', {
+        fetch('https://obstacle.titlepack.io/api/player/give_token', {
             method: 'post',
             headers: {
                 'Content-Type': 'application/json',
             },
+            credentials: 'include',
             body: JSON.stringify(params),
         }).then(async res => {
+            window.history.replaceState({}, "", "/")
             if (res.ok) {
                 loading.innerText = 'You are all set! You can close this tab now.'
-                const response = await res.json();
-                localStorage.setItem('__obs_web_token_login', response.login)
-                localStorage.setItem('__obs_web_token_value', response.token)
             } else {
                 loading.innerText = 'Something went wrong. Please contact the developers (e.g. @ahmadbky or @MiLTanT on discord).'
                 console.log(await res.text())
