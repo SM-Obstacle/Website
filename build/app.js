@@ -1,5 +1,85 @@
 import * as tools from './toolbox.js'
 
+const campaigns = {
+    'storm': [
+        'AJUMu8dNAI9fXkHaaodLRQWb0i5',
+        'VTDeDSyoLphHbg4xpKgJPjCULu2',
+        'm94pYMVmW7fdnVdpBbK8ns7j__d',
+        'wVdm82BaI4zrD7PUT9GgLsElCl6',
+        'wi5t9nsWrFsUdW9TVrpNkOHZVEh',
+        'p4ZBFCtaFT_LQscpCi3J0IZqiG2',
+        'Wg_ueBq7ovovY1z2PGJsguwNf_9',
+        'IyyNms4JhN1BCvoltgli4tgllL6',
+        'LPOsdLqT5NKvefQT6y_vzZXsf23',
+        'bveb4HoqLZSW1nsmyGRYe1a6I4c'
+    ],
+    '29': [
+        "qpKzvXQaaJGvSsXPTNk_iVWmRTg",
+        "Fcgbnv1RwTIdgRySDLwtyzzMj9j",
+        "TEDQRUPTU1VkGrzBKLhIOY9cYV1",
+        "LwyG1V32XJ7EhadoevREd6F_3L1",
+        "90qdC1x5f2s4C4oFveHhimcwLzj",
+        "eKbgGOAuuwUP6ByvWlP8G728fuc",
+        "hzlKEVfxuGyriKXlTm__LoiVRAj",
+        "VSn_Cz45JUGLH_LJaRBUKaRIQsh",
+        "H5yHFPEOVcdmJv7DabEGYqhUSDc",
+        "0u6aaVnLw1cbwUIi7I1hyP1EHT0",
+        "7ki7DAx8RGHufasKBLzlHnvFMUj",
+        "JTeY36K5VrDL7noJGzl4dqwPC5j",
+        "9rs_79lkU09Edy3FCyjXNTPNj_j",
+        "uHN22ZmWSNesgZqOVcjgWYv7cPc",
+        "TcwGFWuciPoKzccgWa6wRVM7yvd",
+        "18FInhM7gAcqAgvwPwllYEDE6rk",
+        "pAv3QI4f8y6fbSU2qoMj4cFRQTi",
+        "G5Dm8fjoFSqS8nui1mP1wKZ4z_3",
+        "tSd082VQJ51_71EXvCobORPlhZl",
+        "KkqC5yQSQ18XyhEfpqMLER3vAjc",
+        "uHYccBmFsS1kSLc45zLhlOya1eb",
+        "F1bDc8HpEr3VjgXwuZh5m_2sb6e",
+        "exsvJlTM1oQq1VJ8d9u2qSgFyla",
+        "Okx2W7jKXCue7s58kpcStl9vRF3",
+        "GwjMPymVycUB9NkGvk00juY4E55"
+    ]
+}
+
+const load_campaign = (campaign) => {
+    tools.get_campaign_times_callback(campaigns[campaign], data => {
+        document_updated_hook(tools.generate_table(
+            [
+                {
+                    'name': 'rank',
+                    'text': 'Rank',
+                    'type': 'fraction'
+                },
+                {
+                    'name': 'sr_player',
+                    'text': 'Player',
+                    'type': 'player'
+                },
+                {
+                    'name': 'rank_avg',
+                    'text': 'Rank Average',
+                    'type': 'number'
+                },
+                {
+                    'name': 'map_finished',
+                    'text': 'Map Finiched',
+                    'type': 'fraction'
+                },
+                {
+                    'name': 'worst_rank',
+                    'text': 'Worst Rank',
+                    'type': 'number'
+                }
+            ],
+            data.map(d => [
+                [d.rank, [d.name, d.login], d.score, [d.maps_finished, d.ranks.length], d.worst.rank],
+                ...d.ranks.map(r => [[r.rank, r.last_rank], [r.map, r.map_id, 'map']])
+            ])
+        ))
+    })
+}
+
 const routes = {
     ['']: () => {
         tools.graphql_callback(
@@ -119,52 +199,11 @@ const routes = {
     },
     
     storm: () => {
-        tools.get_campaign_times_callback([
-            'AJUMu8dNAI9fXkHaaodLRQWb0i5',
-            'VTDeDSyoLphHbg4xpKgJPjCULu2',
-            'm94pYMVmW7fdnVdpBbK8ns7j__d',
-            'wVdm82BaI4zrD7PUT9GgLsElCl6',
-            'wi5t9nsWrFsUdW9TVrpNkOHZVEh',
-            'p4ZBFCtaFT_LQscpCi3J0IZqiG2',
-            'Wg_ueBq7ovovY1z2PGJsguwNf_9',
-            'IyyNms4JhN1BCvoltgli4tgllL6',
-            'LPOsdLqT5NKvefQT6y_vzZXsf23',
-            'bveb4HoqLZSW1nsmyGRYe1a6I4c'
-        ], data => {
-            document_updated_hook(tools.generate_table(
-                [
-                    {
-                        'name': 'rank',
-                        'text': 'Rank',
-                        'type': 'fraction'
-                    },
-                    {
-                        'name': 'sr_player',
-                        'text': 'Player',
-                        'type': 'player'
-                    },
-                    {
-                        'name': 'rank_avg',
-                        'text': 'Rank Average',
-                        'type': 'number'
-                    },
-                    {
-                        'name': 'map_finished',
-                        'text': 'Map Finiched',
-                        'type': 'fraction'
-                    },
-                    {
-                        'name': 'worst_rank',
-                        'text': 'Worst Rank',
-                        'type': 'number'
-                    }
-                ],
-                data.map(d => [
-                    [d.rank, [d.name, d.login], d.score, [d.maps_finished, d.ranks.length], d.worst.rank],
-                    ...d.ranks.map(r => [[r.rank, r.last_rank], [r.map, r.map_id, 'map']])
-                ])
-            ))
-        })
+        load_campaign('storm')
+    },
+    
+    campaign: (campaign_id) => {
+        load_campaign(campaign_id)
     },
 
     edit: () => {
@@ -192,6 +231,45 @@ const routes = {
         <a href="https://aurel.obstacle.ovh/wordpress/" target="_blank">Aurel's blog</a>: Tutorials and resources about Obstacle
     </li>
 </ul>`
+        tools.generate_content(content)
+    },
+
+    latestnews: () => {
+        const content = document.createElement('div')
+        content.innerHTML = `
+<h1>Obstacle 2.0 Release</h1>
+<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/Qd3UzQ93aGE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+<p>Obstacle 2.0 is out! It brings a lot of new content, including:</p>
+<ul>
+    <li>
+        <p><b>Summer 2023</b>: a new campaign with 25 new maps! Each map has 4 medals. Can you get the Master Medal? :p</p>
+        <p>The maps were made by Aurel, Ben, errorcat, Buggz, HasCrashed, Inner Peace, James, Khass, Kiwi, and Pixou.</p>
+        <p>Many thanks to Khass for managing the mappers, and to unmecrandom, Kiwi, and Hippe for testing the maps and establishing the medal times.</p>
+    </li>
+    <li>
+        <p><b>Titlepack menus</b>: A complete redesign made by ZenyoX and implemented by MiLTanT!</p>
+        <p>It should be clearer and more welcoming, and the new code should be more stable and maintainable coming forward. Some features are still a work in progress, but we think it's worth it to make the change now.</p>
+        <p>We hope you like it, suggestions appreciated :)</p>
+    </li>
+    <li>
+        <p><b>Database and Website</b>: <a href="https://obstacle.titlepack.io">obstacle.titlepack.io</a> is the new official home of Obstacle.</p>
+        <p>But actually, this is just the surface of an impressive work that ahmad accomplished over the last few months. The API and database have been rethought so that many features and security measures will be easier to implement in the future, as well as a better error reporting.</p>
+        <p>Starting now, you will sometimes be prompted to authentificate yourself via Maniaplanet services when entering the titlepack. This should ensure that nobody is posting records in your name (which, if they raise cheating concerns in your own name, could get <i>you</i> banned).</p>
+        <p>Informations like checkpoint times are now also stored in the database for future use.</p>
+    </li>
+    <li>
+        <p><b>New Content!</b></p>
+        <p>The titlepack now embeds many new Items and Blocks made primarily by Aurel and Inner Peace:</p>
+        <ul>
+            <li>Space items: asteroids, stars, and custom grounds to pair up with...</li>
+            <li>Lunar Mod: A texture pack made specifically to work on openplanet void maps.</li>
+            <li>LaunchNoWings: A new launcher design with a design close to nadeo's but without those anoying wings :D</li>
+            <li>Conductor and Terrain Tools: Helper blocks to help with conducting the bases color and voiding the ground.</li>
+        </ul>
+    </li>
+</ul>
+<p>Looking forward to see you in-game,</p>
+<p>MiLTanT</p>`
         tools.generate_content(content)
     },
 
