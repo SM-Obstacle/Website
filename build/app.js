@@ -275,10 +275,11 @@ const routes = {
 
     give_token: () => {
         const content = document.createElement('div')
-        content.innerHTML = `<h1 class="status-msg">Loading...</h1>`
+        const loading = document.createElement('h1');
+        loading.innerText = `Loading...`
+        content.appendChild(loading)
         tools.generate_content(content)
 
-        const loading = document.querySelector('h1.status-msg');
 
         const params = ((entries) => {
             const result = {}
@@ -300,7 +301,11 @@ const routes = {
                 loading.innerText = 'You are all set! You can close this tab now.'
             } else {
                 loading.innerText = 'Something went wrong. Please contact the developers (e.g. @ahmadbky or @MiLTanT on discord).'
-                console.log(await res.text())
+                const error_msg = document.createElement('pre')
+                error_msg.style.backgroundColor = "#333c"
+                error_msg.InnerText = `State: ${params.state}
+${await res.text()}`
+                content.appendChild(error_msg)
             }
         })
     }
