@@ -75,7 +75,7 @@ const load_campaign = async (campaign) => {
                 },
                 {
                     'name': 'map_finished',
-                    'text': 'Map Finiched',
+                    'text': 'Map Finished',
                     'type': 'fraction'
                 },
                 {
