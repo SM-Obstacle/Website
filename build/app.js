@@ -43,6 +43,17 @@ const campaigns = {
 }
 
 const load_campaign = (campaign) => {
+    const campaign_id = +campaign
+    if (isNaN(campaign_id)) return;
+    
+    let maplist = []
+    if (!Object.hasOwn(campaigns, campaign)) {
+        try {
+            campaigns[campaign] = await tools.get_mx_mappack(campaign_id)
+        } catch {
+            return
+        }
+    }
     tools.get_campaign_times_callback(campaigns[campaign], data => {
         document_updated_hook(tools.generate_table(
             [
