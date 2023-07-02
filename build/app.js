@@ -85,7 +85,7 @@ const load_campaign = async (campaign) => {
                 }
             ],
             data.map(d => [
-                [d.rank, [d.name, d.login], d.score, [d.maps_finished, d.ranks.length], d.worst.rank],
+                [d.rank, [d.name, d.login], Math.round((d.score + Number.EPSILON) * 100) / 100, [d.maps_finished, d.ranks.length], d.worst.rank],
                 ...d.ranks.map(r => [[r.rank, r.last_rank], [r.map, r.map_id, 'map']])
             ])
         ))
