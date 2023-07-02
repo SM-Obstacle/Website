@@ -126,6 +126,22 @@ export const get_mx_button = uid => {
     return button
 }
 
+export const get_mx_mappack = async uid => {
+    try {
+        const response = await fetch('https://sm.mania.exchange/api/mappack/get_mappack_tracks/' + uid)
+        const maps = await response.json()
+        
+        if (maps.length > 0) {
+            return maps.map(m => m.TrackUID)
+        } else {
+            throw new Error('An error occurred fetching the maps on mania.exchange.')
+        }
+    } catch (error) {
+        alert(error.message)
+        throw error
+    }
+}
+
 export const graphql_callback = (query, callback, variables = {}) => {
     fetch('https://obstacle.titlepack.io/api/graphql', {
         method: 'POST',
