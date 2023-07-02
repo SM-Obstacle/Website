@@ -14,6 +14,14 @@ router.route('/map/:id([^/]+)')
   .get(function (req, res, next) {
     res.sendFile(path.resolve('./build/index.html'))
   })
+router.route('/campaign/:id(\\d+)(/.+|/)?')
+  .get(function (req, res, next) {
+    res.sendFile(path.resolve('./build/index.html'))
+  })
+router.route('/latestnews')
+  .get(function (req, res, next) {
+    res.sendFile(path.resolve('./build/index.html'))
+  })
 router.route('/maps/:id([^/]+)')
   .get(function (req, res, next) {
     res.sendFile(path.resolve('./build/index.html'))
