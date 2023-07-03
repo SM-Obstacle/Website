@@ -17,7 +17,7 @@ const campaigns = {
         "qpKzvXQaaJGvSsXPTNk_iVWmRTg",
         "Fcgbnv1RwTIdgRySDLwtyzzMj9j",
         "TEDQRUPTU1VkGrzBKLhIOY9cYV1",
-        "LwyG1V32XJ7EhadoevREd6F_3L1",
+        "GBEPgbo_hFst5xII2zoz7sP8xBe",
         "90qdC1x5f2s4C4oFveHhimcwLzj",
         "eKbgGOAuuwUP6ByvWlP8G728fuc",
         "hzlKEVfxuGyriKXlTm__LoiVRAj",
