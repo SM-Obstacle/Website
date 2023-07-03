@@ -230,7 +230,7 @@ const routes = {
         <a href="https://www.instagram.com/obstacle_sm/" target="_blank">Obstacle Instagram</a>: News and sneak peeks of upcoming Obstacle content
     </li>
     <li>
-        <a href="https://discord.gg/R4ZS23aS9c" target="_blank">Obstacle Discord</a>: Active community of players, mappers, and people gathered around Obstacle
+        <a href="https://discord.gg/XG9aVHr4F2" target="_blank">Obstacle Discord</a>: Active community of players, mappers, and people gathered around Obstacle
     </li>
     <li>
         <a href="https://sm.mania-exchange.com/" target="_blank">ShootMania Exchange</a>: Hosting of ShootMania maps
