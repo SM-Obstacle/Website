@@ -218,13 +218,6 @@ const routes = {
         load_campaign(campaign_id)
     },
 
-    edit: () => {
-        const content = document.createElement('div')
-        content.innerHTML = '<h1>L\'obstacle c\'est génial!</h1><p>pew pew et puis zoooom</p>'
-        content.contentEditable = true
-        tools.generate_content(content)
-    },
-
     links: () => {
         const content = document.createElement('div')
         content.innerHTML = `
@@ -232,6 +225,9 @@ const routes = {
 <ul>
     <li>
         <a href="https://obstacle.fandom.com/wiki/ShootMania_Obstacle_Wiki" target="_blank">Obstacle Wiki</a>: Explanations of moves and techniques
+    </li>
+    <li>
+        <a href="https://www.instagram.com/obstacle_sm/" target="_blank">Obstacle Instagram</a>: News and sneak peeks of upcoming Obstacle content
     </li>
     <li>
         <a href="https://discord.gg/R4ZS23aS9c" target="_blank">Obstacle Discord</a>: Active community of players, mappers, and people gathered around Obstacle
