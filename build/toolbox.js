@@ -161,7 +161,7 @@ export const graphql_callback = (query, callback, variables = {}) => {
     })
     .then(r => r.json())
     .then(json => callback(json.data))
-    .catch(err => toolbox.generate_error(err.message, '- ' + err.name))
+    .catch(err => generate_error(err.message, '- ' + err.name))
 }
 
 export const get_campaign_times_callback = (playlist, callback) => {
