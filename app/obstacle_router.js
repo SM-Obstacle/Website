@@ -6,6 +6,10 @@ router.route('/storm')
   .get(function (req, res, next) {
     res.sendFile(path.resolve('./build/index.html'))
   })
+router.route('/links')
+  .get(function (req, res, next) {
+    res.sendFile(path.resolve('./build/index.html'))
+  })
 router.route('/player/:id([^/]+)')
   .get(function (req, res, next) {
     res.sendFile(path.resolve('./build/index.html'))
