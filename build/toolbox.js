@@ -15,7 +15,7 @@ export const generate_404 = (explanation) => {
 
     const dom_h1_404 = document.createElement('h1')
     dom_h1_404.innerText = 'Error 404 - Not Found'
-    
+
     const dom_p_404 = document.createElement('p')
 
     if (explanation != null) {
@@ -69,7 +69,7 @@ export const generate_table = (columns, content) => {
                 dom_row.addEventListener('click', debounce(e => {
                     const stay_folded = dom_row.classList.contains('unfolded') || window.getSelection().type === 'Range'
                     const main_rows = document.querySelectorAll('tr:not(.additional)')
-                    ;[...main_rows].forEach(r => r.classList.remove('unfolded'))
+                        ;[...main_rows].forEach(r => r.classList.remove('unfolded'))
                     if (!stay_folded)
                         dom_row.classList.add('unfolded')
                 }, 100))
@@ -90,7 +90,7 @@ export const generate_table = (columns, content) => {
                 const cell = document.createElement('td')
                 cell.classList.add(...columns[i].name.split(' '))
                 set_content(cell, element, columns[i].type)
-        
+
                 dom_row.appendChild(cell)
             })
             dom_tbody.appendChild(dom_row)
@@ -119,8 +119,8 @@ export const get_mx_button = uid => {
                         e.target.disabled = true
                         alert('this map does not seem to be uploaded to sm.mania.exchange')
                     }
-	        })
-	}
+                })
+        }
     })
 
     return button
@@ -130,7 +130,7 @@ export const get_mx_mappack = async uid => {
     try {
         const response = await fetch('https://sm.mania.exchange/api/mappack/get_mappack_tracks/' + uid)
         const maps = await response.json()
-        
+
         if (maps.length > 0) {
             return maps.map(m => m.TrackUID)
         } else {
@@ -155,21 +155,21 @@ export const graphql_callback = (query, callback, variables = {}) => {
             query: query
         })
     })
-    .then(r => r.json())
-    .then(json => callback(json.data))
+        .then(r => r.json())
+        .then(json => callback(json.data))
 }
 
 export const get_campaign_times_callback = (playlist, callback) => {
     const str = `query {
         ${playlist.map((id, i) =>
-            `map${i}: map(gameId: "${sanitize_graphql_string(id)}") { gameId, name, records { rank, player { id, login, name } } }`
-        ).join('\n')}
+        `map${i}: map(gameId: "${sanitize_graphql_string(id)}") { gameId, name, records { rank, player { id, login, name } } }`
+    ).join('\n')}
     }`
-    
+
     graphql_callback(
         str, data => {
             const players = []
-        
+
             // Get all the unique players of each map
             for (const map_id in data) {
                 for (const record of data[map_id].records) {
@@ -186,36 +186,36 @@ export const get_campaign_times_callback = (playlist, callback) => {
                     }
                 }
             }
-        
+
             let map_number = 1
             for (const map_id in data) {
                 const last_rank = data[map_id].records.length > 0 ? data[map_id].records[data[map_id].records.length - 1].rank : 99
-                
+
                 for (const record of data[map_id].records) {
                     let idx = players.findIndex((p) => p.login === record.player.login)
-                    players[idx].ranks.push({rank: record.rank, last_rank: last_rank, map: data[map_id].name, map_id: data[map_id].gameId})
+                    players[idx].ranks.push({ rank: record.rank, last_rank: last_rank, map: data[map_id].name, map_id: data[map_id].gameId })
                     ++players[idx].maps_finished
                 }
-        
+
                 for (const player in players) {
                     if (players[player].ranks.length < map_number) {
-                        players[player].ranks.push({rank: last_rank+1, last_rank: last_rank, map: data[map_id].name, map_id: data[map_id].gameId})
+                        players[player].ranks.push({ rank: last_rank + 1, last_rank: last_rank, map: data[map_id].name, map_id: data[map_id].gameId })
                     }
                 }
                 ++map_number
             }
             --map_number
-        
+
             for (const player in players) {
                 if (players[player].ranks.length < map_number - 1) {
                     console.error(player, players[player])
                 }
-        
+
                 const ranks = players[player].ranks.sort((a, b) => (a.rank / a.last_rank - b.rank / b.last_rank) + (a.rank - b.rank) / 1000)
                 players[player].worst = ranks.reduce((a, b) => a.rank > b.rank ? a : b)
-                players[player].score = ranks.reduce(( acc, rank ) => acc + rank.rank, 0) / ranks.length
+                players[player].score = ranks.reduce((acc, rank) => acc + rank.rank, 0) / ranks.length
             }
-        
+
             players.sort((a, b) => {
                 if (a.maps_finished !== b.maps_finished) {
                     return b.maps_finished - a.maps_finished
@@ -223,30 +223,30 @@ export const get_campaign_times_callback = (playlist, callback) => {
                     return a.score - b.score
                 }
             })
-        
+
             let rank = 0
             let old_score = 0
             let old_finishes = 0
             let old_rank = 0
             for (const player of players) {
                 rank += 1
-        
+
                 player.rank = old_score === player.score && old_finishes === player.map_finishes ? old_rank : rank
-        
+
                 old_score = player.score
                 old_finishes = player.map_finishes
                 old_rank = player.rank
             }
-        
+
             callback(players);
         }
-	)
+    )
 }
 
 export const sanitize_graphql_string = str => {
     return str.replace('"', '\\"')
-              .replace('\n', '\\n')
-              .replace('\\', '\\\\')
+        .replace('\n', '\\n')
+        .replace('\\', '\\\\')
 }
 
 export const format_time = time => {
@@ -276,12 +276,12 @@ export const set_content = (node, content, type = 'string') => {
     switch (type) {
         case 'duration':
             node.innerText = format_time(content)
-        break
+            break
         case 'date':
             const date = new Date(content)
             node.innerText = date.toLocaleDateString()
             node.title = date.toLocaleString()
-        break
+            break
         case 'player':
         case 'map':
             const link = document.createElement('a')
@@ -298,7 +298,7 @@ export const set_content = (node, content, type = 'string') => {
             link.href = `/${content[2] ?? type}/${content[1]}`
             link.classList.add('mpstring')
             node.appendChild(link)
-        break
+            break
         case 'fraction':
             if (content.length === 2) {
                 const numerator = document.createElement('span')
@@ -311,16 +311,16 @@ export const set_content = (node, content, type = 'string') => {
             }
         default:
             node.innerText = content
-        break
+            break
     }
 }
 
-    
+
 /** From underscore.js */
 export const debounce = (func, wait, immediate) => {
     var timeout, previous, args, result, context;
 
-    const later = function() {
+    const later = function () {
         const passed = Date.now() - previous;
         if (wait > passed) {
             timeout = setTimeout(later, wait - passed);
@@ -330,9 +330,9 @@ export const debounce = (func, wait, immediate) => {
             if (!timeout) args = context = null;
         }
     };
-    const restArguments = function(func, startIndex) {
+    const restArguments = function (func, startIndex) {
         startIndex = startIndex == null ? func.length - 1 : +startIndex;
-        return function() {
+        return function () {
             const length = Math.max(arguments.length - startIndex, 0),
                 rest = Array(length);
             var index = 0;
@@ -353,7 +353,7 @@ export const debounce = (func, wait, immediate) => {
         };
     }
 
-    const debounced = restArguments(function(_args) {
+    const debounced = restArguments(function (_args) {
         context = this;
         args = _args;
         previous = Date.now();
@@ -364,7 +364,7 @@ export const debounce = (func, wait, immediate) => {
         return result;
     });
 
-    debounced.cancel = function() {
+    debounced.cancel = function () {
         clearTimeout(timeout);
         timeout = args = context = null;
     };

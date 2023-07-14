@@ -45,7 +45,7 @@ const campaigns = {
 const load_campaign = async (campaign) => {
     const campaign_id = +campaign
     if (isNaN(campaign_id)) return;
-    
+
     if (!Object.hasOwn(campaigns, campaign)) {
         try {
             campaigns[campaign] = await tools.get_mx_mappack(campaign_id)
@@ -54,7 +54,7 @@ const load_campaign = async (campaign) => {
             return;
         }
     }
-    
+
     tools.get_campaign_times_callback(campaigns[campaign], data => {
         document_updated_hook(tools.generate_table(
             [
@@ -168,7 +168,7 @@ const routes = {
             }
         )
     },
-    
+
     map: (map_id) => {
         tools.graphql_callback(
             `{ map (gameId: "${tools.sanitize_graphql_string(map_id)}") { gameId cpsNumber name player { name, login } records { rank recordDate time player { login name } } } }`,
@@ -202,18 +202,18 @@ const routes = {
                 const cps_number = document.createElement('span')
                 const cpsNumber = data.map.cpsNumber;
                 if (cpsNumber !== null) {
-                    cps_number.innerText = `${cpsNumber} cp${cpsNumber > 1 ? 's':''}`
+                    cps_number.innerText = `${cpsNumber} cp${cpsNumber > 1 ? 's' : ''}`
                 }
                 tools.set_content(mapper_span, [data.map.player.name, data.map.player.login], 'player')
                 tools.generate_title(data.map.name, [cps_number, mapper_span, tools.get_mx_button(data.map.gameId)])
             }
         )
     },
-    
+
     storm: () => {
         load_campaign('storm')
     },
-    
+
     campaign: (campaign_id) => {
         load_campaign(campaign_id)
     },
@@ -288,7 +288,6 @@ const routes = {
         content.appendChild(loading)
         tools.generate_content(content)
 
-
         const params = ((entries) => {
             const result = {}
             for (const [key, value] of entries)
@@ -308,20 +307,34 @@ const routes = {
             if (res.ok) {
                 loading.innerText = 'You are all set! You can close this tab now.'
             } else {
-                loading.innerText = 'Something went wrong. Please contact the developers (e.g. @ahmadbky or @MiLTanT on discord).'
+                loading.innerText = 'Something went wrong. Please contact the developers (i.e. @ahmadbky or @MiLTanT on discord).'
+                const err = await res.json()
+                    .catch(_ => {
+                        return {
+                            err: 105,
+                            message: "Error response not JSON",
+                        }
+                    })
+
+                if (err.type === 207) { // InvalidMPCode type
+                    const detail = document.createElement('h2')
+                    detail.innerText = `It looks like you logged in with a different account than the one used in game.
+Try to log out from the ManiaPlanet page, then retry with the correct account.`
+                    content.appendChild(detail)
+                }
+
                 const error_msg = document.createElement('pre')
                 error_msg.style.backgroundColor = "#333c"
-                error_msg.InnerText = `State: ${params.state}
-${await res.text()}`
+                error_msg.innerText = `State: ${params.state}\n${JSON.stringify(err)}`
                 content.appendChild(error_msg)
             }
         })
     }
 }
 
-function navigate (path) {
+function navigate(path) {
     const current_page = path.split('/')
-    
+
     try {
         routes[current_page[1]](...current_page.slice(2))
     } catch (TypeError) {
@@ -333,7 +346,7 @@ function navigate (path) {
 
     for (const link of document.querySelectorAll(`nav ul a`))
         link.classList.remove('active')
-    
+
     for (const link of document.querySelectorAll(`nav ul a[href="${path}"]`)) {
         link.classList.add('active')
     }
@@ -346,7 +359,7 @@ function navigate (path) {
     })
 }
 
-function document_updated_hook (chunk) {
+function document_updated_hook(chunk) {
     for (const link of chunk.querySelectorAll('a:not([target="_blank"])')) {
         link.addEventListener('click', event => {
             const pathname = (new URL(link.href)).pathname
