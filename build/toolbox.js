@@ -10,18 +10,22 @@ export const generate_content = (elements) => {
     return dom_parent
 }
 
-export const generate_404 = (explanation) => {
-    document.title += ' - Error 404'
+export const generate_error = (explanation, error) => {
+    document.title += ' - Error ' + error
 
-    const dom_h1_404 = document.createElement('h1')
-    dom_h1_404.innerText = 'Error 404 - Not Found'
+    const dom_h1 = document.createElement('h1')
+    dom_h1.innerText = 'Error ' + error
 
-    const dom_p_404 = document.createElement('p')
+    const dom_p = document.createElement('p')
 
     if (explanation != null) {
-        dom_p_404.innerText = explanation
+        dom_p.innerText = explanation
     }
-    generate_content([dom_h1_404, dom_p_404])
+    generate_content([dom_h1, dom_p])
+}
+
+export const generate_404 = (explanation) => {
+    return generate_error(explanation, '404 - Not Found')
 }
 
 export const generate_title = (title, toolbar = []) => {
@@ -157,6 +161,7 @@ export const graphql_callback = (query, callback, variables = {}) => {
     })
         .then(r => r.json())
         .then(json => callback(json.data))
+        .catch(err => generate_error(err.message, '- ' + err.name))
 }
 
 export const get_campaign_times_callback = (playlist, callback) => {
