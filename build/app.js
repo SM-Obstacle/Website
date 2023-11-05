@@ -43,19 +43,8 @@ const campaigns = {
 }
 
 const load_campaign = async (campaign) => {
-    const campaign_id = +campaign
-    if (isNaN(campaign_id)) return;
-
-    if (!Object.hasOwn(campaigns, campaign)) {
-        try {
-            campaigns[campaign] = await tools.get_mx_mappack(campaign_id)
-        } catch (error) {
-            console.error(`Failed to get mappack for campaign ${campaign}: ${error}`);
-            return;
-        }
-    }
-
-    tools.get_campaign_times_callback(campaigns[campaign], data => {
+    tools.graphql_callback(`{ mappack (mappackId: "${tools.sanitize_graphql_string(campaign)}") { maps { map mapId } scores { rank login name score worst { rank } ranks { rank lastRank mapIdx } mapsFinished } } }`,
+    (data) => {
         document_updated_hook(tools.generate_table(
             [
                 {
@@ -84,9 +73,9 @@ const load_campaign = async (campaign) => {
                     'type': 'number'
                 }
             ],
-            data.map(d => [
-                [d.rank, [d.name, d.login], Math.round((d.score + Number.EPSILON) * 100) / 100, [d.maps_finished, d.ranks.length], d.worst.rank],
-                ...d.ranks.map(r => [[r.rank, r.last_rank], [r.map, r.map_id, 'map']])
+            data.mappack.scores.map(d => [
+                [d.rank, [d.name, d.login], Math.round((d.score + Number.EPSILON) * 100) / 100, [d.mapsFinished, d.ranks.length], d.worst.rank],
+                ...d.ranks.map(r => [[r.rank, r.lastRank], [data.mappack.maps[r.mapIdx].map, data.mappack.maps[r.mapIdx].mapId, 'map']])
             ])
         ))
     })

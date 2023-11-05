@@ -130,22 +130,6 @@ export const get_mx_button = uid => {
     return button
 }
 
-export const get_mx_mappack = async uid => {
-    try {
-        const response = await fetch('https://sm.mania.exchange/api/mappack/get_mappack_tracks/' + uid)
-        const maps = await response.json()
-
-        if (maps.length > 0) {
-            return maps.map(m => m.TrackUID)
-        } else {
-            throw new Error('An error occurred fetching the maps on mania.exchange.')
-        }
-    } catch (error) {
-        alert(error.message)
-        throw error
-    }
-}
-
 export const graphql_callback = (query, callback, variables = {}) => {
     fetch('https://obstacle.titlepack.io/api/graphql', {
         method: 'POST',
@@ -162,90 +146,6 @@ export const graphql_callback = (query, callback, variables = {}) => {
         .then(r => r.json())
         .then(json => callback(json.data))
         .catch(err => generate_error(err.message, '- ' + err.name))
-}
-
-export const get_campaign_times_callback = (playlist, callback) => {
-    const str = `query {
-        ${playlist.map((id, i) =>
-        `map${i}: map(gameId: "${sanitize_graphql_string(id)}") { gameId, name, records { rank, player { id, login, name } } }`
-    ).join('\n')}
-    }`
-
-    graphql_callback(
-        str, data => {
-            const players = []
-
-            // Get all the unique players of each map
-            for (const map_id in data) {
-                for (const record of data[map_id].records) {
-                    const idx = players.findIndex((p) => p.login === record.player.login)
-                    if (idx === -1) {
-                        players.push({
-                            login: record.player.login,
-                            name: record.player.name,
-                            ranks: [],
-                            score: 0,
-                            maps_finished: 0,
-                            rank: 0
-                        })
-                    }
-                }
-            }
-
-            let map_number = 1
-            for (const map_id in data) {
-                const last_rank = data[map_id].records.length > 0 ? data[map_id].records[data[map_id].records.length - 1].rank : 99
-
-                for (const record of data[map_id].records) {
-                    let idx = players.findIndex((p) => p.login === record.player.login)
-                    players[idx].ranks.push({ rank: record.rank, last_rank: last_rank, map: data[map_id].name, map_id: data[map_id].gameId })
-                    ++players[idx].maps_finished
-                }
-
-                for (const player in players) {
-                    if (players[player].ranks.length < map_number) {
-                        players[player].ranks.push({ rank: last_rank + 1, last_rank: last_rank, map: data[map_id].name, map_id: data[map_id].gameId })
-                    }
-                }
-                ++map_number
-            }
-            --map_number
-
-            for (const player in players) {
-                if (players[player].ranks.length < map_number - 1) {
-                    console.error(player, players[player])
-                }
-
-                const ranks = players[player].ranks.sort((a, b) => (a.rank / a.last_rank - b.rank / b.last_rank) + (a.rank - b.rank) / 1000)
-                players[player].worst = ranks.reduce((a, b) => a.rank > b.rank ? a : b)
-                players[player].score = ranks.reduce((acc, rank) => acc + rank.rank, 0) / ranks.length
-            }
-
-            players.sort((a, b) => {
-                if (a.maps_finished !== b.maps_finished) {
-                    return b.maps_finished - a.maps_finished
-                } else {
-                    return a.score - b.score
-                }
-            })
-
-            let rank = 0
-            let old_score = 0
-            let old_finishes = 0
-            let old_rank = 0
-            for (const player of players) {
-                rank += 1
-
-                player.rank = old_score === player.score && old_finishes === player.map_finishes ? old_rank : rank
-
-                old_score = player.score
-                old_finishes = player.map_finishes
-                old_rank = player.rank
-            }
-
-            callback(players);
-        }
-    )
 }
 
 export const sanitize_graphql_string = str => {
