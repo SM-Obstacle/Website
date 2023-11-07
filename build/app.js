@@ -1,49 +1,7 @@
 import * as tools from './toolbox.js'
 
-const campaigns = {
-    'storm': [
-        'AJUMu8dNAI9fXkHaaodLRQWb0i5',
-        'VTDeDSyoLphHbg4xpKgJPjCULu2',
-        'm94pYMVmW7fdnVdpBbK8ns7j__d',
-        'wVdm82BaI4zrD7PUT9GgLsElCl6',
-        'wi5t9nsWrFsUdW9TVrpNkOHZVEh',
-        'p4ZBFCtaFT_LQscpCi3J0IZqiG2',
-        'Wg_ueBq7ovovY1z2PGJsguwNf_9',
-        'IyyNms4JhN1BCvoltgli4tgllL6',
-        'LPOsdLqT5NKvefQT6y_vzZXsf23',
-        'bveb4HoqLZSW1nsmyGRYe1a6I4c'
-    ],
-    '29': [
-        "qpKzvXQaaJGvSsXPTNk_iVWmRTg",
-        "Fcgbnv1RwTIdgRySDLwtyzzMj9j",
-        "TEDQRUPTU1VkGrzBKLhIOY9cYV1",
-        "GBEPgbo_hFst5xII2zoz7sP8xBe",
-        "90qdC1x5f2s4C4oFveHhimcwLzj",
-        "eKbgGOAuuwUP6ByvWlP8G728fuc",
-        "hzlKEVfxuGyriKXlTm__LoiVRAj",
-        "VSn_Cz45JUGLH_LJaRBUKaRIQsh",
-        "H5yHFPEOVcdmJv7DabEGYqhUSDc",
-        "0u6aaVnLw1cbwUIi7I1hyP1EHT0",
-        "7ki7DAx8RGHufasKBLzlHnvFMUj",
-        "JTeY36K5VrDL7noJGzl4dqwPC5j",
-        "9rs_79lkU09Edy3FCyjXNTPNj_j",
-        "uHN22ZmWSNesgZqOVcjgWYv7cPc",
-        "TcwGFWuciPoKzccgWa6wRVM7yvd",
-        "18FInhM7gAcqAgvwPwllYEDE6rk",
-        "pAv3QI4f8y6fbSU2qoMj4cFRQTi",
-        "G5Dm8fjoFSqS8nui1mP1wKZ4z_3",
-        "tSd082VQJ51_71EXvCobORPlhZl",
-        "KkqC5yQSQ18XyhEfpqMLER3vAjc",
-        "uHYccBmFsS1kSLc45zLhlOya1eb",
-        "F1bDc8HpEr3VjgXwuZh5m_2sb6e",
-        "exsvJlTM1oQq1VJ8d9u2qSgFyla",
-        "Okx2W7jKXCue7s58kpcStl9vRF3",
-        "GwjMPymVycUB9NkGvk00juY4E55"
-    ]
-}
-
 const load_campaign = async (campaign) => {
-    tools.graphql_callback(`{ mappack (mappackId: "${tools.sanitize_graphql_string(campaign)}") { maps { map mapId } scores { rank login name score worst { rank } ranks { rank lastRank mapIdx } mapsFinished } } }`,
+    tools.graphql_callback(`{ mappack (mappackId: "${tools.sanitize_graphql_string(campaign)}") { maps { map mapId lastRank } scores { rank login name score worst { rank } ranks { rank mapIdx } mapsFinished } } }`,
     (data) => {
         document_updated_hook(tools.generate_table(
             [
@@ -75,7 +33,7 @@ const load_campaign = async (campaign) => {
             ],
             data.mappack.scores.map(d => [
                 [d.rank, [d.name, d.login], Math.round((d.score + Number.EPSILON) * 100) / 100, [d.mapsFinished, d.ranks.length], d.worst.rank],
-                ...d.ranks.map(r => [[r.rank, r.lastRank], [data.mappack.maps[r.mapIdx].map, data.mappack.maps[r.mapIdx].mapId, 'map']])
+                ...d.ranks.map(r => [[r.rank, data.mappack.maps[r.mapIdx].lastRank], [data.mappack.maps[r.mapIdx].map, data.mappack.maps[r.mapIdx].mapId, 'map']])
             ])
         ))
     })
