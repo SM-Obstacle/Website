@@ -1,4 +1,6 @@
 import { Metadata, ResolvingMetadata } from "next";
+import Link from "next/link";
+import React from "react";
 
 export async function generateMetadata(
   parent: ResolvingMetadata
@@ -10,29 +12,67 @@ export async function generateMetadata(
   };
 }
 
+type Resources = {
+  title: string,
+  list: ({
+    link: string,
+    label: string,
+    details: string,
+  } | string)[]
+}[];
+
 // TODO: ajouter les infos d'aurel
 // TODO: rendre ça générique (en se basant sur la BD)
+const resources = [
+  {
+    title: "Resources",
+    list: [
+      {
+        link: "https://obstacle.fandom.com/wiki/ShootMania_Obstacle_Wiki",
+        label: "Obstacle Wiki",
+        details: "Explanations of moves and techniques",
+      },
+      {
+        link: "https://www.instagram.com/obstacle_sm/",
+        label: "Obstacle Instagram",
+        details: "News and sneak peeks of upcoming Obstacle content",
+      },
+      {
+        link: "https://discord.gg/w2j64wXpjb",
+        label: "Obstacle Discord",
+        details: "Active community of players, mappers, and people gathered around Obstacle",
+      },
+      {
+        link: "https://sm.mania-exchange.com/",
+        label: "ShootMania Exchange",
+        details: "Hosting of ShootMania maps",
+      },
+      {
+        link: "https://aurel.obstacle.ovh/wordpress/",
+        label: "Aurel's blog",
+        details: "Tutorials and resources about Obstacle",
+      },
+    ],
+  },
+] satisfies Resources;
+
 export default function Links() {
   return (
     <div>
-      <h1>Resources</h1>
-      <ul>
-        <li>
-          <a href="https://obstacle.fandom.com/wiki/ShootMania_Obstacle_Wiki" target="_blank">Obstacle Wiki</a>: Explanations of moves and techniques
-        </li>
-        <li>
-          <a href="https://www.instagram.com/obstacle_sm/" target="_blank">Obstacle Instagram</a>: News and sneak peeks of upcoming Obstacle content
-        </li>
-        <li>
-          <a href="https://discord.gg/w2j64wXpjb" target="_blank">Obstacle Discord</a>: Active community of players, mappers, and people gathered around Obstacle
-        </li>
-        <li>
-          <a href="https://sm.mania-exchange.com/" target="_blank">ShootMania Exchange</a>: Hosting of ShootMania maps
-        </li>
-        <li>
-          <a href="https://aurel.obstacle.ovh/wordpress/" target="_blank">Aurel's blog</a>: Tutorials and resources about Obstacle
-        </li>
-      </ul>
+      {resources.map((resource) => (
+        <React.Fragment key={resource.title}>
+          <h1>{resource.title}</h1>
+          <ul>
+            {resource.list.map((link) => typeof link === "string" ? (
+              <li key={link}>{link}</li>
+            ) : (
+              <li key={link.link}>
+                <Link href={link.link} target="_blank">{link.label}</Link>: {link.details}
+              </li>
+            ))}
+          </ul>
+        </React.Fragment>
+      ))}
     </div>
   );
 }
