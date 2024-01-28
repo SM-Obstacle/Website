@@ -167,9 +167,12 @@ main h1 {
     margin: 0px;
 }
 
+main table th {
+    font-weight: 900;
+}
+
 main table thead {
     font-size: 25px;
-    font-weight: 700;
     display: block flex;
     justify-content: space-evenly;
 }
@@ -265,6 +268,8 @@ main table td.map_finished {
 main table td.rank,
 main table td.date,
 main table td.worst_rank {
+    font-style: italic;
+    font-weight: 700;
     font-family: var(--lato), sans-serif, var(--forkAwesome), var(--kenneyIcons);
 }
 main table td.map,
