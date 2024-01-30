@@ -19,7 +19,7 @@ export const generate_error = (explanation, error) => {
     const dom_p = document.createElement('p')
 
     if (explanation != null) {
-        dom_p.innerText = explanation
+        dom_p.innerHTML = explanation
     }
     generate_content([dom_h1, dom_p])
 }
