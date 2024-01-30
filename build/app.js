@@ -286,7 +286,7 @@ function navigate(path) {
         routes[current_page[1]](...current_page.slice(2))
     } catch (TypeError) {
         if (current_page[1] === 'maps')
-            tools.generate_404(`The /maps/ route is outdated, please try <a href="/map/${path.replace('/maps', '/map')}">/map/</a> instead.`)
+            tools.generate_404(`The /maps/ route is outdated, please try <a href="${path.replace('/maps', '/map')}">/map/</a> instead.`)
         else
             tools.generate_404()
     }
