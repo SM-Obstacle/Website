@@ -44,7 +44,7 @@ type EventEdition {
 
 type Map implements Node {
 	id: ID!
-	gameId: String!
+	gameId: Escaped!
 	playerId: ID!
 	cpsNumber: Int
 	player: Player!
@@ -85,15 +85,25 @@ type MapEdge {
 	cursor: String!
 }
 
-type MappackMap {
-	map: Escaped!
-	mapId: String!
-	lastRank: Int!
+type Mappack {
+	nbMaps: Int!
+	leaderboard: [MappackPlayer!]!
+	player(login: String!): MappackPlayer!
 }
 
-type MappackScores {
-	maps: [MappackMap!]!
-	scores: [PlayerScore!]!
+type MappackMap {
+	rank: Int!
+	lastRank: Int!
+	map: Map!
+}
+
+type MappackPlayer {
+	rank: Int!
+	player: Player!
+	ranks: [MappackMap!]!
+	rankAvg: Float!
+	mapFinished: Int!
+	worstRank: Int!
 }
 
 enum Medal {
@@ -147,7 +157,7 @@ type PageInfo {
 
 type Player implements Node {
 	id: ID!
-	login: String!
+	login: Escaped!
 	name: Escaped!
 	zonePath: String
 	banishments: [Banishment!]!
@@ -196,19 +206,8 @@ enum PlayerRole {
 	ADMIN
 }
 
-type PlayerScore {
-	playerId: Int!
-	login: String!
-	name: Escaped!
-	ranks: [Rank!]!
-	score: Float!
-	mapsFinished: Int!
-	rank: Int!
-	worst: Rank!
-}
-
 type QueryRoot {
-	mappack(mappackId: String!): MappackScores!
+	mappack(mappackId: String!): Mappack!
 	banishments: [Banishment!]!
 	events: [Event!]!
 	players(after: String, before: String, first: Int, last: Int): PlayerConnection!
@@ -218,11 +217,6 @@ type QueryRoot {
 	map(gameId: String!): Map!
 	player(login: String!): Player!
 	records(dateSortBy: SortState): [RankedRecord!]!
-}
-
-type Rank {
-	rank: Int!
-	mapIdx: Int!
 }
 
 type RankedRecord {
