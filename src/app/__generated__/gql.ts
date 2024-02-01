@@ -13,15 +13,16 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel or swc plugin for production.
  */
 const documents = {
-    "\n  query GetCampaignLeaderboard($mappackId: String!) {\n    mappack(mappackId: $mappackId) {\n      maps {\n        map\n        mapId\n        lastRank\n      }\n      scores {\n        rank\n        login\n        name\n        score\n        worst {\n          rank\n        }\n        ranks {\n          rank\n          mapIdx\n        }\n        mapsFinished\n      }\n    }\n  }\n": types.GetCampaignLeaderboardDocument,
+    "\n  query GetCampaignLeaderboard($mappackId: String!) {\n    mappack(mappackId: $mappackId) {\n      nbMaps\n      leaderboard {\n        rank\n        player {\n          login\n          name\n        }\n        rankAvg\n        mapFinished\n        worstRank\n      }\n    }\n  }\n": types.GetCampaignLeaderboardDocument,
+    "\n  query GetCampaignPlayerInfo($mappackId: String!, $login: String!) {\n    mappack(mappackId: $mappackId) {\n      player(login: $login) {\n        ranks {\n          rank\n          map {\n            gameId\n            name\n          }\n          lastRank\n        }\n      }\n    }\n  }\n": types.GetCampaignPlayerInfoDocument,
     "\n  query GetRecords($dateSortBy: SortState) {\n    records(dateSortBy: $dateSortBy) {\n      player {\n        login\n        name\n      }\n      map {\n        gameId\n        name\n      }\n      ...RecordBase\n    }\n  }\n": types.GetRecordsDocument,
-    "\n  fragment RecordBase on RankedRecord {\n    id\n    rank\n    time\n    recordDate\n  }\n": types.RecordBaseFragmentDoc,
     "\n  fragment MapRecords on Map {\n    records(rankSortBy: $rankSortBy, dateSortBy: $dateSortBy) {\n      player {\n        login\n        name\n      }\n      ...RecordBase\n    }\n  }\n": types.MapRecordsFragmentDoc,
     "\n  query GetMapInfo(\n    $gameId: String!\n    $dateSortBy: SortState\n    $rankSortBy: SortState\n  ) {\n    map(gameId: $gameId) {\n      gameId\n      name\n      cpsNumber\n      reversed\n      player {\n        login\n        name\n      }\n      ...MapRecords\n    }\n  }\n": types.GetMapInfoDocument,
     "\n  query SortMapRecords(\n    $gameId: String!\n    $dateSortBy: SortState\n    $rankSortBy: SortState\n  ) {\n    map(gameId: $gameId) {\n      ...MapRecords\n    }\n  }\n": types.SortMapRecordsDocument,
     "\n  fragment PlayerRecords on Player {\n    records(dateSortBy: $dateSortBy) {\n      map {\n        gameId\n        name\n      }\n      ...RecordBase\n    }\n  }\n": types.PlayerRecordsFragmentDoc,
     "\n  query GetPlayerInfo($login: String!, $dateSortBy: SortState) {\n    player(login: $login) {\n      login\n      name\n      zonePath\n      role\n      ...PlayerRecords\n    }\n  }\n": types.GetPlayerInfoDocument,
     "\n  query SortPlayerRecords($login: String!, $dateSortBy: SortState) {\n    player(login: $login) {\n      ...PlayerRecords\n    }\n  }\n": types.SortPlayerRecordsDocument,
+    "\n  fragment RecordBase on RankedRecord {\n    id\n    rank\n    time\n    recordDate\n  }\n": types.RecordBaseFragmentDoc,
 };
 
 /**
@@ -41,15 +42,15 @@ export function gql(source: string): unknown;
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  query GetCampaignLeaderboard($mappackId: String!) {\n    mappack(mappackId: $mappackId) {\n      maps {\n        map\n        mapId\n        lastRank\n      }\n      scores {\n        rank\n        login\n        name\n        score\n        worst {\n          rank\n        }\n        ranks {\n          rank\n          mapIdx\n        }\n        mapsFinished\n      }\n    }\n  }\n"): (typeof documents)["\n  query GetCampaignLeaderboard($mappackId: String!) {\n    mappack(mappackId: $mappackId) {\n      maps {\n        map\n        mapId\n        lastRank\n      }\n      scores {\n        rank\n        login\n        name\n        score\n        worst {\n          rank\n        }\n        ranks {\n          rank\n          mapIdx\n        }\n        mapsFinished\n      }\n    }\n  }\n"];
+export function gql(source: "\n  query GetCampaignLeaderboard($mappackId: String!) {\n    mappack(mappackId: $mappackId) {\n      nbMaps\n      leaderboard {\n        rank\n        player {\n          login\n          name\n        }\n        rankAvg\n        mapFinished\n        worstRank\n      }\n    }\n  }\n"): (typeof documents)["\n  query GetCampaignLeaderboard($mappackId: String!) {\n    mappack(mappackId: $mappackId) {\n      nbMaps\n      leaderboard {\n        rank\n        player {\n          login\n          name\n        }\n        rankAvg\n        mapFinished\n        worstRank\n      }\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  query GetCampaignPlayerInfo($mappackId: String!, $login: String!) {\n    mappack(mappackId: $mappackId) {\n      player(login: $login) {\n        ranks {\n          rank\n          map {\n            gameId\n            name\n          }\n          lastRank\n        }\n      }\n    }\n  }\n"): (typeof documents)["\n  query GetCampaignPlayerInfo($mappackId: String!, $login: String!) {\n    mappack(mappackId: $mappackId) {\n      player(login: $login) {\n        ranks {\n          rank\n          map {\n            gameId\n            name\n          }\n          lastRank\n        }\n      }\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n  query GetRecords($dateSortBy: SortState) {\n    records(dateSortBy: $dateSortBy) {\n      player {\n        login\n        name\n      }\n      map {\n        gameId\n        name\n      }\n      ...RecordBase\n    }\n  }\n"): (typeof documents)["\n  query GetRecords($dateSortBy: SortState) {\n    records(dateSortBy: $dateSortBy) {\n      player {\n        login\n        name\n      }\n      map {\n        gameId\n        name\n      }\n      ...RecordBase\n    }\n  }\n"];
-/**
- * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
- */
-export function gql(source: "\n  fragment RecordBase on RankedRecord {\n    id\n    rank\n    time\n    recordDate\n  }\n"): (typeof documents)["\n  fragment RecordBase on RankedRecord {\n    id\n    rank\n    time\n    recordDate\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -74,6 +75,10 @@ export function gql(source: "\n  query GetPlayerInfo($login: String!, $dateSortB
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n  query SortPlayerRecords($login: String!, $dateSortBy: SortState) {\n    player(login: $login) {\n      ...PlayerRecords\n    }\n  }\n"): (typeof documents)["\n  query SortPlayerRecords($login: String!, $dateSortBy: SortState) {\n    player(login: $login) {\n      ...PlayerRecords\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  fragment RecordBase on RankedRecord {\n    id\n    rank\n    time\n    recordDate\n  }\n"): (typeof documents)["\n  fragment RecordBase on RankedRecord {\n    id\n    rank\n    time\n    recordDate\n  }\n"];
 
 export function gql(source: string) {
   return (documents as any)[source] ?? {};

@@ -1,12 +1,24 @@
 "use client";
 
-import { useState } from "react";
+import { PropsWithChildren, useCallback, useState } from "react";
 
-export default function TableRow({ children }: { children: React.ReactNode }) {
-  const [unfolded, setUnfolded] = useState(false);
+export default function TableRow({
+  children,
+  onClick,
+  unfold,
+}: {
+  onClick?: () => void,
+  unfold?: boolean,
+} & PropsWithChildren) {
+  const [unfolded, setUnfolded] = useState(unfold ?? false);
+
+  const handleClick = useCallback(() => {
+    setUnfolded(!unfolded);
+    (onClick ?? (() => { }))();
+  }, [onClick]);
 
   return (
-    <tr tabIndex={0} onClick={() => setUnfolded(!unfolded)} className={unfolded ? "unfolded" : undefined}>
+    <tr tabIndex={0} onClick={handleClick} className={unfolded ? "unfolded" : undefined}>
       {children}
     </tr>
   );

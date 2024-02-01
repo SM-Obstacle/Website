@@ -1,31 +1,42 @@
 import { gql } from "@/app/__generated__";
 import { MPFormatLink } from "@/components/MPFormat";
-import TableRow from "@/components/TableRow";
 import { fetchGraphql } from "@/lib/utils";
 import { Metadata, ResolvingMetadata } from "next";
 import React from "react";
+import CampaignPlayerRow from "./CampaignPlayerRow";
+import { TypedDocumentNode } from "@graphql-typed-document-node/core";
+import { GetCampaignLeaderboardQuery } from "@/app/__generated__/graphql";
 
 export const GET_CAMPAIGN_LEADERBOARD = gql(/* GraphQL */ `
   query GetCampaignLeaderboard($mappackId: String!) {
     mappack(mappackId: $mappackId) {
-      maps {
-        map
-        mapId
-        lastRank
-      }
-      scores {
+      nbMaps
+      leaderboard {
         rank
-        login
-        name
-        score
-        worst {
-          rank
+        player {
+          login
+          name
         }
+        rankAvg
+        mapFinished
+        worstRank
+      }
+    }
+  }
+`);
+
+export const GET_CAMPAIGN_PLAYER_INFO = gql(/* GraphQL */ `
+  query GetCampaignPlayerInfo($mappackId: String!, $login: String!) {
+    mappack(mappackId: $mappackId) {
+      player(login: $login) {
         ranks {
           rank
-          mapIdx
+          map {
+            gameId
+            name
+          }
+          lastRank
         }
-        mapsFinished
       }
     }
   }
@@ -42,12 +53,37 @@ export async function generateMetadata(
   };
 }
 
+async function fetchSelectedPlayers(
+  mappackId: string,
+  mappackData: GetCampaignLeaderboardQuery["mappack"],
+  selectedPlayers: string | string[]
+) {
+  if (typeof selectedPlayers === "string") {
+    selectedPlayers = [selectedPlayers];
+  }
+
+  return {
+    ...mappackData,
+    leaderboard: await Promise.all(mappackData.leaderboard.map(async (player) => {
+      let ranks = null;
+      if (selectedPlayers.includes(player.player.login)) {
+        const data = await fetchGraphql(GET_CAMPAIGN_PLAYER_INFO, { mappackId, login: player.player.login });
+        ranks = data.mappack.player.ranks;
+      }
+      return { ...player, ranks };
+    })),
+  }
+}
+
 export default async function Campaign({
-  params
+  params,
+  searchParams,
 }: {
   params: { mappackId: string; };
+  searchParams: { players?: string[] | string },
 }) {
   const mappack = (await fetchGraphql(GET_CAMPAIGN_LEADERBOARD, { mappackId: params.mappackId })).mappack;
+  const data = await fetchSelectedPlayers(params.mappackId, mappack, searchParams.players ?? []);
 
   return (
     <table>
@@ -74,44 +110,41 @@ export default async function Campaign({
         </tr>
       </thead>
       <tbody>
-        {mappack.scores.map((score, i) => (
+        {data.leaderboard.map((player, i) => (
           <React.Fragment key={i}>
-            <TableRow>
-              <td className="rank">{score.rank}</td>
+            <CampaignPlayerRow unfold={player.ranks !== null} login={player.player.login}>
+              <td className="rank">{player.rank}</td>
               <td className="sr_player">
                 <MPFormatLink
-                  path={`/player/${score.login}`}
-                  name={score.name}
+                  path={`/player/${player.player.login}`}
+                  name={player.player.name}
                 />
               </td>
-              <td className="rank_avg">{Math.round((score.score + Number.EPSILON) * 100) / 100}</td>
+              <td className="rank_avg">{player.rankAvg}</td>
               <td className="map_finished">
                 <span>
-                  {score.mapsFinished}
-                  <small>/{score.ranks.length}</small>
+                  {player.mapFinished}
+                  <small>/{mappack.nbMaps}</small>
                 </span>
               </td>
-              <td className="worst_rank">{score.worst.rank}</td>
-            </TableRow>
-            {score.ranks.map((rank, j) => {
-              const map = mappack.maps[rank.mapIdx];
-              return (
-                <tr key={`${i}${j}`} className="additional">
-                  <td className="rank">
-                    <span>
-                      {rank.rank}
-                      <small>/{map.lastRank}</small>
-                    </span>
-                  </td>
-                  <td className="sr_player">
-                    <MPFormatLink
-                      path={`/map/${map.mapId}`}
-                      name={map.map}
-                    />
-                  </td>
-                </tr>
-              );
-            })}
+              <td className="worst_rank">{player.worstRank}</td>
+            </CampaignPlayerRow>
+            {player.ranks?.map((rank) => (
+              <tr className="additional">
+                <td className="rank">
+                  <span>
+                    {rank.rank}
+                    <small>/{rank.lastRank}</small>
+                  </span>
+                </td>
+                <td className="sr_player">
+                  <MPFormatLink
+                    path={`/map/${rank.map.gameId}`}
+                    name={rank.map.name}
+                  />
+                </td>
+              </tr>
+            ))}
           </React.Fragment>
         ))}
       </tbody>

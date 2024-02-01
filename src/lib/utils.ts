@@ -1,4 +1,4 @@
-import { TypedDocumentNode } from "@apollo/client";
+import { GraphQLRequest, IncrementalPayload, TypedDocumentNode } from "@apollo/client";
 import { print } from "graphql";
 
 // TODO: throw on error
@@ -6,7 +6,7 @@ export async function fetchGraphql<O, P = { [key: string]: any }>(
   query: TypedDocumentNode<O, P>,
   variables?: P
 ) {
-  const out: { data: O } = await fetch(getGraphqlApiUrl(), {
+  const out: IncrementalPayload<O, unknown> = await fetch(getGraphqlApiUrl(), {
     method: "post",
     body: JSON.stringify({
       query: print(query),
@@ -18,7 +18,11 @@ export async function fetchGraphql<O, P = { [key: string]: any }>(
     },
   }).then((res) => res.json());
 
-  return out.data;
+  if (out.errors) {
+    throw new Error(out.errors[0].message);
+  }
+
+  return out.data!;
 }
 
 export function getGraphqlApiUrl() {
