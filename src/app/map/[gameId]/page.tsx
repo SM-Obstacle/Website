@@ -8,7 +8,7 @@ import MPFormat, { MPFormatLink } from "@/components/MPFormat";
 import Time, { Date } from "@/components/Time";
 import { RankedRecordOfMap } from "@/lib/ranked-record";
 import { fetchGraphql } from "@/lib/utils";
-import { SearchParams, getSortState } from "@/lib/search-params";
+import { ServerProps, getSortState } from "@/lib/server-props";
 
 export const MAP_RECORDS_FRAGMENT = gql(/* GraphQL */ `
   fragment MapRecords on Map {
@@ -54,6 +54,8 @@ const SORT_MAP_RECORDS = gql(/* GraphQL */ `
   }
 `);
 
+type SP = ServerProps<{ gameId: string }, { dateSortBy?: string, rankSortBy?: string }>;
+
 type MapRecordsProperty = GetMapInfoQuery["map"] & {
   records: RankedRecordOfMap[];
 };
@@ -66,10 +68,7 @@ export async function generateMetadata(
   {
     params,
     searchParams,
-  }: {
-    params: { gameId: string },
-    searchParams: SearchParams,
-  },
+  }: SP,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
   const oldTitle = (await parent).title?.absolute;
@@ -83,10 +82,7 @@ export async function generateMetadata(
 export default async function MapRecords({
   params,
   searchParams,
-}: {
-  params: { gameId: string },
-  searchParams: SearchParams,
-}) {
+}: SP) {
   const data = await fetchMapInfo(params.gameId, getSortState(searchParams["dateSortBy"]), getSortState(searchParams["rankSortBy"]));
   const mapInfo = data.map as MapRecordsProperty;
 

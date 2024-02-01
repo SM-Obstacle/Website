@@ -25,6 +25,10 @@ export async function fetchGraphql<O, P = { [key: string]: any }>(
   return out.data!;
 }
 
+export function getApiHost() {
+  return "http://localhost:3001";
+}
+
 export function getGraphqlApiUrl() {
-  return "http://localhost:3001/graphql";
+  return `${getApiHost()}/graphql`;
 }

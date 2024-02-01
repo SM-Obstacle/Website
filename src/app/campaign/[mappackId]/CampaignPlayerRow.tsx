@@ -2,7 +2,7 @@
 
 import TableRow from "@/components/TableRow";
 import { useRouter, useSearchParams } from "next/navigation";
-import { PropsWithChildren } from "react";
+import { PropsWithChildren, useEffect, useRef } from "react";
 
 export default function CampaignPlayerRow({
   login,
@@ -14,19 +14,27 @@ export default function CampaignPlayerRow({
 } & PropsWithChildren) {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const selectedRowRef = useRef<HTMLTableRowElement | null>(null);
 
   const onClick = () => {
     const params = new URLSearchParams(searchParams.toString());
-    if (params.getAll('players').includes(login)) {
-      params.delete('players', login);
+    if (params.get('player') === login) {
+      params.delete('player');
     } else {
-      params.append('players', login);
+      params.set('player', login);
     }
     router.push(`?${params.toString()}`);
   };
 
+  // useEffect instead of calling `scrollIntoView` directly because it would scroll from the top of the page.
+  useEffect(() => {
+    if (unfold) {
+      selectedRowRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  });
+
   return (
-    <TableRow unfold={unfold} onClick={onClick}>
+    <TableRow ref={selectedRowRef} unfold={unfold} onClick={onClick}>
       {children}
     </TableRow>
   );

@@ -3,7 +3,7 @@ import { GetPlayerInfoQuery, SortState } from "@/app/__generated__/graphql";
 import MPFormat, { MPFormatLink } from "@/components/MPFormat";
 import Time, { Date } from "@/components/Time";
 import { RankedRecordOfPlayer } from "@/lib/ranked-record";
-import { SearchParams, getSortState } from "@/lib/search-params";
+import { ServerProps, getSortState } from "@/lib/server-props";
 import { fetchGraphql } from "@/lib/utils";
 import { parse, toPlainText } from "@altrd/mpformat";
 import { Metadata, ResolvingMetadata } from "next";
@@ -49,18 +49,17 @@ const fetchPlayerInfo = cache(async (login: string, dateSortBy?: SortState) => {
   return fetchGraphql(GET_PLAYER_INFO, { login, dateSortBy });
 });
 
+type SP = ServerProps<{ login: string }, { dateSortBy?: string }>;
+
 export async function generateMetadata(
   {
     params,
     searchParams,
-  }: {
-    params: { login: string },
-    searchParams: SearchParams,
-  },
+  }: SP,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
   const oldTitle = (await parent).title?.absolute;
-  const playerInfo = (await fetchPlayerInfo(params.login, getSortState(searchParams["dateSortBy"]))).player;
+  const playerInfo = (await fetchPlayerInfo(params.login, getSortState(searchParams.dateSortBy))).player;
 
   return {
     title: `${oldTitle} - ${toPlainText(parse(playerInfo.name))}`,
@@ -70,10 +69,7 @@ export async function generateMetadata(
 export default async function PlayerRecords({
   params,
   searchParams,
-}: {
-  params: { login: string },
-  searchParams: SearchParams,
-}) {
+}: SP) {
   const data = await fetchPlayerInfo(params.login, getSortState(searchParams["dateSortBy"]));
   const playerInfo = data.player as PlayerRecordsProperty;
 

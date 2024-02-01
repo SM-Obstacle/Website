@@ -2,7 +2,7 @@ import TableRow from "@/components/TableRow";
 import { gql } from "../__generated__/gql";
 import Time, { Date } from "@/components/Time";
 import { MPFormatLink } from "@/components/MPFormat";
-import { SearchParams, getSortState } from "@/lib/search-params";
+import { ServerProps, getSortState } from "@/lib/server-props";
 import { fetchGraphql } from "@/lib/utils";
 import { GlobalRankedRecord } from "@/lib/ranked-record";
 
@@ -24,10 +24,8 @@ const GET_RECORDS = gql(/* GraphQL */ `
 
 export default async function LatestRecords({
   searchParams
-}: {
-  searchParams: SearchParams,
-}) {
-  const dateSortBy = getSortState(searchParams["dateSortBy"]);
+}: ServerProps<{}, { dateSortBy?: string }>) {
+  const dateSortBy = getSortState(searchParams.dateSortBy);
   const records = (await fetchGraphql(GET_RECORDS, { dateSortBy })).records as GlobalRankedRecord[];
 
   return (

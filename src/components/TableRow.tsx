@@ -1,14 +1,16 @@
 "use client";
 
-import { PropsWithChildren, useCallback, useState } from "react";
+import { ForwardedRef, PropsWithChildren, forwardRef, useCallback, useState } from "react";
 
-export default function TableRow({
+function TableRowInner({
   children,
   onClick,
   unfold,
+  forwardedRef,
 }: {
   onClick?: () => void,
   unfold?: boolean,
+  forwardedRef: ForwardedRef<HTMLTableRowElement | null>,
 } & PropsWithChildren) {
   const [unfolded, setUnfolded] = useState(unfold ?? false);
 
@@ -18,8 +20,13 @@ export default function TableRow({
   }, [onClick]);
 
   return (
-    <tr tabIndex={0} onClick={handleClick} className={unfolded ? "unfolded" : undefined}>
+    <tr ref={forwardedRef} tabIndex={0} onClick={handleClick} className={unfolded ? "unfolded" : undefined}>
       {children}
     </tr>
   );
 }
+
+const TableRow = forwardRef<HTMLTableRowElement, Omit<Parameters<typeof TableRowInner>[0], "forwardedRef">>((props, ref) => (
+  <TableRowInner {...props} forwardedRef={ref} />
+));
+export default TableRow;

@@ -5,7 +5,8 @@ import { Metadata, ResolvingMetadata } from "next";
 import React from "react";
 import CampaignPlayerRow from "./CampaignPlayerRow";
 import { TypedDocumentNode } from "@graphql-typed-document-node/core";
-import { GetCampaignLeaderboardQuery } from "@/app/__generated__/graphql";
+import { GetCampaignLeaderboardQuery, GetCampaignPlayerInfoQuery } from "@/app/__generated__/graphql";
+import { SearchParams, ServerProps } from "@/lib/server-props";
 
 export const GET_CAMPAIGN_LEADERBOARD = gql(/* GraphQL */ `
   query GetCampaignLeaderboard($mappackId: String!) {
@@ -42,8 +43,10 @@ export const GET_CAMPAIGN_PLAYER_INFO = gql(/* GraphQL */ `
   }
 `);
 
+type SP = ServerProps<{ mappackId: string }, { player?: string | string[] }>;
+
 export async function generateMetadata(
-  { params }: { params: { mappackId: string } },
+  { params }: SP,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
   const oldTitle = (await parent).title?.absolute;
@@ -56,34 +59,39 @@ export async function generateMetadata(
 async function fetchSelectedPlayers(
   mappackId: string,
   mappackData: GetCampaignLeaderboardQuery["mappack"],
-  selectedPlayers: string | string[]
+  selectedPlayer: string | string[]
 ) {
-  if (typeof selectedPlayers === "string") {
-    selectedPlayers = [selectedPlayers];
+  // Only take the first player if it's an array
+  if (typeof selectedPlayer === "object") {
+    selectedPlayer = selectedPlayer[0];
+  }
+
+  let data: GetCampaignPlayerInfoQuery | null = null;
+  if (selectedPlayer) {
+    data = await fetchGraphql(GET_CAMPAIGN_PLAYER_INFO, {
+      mappackId,
+      login: selectedPlayer,
+    });
   }
 
   return {
     ...mappackData,
-    leaderboard: await Promise.all(mappackData.leaderboard.map(async (player) => {
+    leaderboard: mappackData.leaderboard.map((row) => {
       let ranks = null;
-      if (selectedPlayers.includes(player.player.login)) {
-        const data = await fetchGraphql(GET_CAMPAIGN_PLAYER_INFO, { mappackId, login: player.player.login });
-        ranks = data.mappack.player.ranks;
+      if (selectedPlayer === row.player.login) {
+        ranks = data?.mappack.player.ranks;
       }
-      return { ...player, ranks };
-    })),
+      return { ...row, ranks };
+    }),
   }
 }
 
 export default async function Campaign({
   params,
   searchParams,
-}: {
-  params: { mappackId: string; };
-  searchParams: { players?: string[] | string },
-}) {
+}: SP) {
   const mappack = (await fetchGraphql(GET_CAMPAIGN_LEADERBOARD, { mappackId: params.mappackId })).mappack;
-  const data = await fetchSelectedPlayers(params.mappackId, mappack, searchParams.players ?? []);
+  const data = await fetchSelectedPlayers(params.mappackId, mappack, searchParams.player ?? []);
 
   return (
     <table>
@@ -130,9 +138,9 @@ export default async function Campaign({
               <td className="worst_rank">{player.worstRank}</td>
             </CampaignPlayerRow>
             {player.ranks?.map((rank) => (
-              <tr className="additional">
+              <tr key={rank.map.gameId} className="additional">
                 <td className="rank">
-                  <span>
+                  <span style={rank.rank > rank.lastRank ? { color: "#adadadcc" } : undefined}>
                     {rank.rank}
                     <small>/{rank.lastRank}</small>
                   </span>
