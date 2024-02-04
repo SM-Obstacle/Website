@@ -1,0 +1,14 @@
+export interface IToken {
+  toHTML: () => string
+  toPlainText: () => string
+}
+
+export enum Style {
+  COLORED = 0x1000,
+  ITALIC = 0x2000,
+  BOLD = 0x4000,
+  SHADOWED = 0x8000,
+  CAPITALIZED = 0x10000,
+  WIDE = 0x20000,
+  NARROW = 0x40000,
+}
