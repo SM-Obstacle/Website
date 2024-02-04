@@ -10,7 +10,6 @@
     "compile": "graphql-codegen"
   },
   "dependencies": {
-    "@altrd/mpformat": "^0.2.0",
     "@apollo/client": "^3.9.0-rc.1",
     "graphql": "^16.8.1",
     "lodash": "^4.17.21",
