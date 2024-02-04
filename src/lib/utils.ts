@@ -1,4 +1,4 @@
-import { GraphQLRequest, IncrementalPayload, TypedDocumentNode } from "@apollo/client";
+import { IncrementalPayload, TypedDocumentNode } from "@apollo/client";
 import { print } from "graphql";
 
 // TODO: throw on error
@@ -26,7 +26,7 @@ export async function fetchGraphql<O, P = { [key: string]: any }>(
 }
 
 export function getApiHost() {
-  return "http://localhost:3001";
+  return process.env.RECORDS_API_HOST || "http://localhost:3001";
 }
 
 export function getGraphqlApiUrl() {
