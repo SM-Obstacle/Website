@@ -15,14 +15,11 @@ export default async function GiveTokenPage({
     body: JSON.stringify(searchParams),
   });
 
-  let err = null;
-  if (!res.ok) {
-    err = await res.json()
-      .catch((_) => ({
-        type: 105,
-        message: "Error response not JSON",
-      }));
-  }
+  const err = !res.ok && await res.json()
+    .catch((_) => ({
+      type: 105,
+      message: "Error response not JSON",
+    }));
 
   return (
     <div>
