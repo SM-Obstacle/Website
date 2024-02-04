@@ -1,6 +1,8 @@
 import { ServerProps } from "@/lib/server-props";
 import { getApiHost } from "@/lib/utils";
 
+const INVALID_MP_CODE_TYPE = 207;
+
 export default async function GiveTokenPage({
   searchParams,
 }: ServerProps) {
@@ -17,15 +19,9 @@ export default async function GiveTokenPage({
   if (!res.ok) {
     err = await res.json()
       .catch((_) => ({
-        err: 105,
+        type: 105,
         message: "Error response not JSON",
       }));
-  }
-
-  let h2Detail = null;
-  if (err?.type === 207) { // InvalidMPCode
-    h2Detail = `It looks like you logged in with a different account than the one used in game.
-Try to log out from the ManiaPlanet page, then retry with the correct account.`;
   }
 
   return (
@@ -38,11 +34,16 @@ Try to log out from the ManiaPlanet page, then retry with the correct account.`;
             Something went wrong. Please contact the developers
             (i.e. @ahmadbky or @MiLTanT on discord).
           </h1>
-          {h2Detail && <h2>{h2Detail}</h2>}
-          <pre style={{ backgroundColor: "#333c" }}>
-            State: {searchParams.state}
-            {JSON.stringify(err)}
-          </pre>
+          {err?.type === INVALID_MP_CODE_TYPE && (
+            <h2>
+              It looks like you logged in with a different account than the one used in game.
+              Try to log out from the ManiaPlanet page, then retry with the correct account.
+            </h2>
+          )}
+          <ul>
+            <li>State: <code>{searchParams.state}</code></li>
+            <li>Response: <code>{JSON.stringify(err)}</code></li>
+          </ul>
         </>
       )}
     </div>
