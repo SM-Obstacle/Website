@@ -2,14 +2,14 @@ import { gql } from "@/app/__generated__";
 import { GetPlayerInfoQuery, SortState } from "@/app/__generated__/graphql";
 import MPFormat, { MPFormatLink } from "@/components/MPFormat";
 import Time, { Date } from "@/components/Time";
+import { parse, toPlainText } from "@/lib/mpformat/mpformat";
 import { RankedRecordOfPlayer } from "@/lib/ranked-record";
 import { ServerProps, getSortState } from "@/lib/server-props";
 import { fetchGraphql } from "@/lib/utils";
-import { parse, toPlainText } from "@altrd/mpformat";
 import { Metadata, ResolvingMetadata } from "next";
 import { cache } from "react";
 
-export const PLAYER_RECORDS_FRAGMENT = gql(/* GraphQL */ `
+const PLAYER_RECORDS_FRAGMENT = gql(/* GraphQL */ `
   fragment PlayerRecords on Player {
     records(dateSortBy: $dateSortBy) {
       map {

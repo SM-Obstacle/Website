@@ -8,7 +8,7 @@ import { TypedDocumentNode } from "@graphql-typed-document-node/core";
 import { GetCampaignLeaderboardQuery, GetCampaignPlayerInfoQuery } from "@/app/__generated__/graphql";
 import { SearchParams, ServerProps } from "@/lib/server-props";
 
-export const GET_CAMPAIGN_LEADERBOARD = gql(/* GraphQL */ `
+const GET_CAMPAIGN_LEADERBOARD = gql(/* GraphQL */ `
   query GetCampaignLeaderboard($mappackId: String!) {
     mappack(mappackId: $mappackId) {
       nbMaps
@@ -26,7 +26,7 @@ export const GET_CAMPAIGN_LEADERBOARD = gql(/* GraphQL */ `
   }
 `);
 
-export const GET_CAMPAIGN_PLAYER_INFO = gql(/* GraphQL */ `
+const GET_CAMPAIGN_PLAYER_INFO = gql(/* GraphQL */ `
   query GetCampaignPlayerInfo($mappackId: String!, $login: String!) {
     mappack(mappackId: $mappackId) {
       player(login: $login) {

@@ -1,8 +1,10 @@
+import { ServerProps } from "@/lib/server-props";
 import { Metadata, ResolvingMetadata } from "next";
 import Link from "next/link";
 import React from "react";
 
 export async function generateMetadata(
+  props: ServerProps,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
   const oldTitle = (await parent).title?.absolute ?? "Obstacle Leaderboards";

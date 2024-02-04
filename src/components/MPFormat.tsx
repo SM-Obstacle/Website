@@ -1,4 +1,4 @@
-import { toHTML, parse, toPlainText } from "@altrd/mpformat";
+import { parse, toHTML, toPlainText } from "@/lib/mpformat/mpformat";
 import Link from "next/link";
 
 export default function MPFormat({

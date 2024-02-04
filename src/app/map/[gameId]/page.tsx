@@ -1,6 +1,5 @@
 import { gql } from "@/app/__generated__";
 import { GetMapInfoQuery, SortState } from "@/app/__generated__/graphql";
-import { parse, toPlainText } from "@altrd/mpformat";
 import { Metadata, ResolvingMetadata } from "next";
 import { cache } from "react";
 import MxButton from "./MxButton";
@@ -9,8 +8,9 @@ import Time, { Date } from "@/components/Time";
 import { RankedRecordOfMap } from "@/lib/ranked-record";
 import { fetchGraphql } from "@/lib/utils";
 import { ServerProps, getSortState } from "@/lib/server-props";
+import { parse, toPlainText } from "@/lib/mpformat/mpformat";
 
-export const MAP_RECORDS_FRAGMENT = gql(/* GraphQL */ `
+const MAP_RECORDS_FRAGMENT = gql(/* GraphQL */ `
   fragment MapRecords on Map {
     records(rankSortBy: $rankSortBy, dateSortBy: $dateSortBy) {
       player {

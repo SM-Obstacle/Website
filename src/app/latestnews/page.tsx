@@ -3,7 +3,7 @@ export default function LatestNews() {
   return (
     <div>
       <h1>Obstacle 2.0 Release</h1>
-      <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/Qd3UzQ93aGE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+      <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/Qd3UzQ93aGE" title="YouTube video player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen></iframe>
       <p>Obstacle 2.0 is out! It brings a lot of new content, including:</p>
       <ul>
         <li>
@@ -13,7 +13,7 @@ export default function LatestNews() {
         </li>
         <li>
           <p><b>Titlepack menus</b>: A complete redesign made by ZenyoX and implemented by MiLTanT!</p>
-          <p>It should be clearer and more welcoming, and the new code should be more stable and maintainable coming forward. Some features are still a work in progress, but we think it's worth it to make the change now.</p>
+          <p>It should be clearer and more welcoming, and the new code should be more stable and maintainable coming forward. Some features are still a work in progress, but we think it&apos s worth it to make the change now.</p>
           <p>We hope you like it, suggestions appreciated :)</p>
         </li>
         <li>
@@ -28,7 +28,7 @@ export default function LatestNews() {
           <ul>
             <li>Space items: asteroids, stars, and custom grounds to pair up with...</li>
             <li>Lunar Mod: A texture pack made specifically to work on openplanet void maps.</li>
-            <li>LaunchNoWings: A new launcher design with a design close to nadeo's but without those anoying wings :D</li>
+            <li>LaunchNoWings: A new launcher design with a design close to nadeo&apos s but without those anoying wings :D</li>
             <li>Conductor and Terrain Tools: Helper blocks to help with conducting the bases color and voiding the ground.</li>
           </ul>
         </li>
