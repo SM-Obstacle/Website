@@ -14,10 +14,10 @@ function TableRowInner({
 } & PropsWithChildren) {
   const [unfolded, setUnfolded] = useState(unfold ?? false);
 
-  const handleClick = useCallback(() => {
+  const handleClick = () => {
     setUnfolded(!unfolded);
     (onClick ?? (() => { }))();
-  }, [onClick]);
+  };
 
   return (
     <tr ref={forwardedRef} tabIndex={0} onClick={handleClick} className={unfolded ? "unfolded" : undefined}>
@@ -29,4 +29,5 @@ function TableRowInner({
 const TableRow = forwardRef<HTMLTableRowElement, Omit<Parameters<typeof TableRowInner>[0], "forwardedRef">>((props, ref) => (
   <TableRowInner {...props} forwardedRef={ref} />
 ));
+TableRow.displayName = "TableRow";
 export default TableRow;
