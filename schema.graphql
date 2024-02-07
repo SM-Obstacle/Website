@@ -22,6 +22,7 @@ type Event {
 	admins: [Player!]!
 	categories: [EventCategory!]!
 	editions: [EventEdition!]!
+	edition(editionId: Int!): EventEdition!
 }
 
 type EventCategory {
@@ -32,6 +33,8 @@ type EventCategory {
 
 type EventEdition {
 	id: Int!
+	mappack: Mappack
+	admins: [Player!]!
 	event: Event!
 	name: String!
 	startDate: NaiveDateTime!
@@ -209,6 +212,7 @@ enum PlayerRole {
 type QueryRoot {
 	mappack(mappackId: String!): Mappack!
 	banishments: [Banishment!]!
+	event(handle: String!): Event!
 	events: [Event!]!
 	players(after: String, before: String, first: Int, last: Int): PlayerConnection!
 	maps(after: String, before: String, first: Int, last: Int): MapConnection!
