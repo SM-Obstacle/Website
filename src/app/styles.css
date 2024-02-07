@@ -114,7 +114,7 @@ nav a.active {
     padding: 1em;
     font-style: italic;
 }
-#toolbar_wrapper > span a.mpstring {
+#toolbar_wrapper a.mpstring {
     text-decoration: none;
 }
 #toolbar_wrapper > span a.mpstring::before {
@@ -140,6 +140,8 @@ main {
 
     border-radius: 10px;
     background-color: #000000dd;
+
+    overflow-y: scroll;
 }
 
 main > * {
