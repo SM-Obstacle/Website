@@ -1,5 +1,5 @@
 import { parse, toHTML, toPlainText } from "@/lib/mpformat/mpformat";
-import Link from "next/link";
+import Link, { LinkProps } from "next/link";
 
 export default function MPFormat({
   children,
@@ -16,17 +16,20 @@ export default function MPFormat({
 export function MPFormatLink({
   path,
   name,
+  component = Link,
 }: {
   path: string,
   name: string,
+  component?: React.ElementType<LinkProps>,
 }) {
+  const Component = component;
   return (
-    <Link
+    <Component
       title={toPlainText(parse(name))}
       href={path}
       className="mpstring"
     >
       <MPFormat>{name}</MPFormat>
-    </Link>
+    </Component>
   );
 }

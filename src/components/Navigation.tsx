@@ -10,7 +10,7 @@ const pages = [
   },
   {
     label: "Campaign",
-    path: "/campaign/29",
+    path: "/event/campaign/1",
   },
   "separator",
   {
