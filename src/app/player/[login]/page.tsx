@@ -6,7 +6,7 @@ import { parse, toPlainText } from "@/lib/mpformat/mpformat";
 import { RankedRecordOfPlayer } from "@/lib/ranked-record";
 import { ServerProps, getSortState } from "@/lib/server-props";
 import { fetchGraphql } from "@/lib/utils";
-import { Metadata, ResolvingMetadata } from "next";
+import { Metadata } from "next";
 import { cache } from "react";
 
 const PLAYER_RECORDS_FRAGMENT = gql(/* GraphQL */ `
@@ -56,13 +56,11 @@ export async function generateMetadata(
     params,
     searchParams,
   }: SP,
-  parent: ResolvingMetadata
 ): Promise<Metadata> {
-  const oldTitle = (await parent).title?.absolute;
   const playerInfo = (await fetchPlayerInfo(params.login, getSortState(searchParams.dateSortBy))).player;
 
   return {
-    title: `${oldTitle} - ${toPlainText(parse(playerInfo.name))}`,
+    title: toPlainText(parse(playerInfo.name)),
   };
 }
 

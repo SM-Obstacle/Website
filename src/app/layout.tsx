@@ -10,7 +10,10 @@ import Navigation from "@/components/Navigation";
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  title: "Obstacle Leaderboards",
+  title: {
+    default: "Obstacle Leaderboards",
+    template: "Obstacle Leaderboards - %s",
+  },
   icons: "/img/favicon.ico",
 };
 

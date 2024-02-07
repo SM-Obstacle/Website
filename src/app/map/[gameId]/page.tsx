@@ -1,6 +1,6 @@
 import { gql } from "@/app/__generated__";
 import { GetMapInfoQuery, SortState } from "@/app/__generated__/graphql";
-import { Metadata, ResolvingMetadata } from "next";
+import { Metadata } from "next";
 import { cache } from "react";
 import MxButton from "./MxButton";
 import MPFormat, { MPFormatLink } from "@/components/MPFormat";
@@ -69,13 +69,11 @@ export async function generateMetadata(
     params,
     searchParams,
   }: SP,
-  parent: ResolvingMetadata
 ): Promise<Metadata> {
-  const oldTitle = (await parent).title?.absolute;
   const mapInfo = (await fetchMapInfo(params.gameId, getSortState(searchParams["dateSortBy"]), getSortState(searchParams["rankSortBy"]))).map;
 
   return {
-    title: `${oldTitle} - ${toPlainText(parse(mapInfo.name))}`,
+    title: toPlainText(parse(mapInfo.name)),
   };
 }
 
