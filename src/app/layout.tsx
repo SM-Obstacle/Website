@@ -6,6 +6,7 @@ import {
   lato,
 } from "./fonts";
 import Navigation from "@/components/Navigation";
+import NextTopLoader from "nextjs-toploader";
 
 export const revalidate = 60;
 
@@ -28,6 +29,7 @@ export default function RootLayout({
       className={`${lato.variable} ${kenneyIcons.variable} ${forkawesomeManiaicons.variable}`}
     >
       <body>
+        <NextTopLoader height={2} showSpinner={false} />
         <Navigation />
 
         <div id="main_wrapper">
