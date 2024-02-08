@@ -1,4 +1,3 @@
-// TODO: fix this broken page
 export default function LatestNews() {
   return (
     <div>

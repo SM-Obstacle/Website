@@ -16,6 +16,7 @@ const documents = {
     "\n  query GetCampaignLeaderboard($eventHandle: String!, $editionId: Int!) {\n    event(handle: $eventHandle) {\n      admins {\n        login\n        name\n      }\n      edition(editionId: $editionId) {\n        name\n        startDate\n        bannerImgUrl\n        admins {\n          login\n          name\n        }\n        mappack {\n          nbMaps\n          leaderboard {\n            rank\n            player {\n              login\n              name\n            }\n            rankAvg\n            mapFinished\n            worstRank\n          }\n        }\n      }\n    }\n  }\n": types.GetCampaignLeaderboardDocument,
     "\n  query GetCampaignPlayerInfo($eventHandle: String!, $editionId: Int!, $login: String!) {\n    event(handle: $eventHandle) {\n      edition(editionId: $editionId) {\n        mappack {\n          player(login: $login) {\n            ranks {\n              rank\n              map {\n                gameId\n                name\n              }\n              lastRank\n            }\n\n          }\n        }\n      }\n    }\n  }\n": types.GetCampaignPlayerInfoDocument,
     "\n  query GetRecords($dateSortBy: SortState) {\n    records(dateSortBy: $dateSortBy) {\n      player {\n        login\n        name\n      }\n      map {\n        gameId\n        name\n      }\n      ...RecordBase\n    }\n  }\n": types.GetRecordsDocument,
+    "\n  query GetResourcesContent {\n    resourcesContent {\n      content\n      lastModified\n    }\n  }\n": types.GetResourcesContentDocument,
     "\n  fragment MapRecords on Map {\n    records(rankSortBy: $rankSortBy, dateSortBy: $dateSortBy) {\n      player {\n        login\n        name\n      }\n      ...RecordBase\n    }\n  }\n": types.MapRecordsFragmentDoc,
     "\n  query GetMapInfo(\n    $gameId: String!\n    $dateSortBy: SortState\n    $rankSortBy: SortState\n  ) {\n    map(gameId: $gameId) {\n      gameId\n      name\n      cpsNumber\n      reversed\n      player {\n        login\n        name\n      }\n      ...MapRecords\n    }\n  }\n": types.GetMapInfoDocument,
     "\n  query SortMapRecords(\n    $gameId: String!\n    $dateSortBy: SortState\n    $rankSortBy: SortState\n  ) {\n    map(gameId: $gameId) {\n      ...MapRecords\n    }\n  }\n": types.SortMapRecordsDocument,
@@ -51,6 +52,10 @@ export function gql(source: "\n  query GetCampaignPlayerInfo($eventHandle: Strin
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n  query GetRecords($dateSortBy: SortState) {\n    records(dateSortBy: $dateSortBy) {\n      player {\n        login\n        name\n      }\n      map {\n        gameId\n        name\n      }\n      ...RecordBase\n    }\n  }\n"): (typeof documents)["\n  query GetRecords($dateSortBy: SortState) {\n    records(dateSortBy: $dateSortBy) {\n      player {\n        login\n        name\n      }\n      map {\n        gameId\n        name\n      }\n      ...RecordBase\n    }\n  }\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  query GetResourcesContent {\n    resourcesContent {\n      content\n      lastModified\n    }\n  }\n"): (typeof documents)["\n  query GetResourcesContent {\n    resourcesContent {\n      content\n      lastModified\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

@@ -19,6 +19,7 @@ export async function fetchGraphql<O, P = { [key: string]: any }>(
   }).then((res) => res.json());
 
   if (out.errors) {
+    console.error(out.errors);
     throw new Error(out.errors[0].message);
   }
 

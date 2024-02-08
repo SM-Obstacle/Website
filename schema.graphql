@@ -123,6 +123,11 @@ type MedalPrice {
 	player: Player!
 }
 
+type MutationRoot {
+	updateResourcesContent(text: String!): ResourcesContent!
+	calcMappackScores(mappackId: String!): Mappack!
+}
+
 """
 ISO 8601 combined date and time without timezone.
 
@@ -210,6 +215,7 @@ enum PlayerRole {
 }
 
 type QueryRoot {
+	resourcesContent: ResourcesContent!
 	mappack(mappackId: String!): Mappack!
 	banishments: [Banishment!]!
 	event(handle: String!): Event!
@@ -251,6 +257,11 @@ enum RatingKind {
 	DIFFICULTY
 }
 
+type ResourcesContent {
+	content: String!
+	lastModified: NaiveDateTime!
+}
+
 enum SortState {
 	SORT
 	REVERSE
@@ -259,4 +270,5 @@ enum SortState {
 
 schema {
 	query: QueryRoot
+	mutation: MutationRoot
 }
