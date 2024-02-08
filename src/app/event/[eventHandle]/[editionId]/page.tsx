@@ -71,7 +71,6 @@ type SP = ServerProps<
   { player?: string | string[] }
 >;
 
-// TODO: retrieve the title from the event
 export async function generateMetadata(
   { params: { editionId: rawEditionId, eventHandle } }: SP,
 ): Promise<Metadata> {
