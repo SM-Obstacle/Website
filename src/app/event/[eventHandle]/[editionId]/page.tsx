@@ -56,7 +56,6 @@ const GET_CAMPAIGN_PLAYER_INFO = gql(/* GraphQL */ `
               }
               lastRank
             }
-
           }
         }
       }
