@@ -42,14 +42,21 @@ export type CheckpointTimes = {
   time: Scalars['Int']['output'];
 };
 
+export type CreateEditionParams = {
+  bannerImgUrl?: InputMaybe<Scalars['String']['input']>;
+  editionId: Scalars['Int']['input'];
+  mxId: Scalars['Int']['input'];
+};
+
 export type Event = {
   __typename?: 'Event';
   admins: Array<Player>;
   categories: Array<EventCategory>;
   cooldown?: Maybe<Scalars['Int']['output']>;
-  edition: EventEdition;
+  edition?: Maybe<EventEdition>;
   editions: Array<EventEdition>;
   handle: Scalars['String']['output'];
+  lastEdition?: Maybe<EventEdition>;
 };
 
 
@@ -124,6 +131,9 @@ export type MapEdge = {
 export type Mappack = {
   __typename?: 'Mappack';
   leaderboard: Array<MappackPlayer>;
+  mxAuthor?: Maybe<Scalars['String']['output']>;
+  mxCreatedAt?: Maybe<Scalars['NaiveDateTime']['output']>;
+  mxName?: Maybe<Scalars['String']['output']>;
   nbMaps: Scalars['Int']['output'];
   player: MappackPlayer;
 };
@@ -165,15 +175,43 @@ export type MedalPrice = {
   priceDate: Scalars['NaiveDateTime']['output'];
 };
 
+export type MutableEvent = {
+  __typename?: 'MutableEvent';
+  admins: Array<Player>;
+  categories: Array<EventCategory>;
+  cooldown?: Maybe<Scalars['Int']['output']>;
+  createEdition: EventEdition;
+  edition?: Maybe<EventEdition>;
+  editions: Array<EventEdition>;
+  handle: Scalars['String']['output'];
+  lastEdition?: Maybe<EventEdition>;
+};
+
+
+export type MutableEventCreateEditionArgs = {
+  params: CreateEditionParams;
+};
+
+
+export type MutableEventEditionArgs = {
+  editionId: Scalars['Int']['input'];
+};
+
 export type MutationRoot = {
   __typename?: 'MutationRoot';
   calcMappackScores: Mappack;
+  event: MutableEvent;
   updateResourcesContent: ResourcesContent;
 };
 
 
 export type MutationRootCalcMappackScoresArgs = {
   mappackId: Scalars['String']['input'];
+};
+
+
+export type MutationRootEventArgs = {
+  handle: Scalars['String']['input'];
 };
 
 
@@ -258,6 +296,7 @@ export type QueryRoot = {
   __typename?: 'QueryRoot';
   banishments: Array<Banishment>;
   event: Event;
+  eventEditionFromMxId?: Maybe<EventEdition>;
   events: Array<Event>;
   map: Map;
   mappack: Mappack;
@@ -273,6 +312,11 @@ export type QueryRoot = {
 
 export type QueryRootEventArgs = {
   handle: Scalars['String']['input'];
+};
+
+
+export type QueryRootEventEditionFromMxIdArgs = {
+  mxId: Scalars['Int']['input'];
 };
 
 
@@ -368,7 +412,7 @@ export type GetCampaignLeaderboardQueryVariables = Exact<{
 }>;
 
 
-export type GetCampaignLeaderboardQuery = { __typename?: 'QueryRoot', event: { __typename?: 'Event', admins: Array<{ __typename?: 'Player', login: any, name: any }>, edition: { __typename?: 'EventEdition', name: string, startDate: any, bannerImgUrl?: string | null, admins: Array<{ __typename?: 'Player', login: any, name: any }>, mappack?: { __typename?: 'Mappack', nbMaps: number, leaderboard: Array<{ __typename?: 'MappackPlayer', rank: number, rankAvg: number, mapFinished: number, worstRank: number, player: { __typename?: 'Player', login: any, name: any } }> } | null } } };
+export type GetCampaignLeaderboardQuery = { __typename?: 'QueryRoot', event: { __typename?: 'Event', admins: Array<{ __typename?: 'Player', login: any, name: any }>, edition?: { __typename?: 'EventEdition', name: string, startDate: any, bannerImgUrl?: string | null, admins: Array<{ __typename?: 'Player', login: any, name: any }>, mappack?: { __typename?: 'Mappack', nbMaps: number, leaderboard: Array<{ __typename?: 'MappackPlayer', rank: number, rankAvg: number, mapFinished: number, worstRank: number, player: { __typename?: 'Player', login: any, name: any } }> } | null } | null } };
 
 export type GetCampaignPlayerInfoQueryVariables = Exact<{
   eventHandle: Scalars['String']['input'];
@@ -377,27 +421,26 @@ export type GetCampaignPlayerInfoQueryVariables = Exact<{
 }>;
 
 
-export type GetCampaignPlayerInfoQuery = { __typename?: 'QueryRoot', event: { __typename?: 'Event', edition: { __typename?: 'EventEdition', mappack?: { __typename?: 'Mappack', player: { __typename?: 'MappackPlayer', ranks: Array<{ __typename?: 'MappackMap', rank: number, lastRank: number, map: { __typename?: 'Map', gameId: any, name: any } }> } } | null } } };
+export type GetCampaignPlayerInfoQuery = { __typename?: 'QueryRoot', event: { __typename?: 'Event', edition?: { __typename?: 'EventEdition', mappack?: { __typename?: 'Mappack', player: { __typename?: 'MappackPlayer', ranks: Array<{ __typename?: 'MappackMap', rank: number, lastRank: number, map: { __typename?: 'Map', gameId: any, name: any } }> } } | null } | null } };
 
 export type GetRecordsQueryVariables = Exact<{
   dateSortBy?: InputMaybe<SortState>;
 }>;
 
 
-export type GetRecordsQuery = { __typename?: 'QueryRoot', records: Array<(
-    { __typename?: 'RankedRecord', player: { __typename?: 'Player', login: any, name: any }, map: { __typename?: 'Map', gameId: any, name: any } }
-    & { ' $fragmentRefs'?: { 'RecordBaseFragment': RecordBaseFragment } }
-  )> };
+export type GetRecordsQuery = { __typename?: 'QueryRoot', records: Array<{ __typename?: 'RankedRecord', id: number, rank: number, time: number, recordDate: any, player: { __typename?: 'Player', login: any, name: any }, map: { __typename?: 'Map', gameId: any, name: any } }> };
+
+export type GetEventListQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type GetEventListQuery = { __typename?: 'QueryRoot', events: Array<{ __typename?: 'Event', handle: string, lastEdition?: { __typename?: 'EventEdition', id: number } | null }> };
 
 export type GetResourcesContentQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetResourcesContentQuery = { __typename?: 'QueryRoot', resourcesContent: { __typename?: 'ResourcesContent', content: string, lastModified: any } };
 
-export type MapRecordsFragment = { __typename?: 'Map', records: Array<(
-    { __typename?: 'RankedRecord', player: { __typename?: 'Player', login: any, name: any } }
-    & { ' $fragmentRefs'?: { 'RecordBaseFragment': RecordBaseFragment } }
-  )> } & { ' $fragmentName'?: 'MapRecordsFragment' };
+export type MapRecordsFragment = { __typename?: 'Map', records: Array<{ __typename?: 'RankedRecord', id: number, rank: number, time: number, recordDate: any, player: { __typename?: 'Player', login: any, name: any } }> };
 
 export type GetMapInfoQueryVariables = Exact<{
   gameId: Scalars['String']['input'];
@@ -406,10 +449,7 @@ export type GetMapInfoQueryVariables = Exact<{
 }>;
 
 
-export type GetMapInfoQuery = { __typename?: 'QueryRoot', map: (
-    { __typename?: 'Map', gameId: any, name: any, cpsNumber?: number | null, reversed: boolean, player: { __typename?: 'Player', login: any, name: any } }
-    & { ' $fragmentRefs'?: { 'MapRecordsFragment': MapRecordsFragment } }
-  ) };
+export type GetMapInfoQuery = { __typename?: 'QueryRoot', map: { __typename?: 'Map', gameId: any, name: any, cpsNumber?: number | null, reversed: boolean, player: { __typename?: 'Player', login: any, name: any }, records: Array<{ __typename?: 'RankedRecord', id: number, rank: number, time: number, recordDate: any, player: { __typename?: 'Player', login: any, name: any } }> } };
 
 export type SortMapRecordsQueryVariables = Exact<{
   gameId: Scalars['String']['input'];
@@ -418,15 +458,31 @@ export type SortMapRecordsQueryVariables = Exact<{
 }>;
 
 
-export type SortMapRecordsQuery = { __typename?: 'QueryRoot', map: (
-    { __typename?: 'Map' }
-    & { ' $fragmentRefs'?: { 'MapRecordsFragment': MapRecordsFragment } }
-  ) };
+export type SortMapRecordsQuery = { __typename?: 'QueryRoot', map: { __typename?: 'Map', records: Array<{ __typename?: 'RankedRecord', id: number, rank: number, time: number, recordDate: any, player: { __typename?: 'Player', login: any, name: any } }> } };
 
-export type PlayerRecordsFragment = { __typename?: 'Player', records: Array<(
-    { __typename?: 'RankedRecord', map: { __typename?: 'Map', gameId: any, name: any } }
-    & { ' $fragmentRefs'?: { 'RecordBaseFragment': RecordBaseFragment } }
-  )> } & { ' $fragmentName'?: 'PlayerRecordsFragment' };
+export type GetEventEditionFromMxIdQueryVariables = Exact<{
+  mxId: Scalars['Int']['input'];
+}>;
+
+
+export type GetEventEditionFromMxIdQuery = { __typename?: 'QueryRoot', eventEditionFromMxId?: { __typename?: 'EventEdition', id: number, event: { __typename?: 'Event', handle: string } } | null };
+
+export type GetMappackLeaderboardQueryVariables = Exact<{
+  mappackId: Scalars['String']['input'];
+}>;
+
+
+export type GetMappackLeaderboardQuery = { __typename?: 'QueryRoot', mappack: { __typename?: 'Mappack', mxAuthor?: string | null, mxCreatedAt?: any | null, mxName?: string | null, nbMaps: number, leaderboard: Array<{ __typename?: 'MappackPlayer', rank: number, rankAvg: number, mapFinished: number, worstRank: number, player: { __typename?: 'Player', login: any, name: any } }> } };
+
+export type GetMappackPlayerInfoQueryVariables = Exact<{
+  mappackId: Scalars['String']['input'];
+  login: Scalars['String']['input'];
+}>;
+
+
+export type GetMappackPlayerInfoQuery = { __typename?: 'QueryRoot', mappack: { __typename?: 'Mappack', player: { __typename?: 'MappackPlayer', ranks: Array<{ __typename?: 'MappackMap', rank: number, lastRank: number, map: { __typename?: 'Map', gameId: any, name: any } }> } } };
+
+export type PlayerRecordsFragment = { __typename?: 'Player', records: Array<{ __typename?: 'RankedRecord', id: number, rank: number, time: number, recordDate: any, map: { __typename?: 'Map', gameId: any, name: any } }> };
 
 export type GetPlayerInfoQueryVariables = Exact<{
   login: Scalars['String']['input'];
@@ -434,10 +490,7 @@ export type GetPlayerInfoQueryVariables = Exact<{
 }>;
 
 
-export type GetPlayerInfoQuery = { __typename?: 'QueryRoot', player: (
-    { __typename?: 'Player', login: any, name: any, zonePath?: string | null, role: PlayerRole }
-    & { ' $fragmentRefs'?: { 'PlayerRecordsFragment': PlayerRecordsFragment } }
-  ) };
+export type GetPlayerInfoQuery = { __typename?: 'QueryRoot', player: { __typename?: 'Player', login: any, name: any, zonePath?: string | null, role: PlayerRole, records: Array<{ __typename?: 'RankedRecord', id: number, rank: number, time: number, recordDate: any, map: { __typename?: 'Map', gameId: any, name: any } }> } };
 
 export type SortPlayerRecordsQueryVariables = Exact<{
   login: Scalars['String']['input'];
@@ -445,21 +498,28 @@ export type SortPlayerRecordsQueryVariables = Exact<{
 }>;
 
 
-export type SortPlayerRecordsQuery = { __typename?: 'QueryRoot', player: (
-    { __typename?: 'Player' }
-    & { ' $fragmentRefs'?: { 'PlayerRecordsFragment': PlayerRecordsFragment } }
-  ) };
+export type SortPlayerRecordsQuery = { __typename?: 'QueryRoot', player: { __typename?: 'Player', records: Array<{ __typename?: 'RankedRecord', id: number, rank: number, time: number, recordDate: any, map: { __typename?: 'Map', gameId: any, name: any } }> } };
 
-export type RecordBaseFragment = { __typename?: 'RankedRecord', id: number, rank: number, time: number, recordDate: any } & { ' $fragmentName'?: 'RecordBaseFragment' };
+export type MappackLbFragment = { __typename?: 'Mappack', nbMaps: number, leaderboard: Array<{ __typename?: 'MappackPlayer', rank: number, rankAvg: number, mapFinished: number, worstRank: number, player: { __typename?: 'Player', login: any, name: any } }> };
+
+export type MappackPlayerInfoFragment = { __typename?: 'Mappack', player: { __typename?: 'MappackPlayer', ranks: Array<{ __typename?: 'MappackMap', rank: number, lastRank: number, map: { __typename?: 'Map', gameId: any, name: any } }> } };
+
+export type RecordBaseFragment = { __typename?: 'RankedRecord', id: number, rank: number, time: number, recordDate: any };
 
 export const RecordBaseFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"RecordBase"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"RankedRecord"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"rank"}},{"kind":"Field","name":{"kind":"Name","value":"time"}},{"kind":"Field","name":{"kind":"Name","value":"recordDate"}}]}}]} as unknown as DocumentNode<RecordBaseFragment, unknown>;
 export const MapRecordsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MapRecords"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Map"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"records"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"rankSortBy"},"value":{"kind":"Variable","name":{"kind":"Name","value":"rankSortBy"}}},{"kind":"Argument","name":{"kind":"Name","value":"dateSortBy"},"value":{"kind":"Variable","name":{"kind":"Name","value":"dateSortBy"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"player"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"login"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"RecordBase"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"RecordBase"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"RankedRecord"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"rank"}},{"kind":"Field","name":{"kind":"Name","value":"time"}},{"kind":"Field","name":{"kind":"Name","value":"recordDate"}}]}}]} as unknown as DocumentNode<MapRecordsFragment, unknown>;
 export const PlayerRecordsFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PlayerRecords"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Player"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"records"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"dateSortBy"},"value":{"kind":"Variable","name":{"kind":"Name","value":"dateSortBy"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"map"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"gameId"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"RecordBase"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"RecordBase"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"RankedRecord"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"rank"}},{"kind":"Field","name":{"kind":"Name","value":"time"}},{"kind":"Field","name":{"kind":"Name","value":"recordDate"}}]}}]} as unknown as DocumentNode<PlayerRecordsFragment, unknown>;
-export const GetCampaignLeaderboardDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetCampaignLeaderboard"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"eventHandle"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"editionId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"event"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"handle"},"value":{"kind":"Variable","name":{"kind":"Name","value":"eventHandle"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"admins"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"login"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"edition"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"editionId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"editionId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"startDate"}},{"kind":"Field","name":{"kind":"Name","value":"bannerImgUrl"}},{"kind":"Field","name":{"kind":"Name","value":"admins"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"login"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"mappack"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nbMaps"}},{"kind":"Field","name":{"kind":"Name","value":"leaderboard"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"rank"}},{"kind":"Field","name":{"kind":"Name","value":"player"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"login"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"rankAvg"}},{"kind":"Field","name":{"kind":"Name","value":"mapFinished"}},{"kind":"Field","name":{"kind":"Name","value":"worstRank"}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetCampaignLeaderboardQuery, GetCampaignLeaderboardQueryVariables>;
-export const GetCampaignPlayerInfoDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetCampaignPlayerInfo"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"eventHandle"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"editionId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"login"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"event"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"handle"},"value":{"kind":"Variable","name":{"kind":"Name","value":"eventHandle"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edition"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"editionId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"editionId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"mappack"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"player"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"login"},"value":{"kind":"Variable","name":{"kind":"Name","value":"login"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ranks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"rank"}},{"kind":"Field","name":{"kind":"Name","value":"map"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"gameId"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"lastRank"}}]}}]}}]}}]}}]}}]}}]} as unknown as DocumentNode<GetCampaignPlayerInfoQuery, GetCampaignPlayerInfoQueryVariables>;
+export const MappackLbFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MappackLb"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Mappack"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nbMaps"}},{"kind":"Field","name":{"kind":"Name","value":"leaderboard"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"rank"}},{"kind":"Field","name":{"kind":"Name","value":"player"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"login"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"rankAvg"}},{"kind":"Field","name":{"kind":"Name","value":"mapFinished"}},{"kind":"Field","name":{"kind":"Name","value":"worstRank"}}]}}]}}]} as unknown as DocumentNode<MappackLbFragment, unknown>;
+export const MappackPlayerInfoFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MappackPlayerInfo"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Mappack"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"player"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"login"},"value":{"kind":"Variable","name":{"kind":"Name","value":"login"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ranks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"rank"}},{"kind":"Field","name":{"kind":"Name","value":"map"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"gameId"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"lastRank"}}]}}]}}]}}]} as unknown as DocumentNode<MappackPlayerInfoFragment, unknown>;
+export const GetCampaignLeaderboardDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetCampaignLeaderboard"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"eventHandle"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"editionId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"event"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"handle"},"value":{"kind":"Variable","name":{"kind":"Name","value":"eventHandle"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"admins"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"login"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"edition"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"editionId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"editionId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"startDate"}},{"kind":"Field","name":{"kind":"Name","value":"bannerImgUrl"}},{"kind":"Field","name":{"kind":"Name","value":"admins"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"login"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"mappack"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MappackLb"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MappackLb"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Mappack"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nbMaps"}},{"kind":"Field","name":{"kind":"Name","value":"leaderboard"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"rank"}},{"kind":"Field","name":{"kind":"Name","value":"player"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"login"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"rankAvg"}},{"kind":"Field","name":{"kind":"Name","value":"mapFinished"}},{"kind":"Field","name":{"kind":"Name","value":"worstRank"}}]}}]}}]} as unknown as DocumentNode<GetCampaignLeaderboardQuery, GetCampaignLeaderboardQueryVariables>;
+export const GetCampaignPlayerInfoDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetCampaignPlayerInfo"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"eventHandle"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"editionId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"login"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"event"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"handle"},"value":{"kind":"Variable","name":{"kind":"Name","value":"eventHandle"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"edition"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"editionId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"editionId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"mappack"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MappackPlayerInfo"}}]}}]}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MappackPlayerInfo"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Mappack"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"player"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"login"},"value":{"kind":"Variable","name":{"kind":"Name","value":"login"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ranks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"rank"}},{"kind":"Field","name":{"kind":"Name","value":"map"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"gameId"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"lastRank"}}]}}]}}]}}]} as unknown as DocumentNode<GetCampaignPlayerInfoQuery, GetCampaignPlayerInfoQueryVariables>;
 export const GetRecordsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetRecords"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"dateSortBy"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"SortState"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"records"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"dateSortBy"},"value":{"kind":"Variable","name":{"kind":"Name","value":"dateSortBy"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"player"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"login"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"map"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"gameId"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"RecordBase"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"RecordBase"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"RankedRecord"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"rank"}},{"kind":"Field","name":{"kind":"Name","value":"time"}},{"kind":"Field","name":{"kind":"Name","value":"recordDate"}}]}}]} as unknown as DocumentNode<GetRecordsQuery, GetRecordsQueryVariables>;
+export const GetEventListDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetEventList"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"events"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"handle"}},{"kind":"Field","name":{"kind":"Name","value":"lastEdition"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}}]} as unknown as DocumentNode<GetEventListQuery, GetEventListQueryVariables>;
 export const GetResourcesContentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetResourcesContent"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"resourcesContent"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"content"}},{"kind":"Field","name":{"kind":"Name","value":"lastModified"}}]}}]}}]} as unknown as DocumentNode<GetResourcesContentQuery, GetResourcesContentQueryVariables>;
 export const GetMapInfoDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetMapInfo"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"gameId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"dateSortBy"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"SortState"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"rankSortBy"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"SortState"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"map"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"gameId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"gameId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"gameId"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"cpsNumber"}},{"kind":"Field","name":{"kind":"Name","value":"reversed"}},{"kind":"Field","name":{"kind":"Name","value":"player"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"login"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"MapRecords"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"RecordBase"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"RankedRecord"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"rank"}},{"kind":"Field","name":{"kind":"Name","value":"time"}},{"kind":"Field","name":{"kind":"Name","value":"recordDate"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MapRecords"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Map"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"records"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"rankSortBy"},"value":{"kind":"Variable","name":{"kind":"Name","value":"rankSortBy"}}},{"kind":"Argument","name":{"kind":"Name","value":"dateSortBy"},"value":{"kind":"Variable","name":{"kind":"Name","value":"dateSortBy"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"player"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"login"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"RecordBase"}}]}}]}}]} as unknown as DocumentNode<GetMapInfoQuery, GetMapInfoQueryVariables>;
 export const SortMapRecordsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SortMapRecords"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"gameId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"dateSortBy"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"SortState"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"rankSortBy"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"SortState"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"map"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"gameId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"gameId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MapRecords"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"RecordBase"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"RankedRecord"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"rank"}},{"kind":"Field","name":{"kind":"Name","value":"time"}},{"kind":"Field","name":{"kind":"Name","value":"recordDate"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MapRecords"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Map"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"records"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"rankSortBy"},"value":{"kind":"Variable","name":{"kind":"Name","value":"rankSortBy"}}},{"kind":"Argument","name":{"kind":"Name","value":"dateSortBy"},"value":{"kind":"Variable","name":{"kind":"Name","value":"dateSortBy"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"player"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"login"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"RecordBase"}}]}}]}}]} as unknown as DocumentNode<SortMapRecordsQuery, SortMapRecordsQueryVariables>;
+export const GetEventEditionFromMxIdDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetEventEditionFromMxId"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"mxId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"eventEditionFromMxId"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"mxId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"mxId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"event"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"handle"}}]}}]}}]}}]} as unknown as DocumentNode<GetEventEditionFromMxIdQuery, GetEventEditionFromMxIdQueryVariables>;
+export const GetMappackLeaderboardDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetMappackLeaderboard"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"mappackId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"mappack"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"mappackId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"mappackId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"mxAuthor"}},{"kind":"Field","name":{"kind":"Name","value":"mxCreatedAt"}},{"kind":"Field","name":{"kind":"Name","value":"mxName"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"MappackLb"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MappackLb"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Mappack"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"nbMaps"}},{"kind":"Field","name":{"kind":"Name","value":"leaderboard"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"rank"}},{"kind":"Field","name":{"kind":"Name","value":"player"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"login"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"rankAvg"}},{"kind":"Field","name":{"kind":"Name","value":"mapFinished"}},{"kind":"Field","name":{"kind":"Name","value":"worstRank"}}]}}]}}]} as unknown as DocumentNode<GetMappackLeaderboardQuery, GetMappackLeaderboardQueryVariables>;
+export const GetMappackPlayerInfoDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetMappackPlayerInfo"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"mappackId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"login"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"mappack"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"mappackId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"mappackId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"MappackPlayerInfo"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"MappackPlayerInfo"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Mappack"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"player"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"login"},"value":{"kind":"Variable","name":{"kind":"Name","value":"login"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ranks"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"rank"}},{"kind":"Field","name":{"kind":"Name","value":"map"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"gameId"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"Field","name":{"kind":"Name","value":"lastRank"}}]}}]}}]}}]} as unknown as DocumentNode<GetMappackPlayerInfoQuery, GetMappackPlayerInfoQueryVariables>;
 export const GetPlayerInfoDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetPlayerInfo"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"login"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"dateSortBy"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"SortState"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"player"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"login"},"value":{"kind":"Variable","name":{"kind":"Name","value":"login"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"login"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"zonePath"}},{"kind":"Field","name":{"kind":"Name","value":"role"}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"PlayerRecords"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"RecordBase"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"RankedRecord"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"rank"}},{"kind":"Field","name":{"kind":"Name","value":"time"}},{"kind":"Field","name":{"kind":"Name","value":"recordDate"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PlayerRecords"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Player"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"records"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"dateSortBy"},"value":{"kind":"Variable","name":{"kind":"Name","value":"dateSortBy"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"map"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"gameId"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"RecordBase"}}]}}]}}]} as unknown as DocumentNode<GetPlayerInfoQuery, GetPlayerInfoQueryVariables>;
 export const SortPlayerRecordsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SortPlayerRecords"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"login"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"dateSortBy"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"SortState"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"player"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"login"},"value":{"kind":"Variable","name":{"kind":"Name","value":"login"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"PlayerRecords"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"RecordBase"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"RankedRecord"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"rank"}},{"kind":"Field","name":{"kind":"Name","value":"time"}},{"kind":"Field","name":{"kind":"Name","value":"recordDate"}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"PlayerRecords"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"Player"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"records"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"dateSortBy"},"value":{"kind":"Variable","name":{"kind":"Name","value":"dateSortBy"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"map"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"gameId"}},{"kind":"Field","name":{"kind":"Name","value":"name"}}]}},{"kind":"FragmentSpread","name":{"kind":"Name","value":"RecordBase"}}]}}]}}]} as unknown as DocumentNode<SortPlayerRecordsQuery, SortPlayerRecordsQueryVariables>;

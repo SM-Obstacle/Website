@@ -1,3 +1,17 @@
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #333;
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: #222;
+}
+
 body,
 html {
     margin: 0;
@@ -83,7 +97,7 @@ nav a {
     text-decoration: none;
 }
 
-nav a.active {
+nav a.active, nav span.active {
     color: #346ab4;
 }
 
@@ -141,7 +155,7 @@ main {
     border-radius: 10px;
     background-color: #000000dd;
 
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 main > * {
@@ -317,10 +331,6 @@ main table tr.unfolded:not(:has(+ tr)) td {
 }
 
 @media only screen and (max-width: 870px) {
-    ::-webkit-scrollbar {
-        display: none;
-    }
-
     #main_wrapper main {
         height: calc(100% - 14px);
         width: calc(100% - 4px);
@@ -341,13 +351,13 @@ main table tr.unfolded:not(:has(+ tr)) td {
         justify-content: right;
     }
     #menu_opened:not(:checked) ~ ul {
+        overflow: hidden;
         max-height: 0px;
         padding: 0;
     }
 
     nav ul {
         max-height: 500px;
-        overflow: hidden;
         transition:
             padding 0.2s ease-in,
             max-height 0.2s linear;
