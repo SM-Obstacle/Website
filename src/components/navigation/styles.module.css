@@ -2,6 +2,7 @@
   background-color: inherit;
   color: white;
   padding: 10px;
+  transition: background-color .1s;
 }
 
 .dropbtn:hover {
@@ -17,6 +18,17 @@
   display: none;
   position: absolute;
   transform: translateY(10px);
+  animation: dropdownContentWrapperTransition .2s;
+}
+
+@keyframes dropdownContentWrapperTransition {
+  from {
+    opacity: 0%;
+  }
+
+  to {
+    opacity: 100%;
+  }
 }
 
 .dropdownContent {
@@ -32,6 +44,8 @@
   color: white;
   padding: 8px 12px;
   display: block;
+  border: solid black 1px;
+  transition: background-color .1s, color .2s;
 }
 
 .dropdownContent a:first-child {
@@ -44,7 +58,9 @@
   border-bottom-right-radius: 10px;
 }
 
-.dropdownContent a:hover {background-color: #333333;}
+.dropdownContent a:hover {
+  background-color: #333333;
+}
 
 .dropdown:hover .dropdownContentWrapper {display: block;}
 
