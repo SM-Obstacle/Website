@@ -46,7 +46,30 @@ type EventEdition {
 	name: String!
 	startDate: NaiveDateTime!
 	bannerImgUrl: String
+	player(login: String!): EventEditionPlayer!
 	categories: [EventCategory!]!
+}
+
+type EventEditionMapExt {
+	map: Map!
+	lastRank: Int!
+	medalTimes: MedalTimes!
+}
+
+type EventEditionPlayer {
+	categorizedRanks: [EventEditionPlayerCategorizedRank!]!
+}
+
+type EventEditionPlayerCategorizedRank {
+	categoryName: Escaped!
+	bannerImgUrl: String
+	ranks: [EventEditionPlayerRank!]!
+}
+
+type EventEditionPlayerRank {
+	rank: Int!
+	time: Int!
+	map: EventEditionMapExt!
 }
 
 
@@ -131,6 +154,13 @@ type MedalPrice {
 	medal: Medal!
 	map: Map!
 	player: Player!
+}
+
+type MedalTimes {
+	bronzeTime: Int!
+	silverTime: Int!
+	goldTime: Int!
+	championTime: Int!
 }
 
 type MutableEvent {

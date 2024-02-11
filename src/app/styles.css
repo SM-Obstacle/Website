@@ -4,8 +4,6 @@
 
 ::-webkit-scrollbar-thumb {
     background-color: #333;
-    border-top-right-radius: 10px;
-    border-bottom-right-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -230,10 +228,15 @@ main table td {
 main table tr > :not(.map, .sr_player, .player:not(.preview)) {
     text-align: center;
 }
-main table .rank {
-    padding-left: 35px;
+main table .rank, main table .medals {
     width: 110px;
     min-width: 110px;
+}
+main table .rank {
+    padding-left: 35px;
+}
+main table .medals {
+    padding-right: 35px;
 }
 
 main table .time {

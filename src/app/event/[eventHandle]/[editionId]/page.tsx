@@ -1,13 +1,17 @@
 import { gql } from "@/app/__generated__";
 import { MPFormatLink } from "@/components/MPFormat";
-import { fetchGraphql } from "@/lib/utils";
+import { cmpMedals, fetchGraphql } from "@/lib/utils";
 import { Metadata } from "next";
 import React, { CSSProperties } from "react";
 import { ServerProps } from "@/lib/server-props";
 import moment from "moment";
 import { fetchSelectedPlayers } from "@/lib/mappack-fragments";
 import { CampaignHeader, CampaignTable } from "@/components/CampaignMain";
-import { MappackLbFragment } from "@/app/__generated__/graphql";
+import { MappackLbFragment, Medal, MedalTimes } from "@/app/__generated__/graphql";
+import CampaignPlayerRow from "./CampaignPlayerRow";
+import NoPropagationLink from "@/components/NoPropagationLink";
+import MedalImage from "./Medal";
+import Time from "@/components/Time";
 
 const GET_CAMPAIGN_LEADERBOARD = gql(/* GraphQL */ `
   query GetCampaignLeaderboard($eventHandle: String!, $editionId: Int!) {
@@ -36,8 +40,28 @@ const GET_CAMPAIGN_PLAYER_INFO = gql(/* GraphQL */ `
   query GetCampaignPlayerInfo($eventHandle: String!, $editionId: Int!, $login: String!) {
     event(handle: $eventHandle) {
       edition(editionId: $editionId) {
-        mappack {
-          ...MappackPlayerInfo
+        player(login: $login) {
+          categorizedRanks {
+            categoryName
+            bannerImgUrl
+            ranks {
+              rank
+              time
+              map {
+                map {
+                  gameId
+                  name
+                }
+                lastRank
+                medalTimes {
+                  bronzeTime
+                  silverTime
+                  goldTime
+                  championTime
+                }
+              }
+            }
+          }
         }
       }
     }
@@ -77,10 +101,44 @@ async function fetchPlayers(
       eventHandle,
       editionId,
       login,
-    }).then((data) => data.event.edition!.mappack);
+    }).then((data) => data.event.edition!.player.categorizedRanks);
   };
 
-  return fetchSelectedPlayers(mappackData, selectedPlayer, fetchPlayerInfo as any);
+  if (Array.isArray(selectedPlayer)) {
+    selectedPlayer = selectedPlayer[0];
+  }
+
+  const data = selectedPlayer && await fetchPlayerInfo(selectedPlayer);
+
+  const withMedalPerMap = data && data.filter((rank) => rank.ranks.length > 0)
+    .map((rank) => ({
+      ...rank,
+      ranks: rank.ranks.map((rank) => ({
+        ...rank,
+        map: {
+          ...rank.map,
+          medal: rank.time > rank.map.medalTimes.bronzeTime ? null
+            : rank.time > rank.map.medalTimes.silverTime ? Medal.Bronze
+              : rank.time > rank.map.medalTimes.goldTime ? Medal.Silver
+                : rank.time > rank.map.medalTimes.championTime ? Medal.Gold
+                  : Medal.Champion
+        }
+      }))
+    }));
+
+  const withMedalPerCategory = withMedalPerMap && withMedalPerMap.map((rank) => ({
+    ...rank,
+    medal: rank.ranks.length > 0 && rank.ranks.map((rank) => rank.map.medal)
+      .reduce((medalAcc, medal) => cmpMedals(medalAcc, medal) > 0 ? medal : medalAcc, Medal.Champion)
+  }));
+
+  return {
+    ...mappackData,
+    leaderboard: mappackData?.leaderboard.map((row) => {
+      const ranks = selectedPlayer === row.player.login && withMedalPerCategory;
+      return { ...row, ranks };
+    }),
+  };
 }
 
 export default async function Campaign({ params: { editionId: rawEditionId, eventHandle }, searchParams }: SP) {
@@ -126,7 +184,92 @@ export default async function Campaign({ params: { editionId: rawEditionId, even
         style={toolbarBg}
       />
 
-      <CampaignTable data={data} nbMaps={mappack!.nbMaps} />
+      <table>
+        <thead>
+          <tr>
+            <th className="rank">
+              <span>Rank</span>
+            </th>
+            <th className="sr_player">
+              <span>Player</span>
+            </th>
+            <th className="rank_avg">
+              <span>Rank </span>
+              <span>Average</span>
+            </th>
+            <th className="map_finished">
+              <span>Map </span>
+              <span>Finished</span>
+            </th>
+            <th className="worst_rank">
+              <span>Worst </span>
+              <span>Rank</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {data.leaderboard?.map((player, i) => (
+            <React.Fragment key={i}>
+              <CampaignPlayerRow
+                unfold={player.ranks !== false}
+                login={player.player.login}
+              >
+                <td className="rank">{player.rank}</td>
+                <td className="sr_player">
+                  <MPFormatLink
+                    component={NoPropagationLink}
+                    path={`/player/${player.player.login}`}
+                    name={player.player.name}
+                  />
+                </td>
+                <td className="rank_avg">{player.rankAvg}</td>
+                <td className="map_finished">
+                  <span>
+                    {player.mapFinished}
+                    <small>/{mappack?.nbMaps}</small>
+                  </span>
+                </td>
+                <td className="worst_rank">{player.worstRank}</td>
+              </CampaignPlayerRow>
+              {player.ranks && player.ranks.map((rank) => (
+                <React.Fragment key={rank.categoryName}>
+                  <tr className="additional">
+                    <td className="sr_player">{rank.categoryName}</td>
+                    <td className="medals">
+                      <MedalImage medal={rank.medal || null} />
+                    </td>
+                  </tr>
+                  {rank.ranks.map((rank) => (
+                    <tr key={rank.map.map.gameId} className="additional">
+                      <td className="rank">
+                        <span
+                          style={rank.rank > rank.map.lastRank
+                            ? { color: "#adadadcc" }
+                            : undefined}
+                        >
+                          {rank.rank}
+                          <small>/{rank.map.lastRank}</small>
+                        </span>
+                      </td>
+                      <td className="sr_player">
+                        <MPFormatLink
+                          path={`/map/${rank.map.map.gameId}`}
+                          name={rank.map.map.name} />
+                      </td>
+                      <td className="time">
+                        <Time>{rank.time}</Time>
+                      </td>
+                      <td className="medals">
+                        <MedalImage medal={rank.map.medal} />
+                      </td>
+                    </tr>
+                  ))}
+                </React.Fragment>
+              ))}
+            </React.Fragment>
+          ))}
+        </tbody>
+      </table>
     </>
   );
 }

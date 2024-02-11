@@ -1,3 +1,4 @@
+import { Medal } from "@/app/__generated__/graphql";
 import { IncrementalPayload, TypedDocumentNode } from "@apollo/client";
 import { print } from "graphql";
 
@@ -32,4 +33,21 @@ export function getApiHost() {
 
 export function getGraphqlApiUrl() {
   return `${getApiHost()}/graphql`;
+}
+
+type NumericMedal = {
+  [K in Medal]: number;
+};
+
+const numericMedal: NumericMedal = {
+  [Medal.Bronze]: 1,
+  [Medal.Silver]: 2,
+  [Medal.Gold]: 3,
+  [Medal.Champion]: 4,
+};
+
+export function cmpMedals(a: Medal | null, b: Medal | null) {
+  const numA = a && numericMedal[a] || 0;
+  const numB = b && numericMedal[b] || 0;
+  return numA - numB;
 }
