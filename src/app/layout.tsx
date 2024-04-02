@@ -1,5 +1,6 @@
-import type { Metadata } from "next";
-import "./styles.css";
+import type { Metadata, Viewport } from "next";
+import "./globals.css";
+import "@/styles/globals.css";
 import {
   forkawesomeManiaicons,
   kenneyIcons,
@@ -9,8 +10,11 @@ import Navigation from "@/components/Navigation";
 import NextTopLoader from "nextjs-toploader";
 import { gql } from "./__generated__";
 import { fetchGraphql } from "@/lib/utils";
+import { styled } from "../../styled-system/jsx";
 
-export const revalidate = 60;
+export const viewport: Viewport = {
+  themeColor: '#060503',
+};
 
 export const metadata: Metadata = {
   title: {
@@ -29,12 +33,50 @@ const GET_EVENTS = gql(/* GraphQL */ `
   }
 `);
 
+const MainWrapper = styled('div', {
+  base: {
+    maxHeight: "calc(100% - 51px)",
+    flexGrow: 1,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  }
+});
+
+const Main = styled('main', {
+  base: {
+    height: "85%",
+    width: "80%",
+    maxHeight: "85%",
+    maxWidth: "70em",
+
+    display: "flex",
+    flexDirection: "column",
+
+    borderRadius: "10px",
+    backgroundColor: "#000000dd",
+
+    overflowY: "auto",
+
+    "@media only screen and (max-width: 870px)": {
+      height: "calc(100% - 14px)",
+      width: "calc(100% - 4px)",
+      maxHeight: "100%",
+      maxWidth: "100%",
+    }
+  }
+});
+
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   const events = await fetchGraphql(GET_EVENTS);
+  const filteredEvents = {
+    ...events,
+    events: events.events.filter((event) => event.lastEdition),
+  };
 
   return (
     <html
@@ -42,14 +84,14 @@ export default async function RootLayout({
       className={`${lato.variable} ${kenneyIcons.variable} ${forkawesomeManiaicons.variable}`}
     >
       <body>
-        <NextTopLoader height={2} showSpinner={false} />
-        <Navigation events={events} />
+        <NextTopLoader height={2} showSpinner={false} color="#346ab4" />
+        <Navigation events={filteredEvents} />
 
-        <div id="main_wrapper">
-          <main>
+        <MainWrapper>
+          <Main>
             {children}
-          </main>
-        </div>
+          </Main>
+        </MainWrapper>
       </body>
     </html>
   );

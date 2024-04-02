@@ -1,5 +1,6 @@
 "use client";
 
+import { ToolbarInput } from "@/components/ToolbarWrapper";
 import { useRef } from "react";
 
 export default function MxButton({ gameId }: { gameId: string }) {
@@ -26,6 +27,6 @@ export default function MxButton({ gameId }: { gameId: string }) {
   };
 
   return (
-    <input onClick={handleMxClick} type="image" src="/img/planet_mx_logo.png" />
+    <ToolbarInput onClick={handleMxClick} type="image" src="/img/planet_mx_logo.png" />
   );
 }

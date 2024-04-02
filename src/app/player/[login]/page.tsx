@@ -1,6 +1,7 @@
 import { gql } from "@/app/__generated__";
 import { GetPlayerInfoQuery, SortState } from "@/app/__generated__/graphql";
 import MPFormat, { MPFormatLink } from "@/components/MPFormat";
+import { Table, Tbody, Td, Th, Thead, Tr } from "@/components/Table";
 import Time, { Date } from "@/components/Time";
 import { parse, toPlainText } from "@/lib/mpformat/mpformat";
 import { RankedRecordOfPlayer } from "@/lib/ranked-record";
@@ -8,6 +9,7 @@ import { ServerProps, getSortState } from "@/lib/server-props";
 import { fetchGraphql } from "@/lib/utils";
 import { Metadata } from "next";
 import { cache } from "react";
+import PlayerToolbar from "./PlayerToolbar";
 
 const PLAYER_RECORDS_FRAGMENT = gql(/* GraphQL */ `
   fragment PlayerRecords on Player {
@@ -69,48 +71,45 @@ export default async function PlayerRecords({
   searchParams,
 }: SP) {
   const data = await fetchPlayerInfo(params.login, getSortState(searchParams["dateSortBy"]));
-  const playerInfo = data.player as PlayerRecordsProperty;
-
-  const playerRole = playerInfo.role[0] + playerInfo.role.slice(1).toLowerCase();
-  const playerZone = playerInfo.zonePath?.split('|').slice(0, 3).join('/');
 
   return (
     <>
-      <div id="toolbar_wrapper">
-        <h1><MPFormat>{playerInfo.name}</MPFormat></h1>
-        {playerZone && <span>{playerZone}</span>}
-        <span>{playerRole}</span>
-      </div>
+      <PlayerToolbar
+        role={data.player.role}
+        zonePath={data.player.zonePath}
+      >
+        <MPFormat>{data.player.name}</MPFormat>
+      </PlayerToolbar>
 
-      <table>
-        <thead>
-          <tr>
-            <th className="rank"><span>Rank</span></th>
-            <th className="map"><span>Map</span></th>
-            <th className="time"><span>Time</span></th>
-            <th className="date"><span>Date</span></th>
-          </tr>
-        </thead>
-        <tbody>
-          {playerInfo.records.map((record) => (
-            <tr tabIndex={0} key={record.id}>
-              <td className="rank">{record.rank}</td>
-              <td className="map">
+      <Table>
+        <Thead>
+          <Tr>
+            <Th rank hideRespv><span>Rank</span></Th>
+            <Th map padRespvFirst><span>Map</span></Th>
+            <Th time padRespvLast><span>Time</span></Th>
+            <Th date hideRespv><span>Date</span></Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {data.player.records.map((record) => (
+            <Tr key={record.id}>
+              <Td rank respvUnpadRank>{record.rank}</Td>
+              <Td map respvMb>
                 <MPFormatLink
                   path={`/map/${record.map.gameId}`}
                   name={record.map.name}
                 />
-              </td>
-              <td className="time">
+              </Td>
+              <Td time respvTime>
                 <Time>{record.time}</Time>
-              </td>
-              <td className="date">
+              </Td>
+              <Td date respvAbsoluteDate>
                 <Date onlyDate>{record.recordDate}</Date>
-              </td>
-            </tr>
+              </Td>
+            </Tr>
           ))}
-        </tbody>
-      </table>
+        </Tbody>
+      </Table>
     </>
   )
 }

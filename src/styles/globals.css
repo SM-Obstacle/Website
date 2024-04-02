@@ -1,0 +1,49 @@
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #333;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #222;
+}
+
+body,
+html {
+  margin: 0;
+  height: 100%;
+  min-width: 390px;
+  min-height: 390px;
+
+  font-weight: 400;
+  font-family: var(--lato), "Trebuchet MS", sans-serif, var(--forkAwesome),
+    var(--kenneyIcons);
+  color: white;
+  overflow: overlay;
+}
+
+body {
+  background-image: url("/img/background.jpg");
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+@media only screen and (max-width: 420px) {
+  html {
+    zoom: 0.8;
+  }
+}
+
+@media only screen and (max-width: 320px) {
+  html {
+    zoom: 0.6;
+  }
+}

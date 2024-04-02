@@ -34,3 +34,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+## Panda
+styled-system
+styled-system-studio
+
+# graphql-codegen
+__generated__

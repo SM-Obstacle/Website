@@ -36,6 +36,7 @@ type EventCategory {
 	handle: String!
 	name: String!
 	bannerImgUrl: String
+	hexColor: String
 }
 
 type EventEdition {
@@ -47,7 +48,23 @@ type EventEdition {
 	startDate: NaiveDateTime!
 	bannerImgUrl: String
 	player(login: String!): EventEditionPlayer!
+	map(gameId: String!): EventEditionMap!
 	categories: [EventCategory!]!
+}
+
+type EventEditionMap {
+	edition: EventEdition!
+	id: ID!
+	gameId: Escaped!
+	playerId: ID!
+	cpsNumber: Int
+	player: Player!
+	name: Escaped!
+	reversed: Boolean!
+	medalFor(reqLogin: String!): MedalPrice
+	ratings: [Rating!]!
+	averageRating: [PlayerRating!]!
+	records(rankSortBy: SortState, dateSortBy: SortState): [RankedRecord!]!
 }
 
 type EventEditionMapExt {
@@ -57,12 +74,15 @@ type EventEditionMapExt {
 }
 
 type EventEditionPlayer {
+	player: Player!
 	categorizedRanks: [EventEditionPlayerCategorizedRank!]!
 }
 
 type EventEditionPlayerCategorizedRank {
 	categoryName: Escaped!
 	bannerImgUrl: String
+	hexColor: String
+	nbMaps: Int!
 	ranks: [EventEditionPlayerRank!]!
 }
 
@@ -140,6 +160,7 @@ type MappackPlayer {
 	rankAvg: Float!
 	mapFinished: Int!
 	worstRank: Int!
+	lastMedal: Medal
 }
 
 enum Medal {

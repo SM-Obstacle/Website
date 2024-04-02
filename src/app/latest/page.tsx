@@ -1,10 +1,10 @@
-import TableRow from "@/components/TableRow";
 import { gql } from "../__generated__/gql";
 import Time, { Date } from "@/components/Time";
 import { MPFormatLink } from "@/components/MPFormat";
 import { ServerProps, getSortState } from "@/lib/server-props";
 import { fetchGraphql } from "@/lib/utils";
 import { GlobalRankedRecord } from "@/lib/ranked-record";
+import { Table, Tbody, Td, Th, Thead, Tr } from "@/components/Table";
 
 const GET_RECORDS = gql(/* GraphQL */ `
   query GetRecords($dateSortBy: SortState) {
@@ -29,41 +29,41 @@ export default async function LatestRecords({
   const records = (await fetchGraphql(GET_RECORDS, { dateSortBy })).records as GlobalRankedRecord[];
 
   return (
-    <table>
-      <thead>
-        <tr>
-          <th className="rank"><span>Rank</span></th>
-          <th className="preview player"><span>Player</span></th>
-          <th className="map"><span>Map</span></th>
-          <th className="time"><span>Time</span></th>
-          <th className="date"><span>Date</span></th>
-        </tr>
-      </thead>
-      <tbody>
+    <Table>
+      <Thead>
+        <Tr>
+          <Th rank hideRespv><span>Rank</span></Th>
+          <Th player padRespvFirst><span>Player</span></Th>
+          <Th map><span>Map</span></Th>
+          <Th time padRespvLast><span>Time</span></Th>
+          <Th date hideRespv><span>Date</span></Th>
+        </Tr>
+      </Thead>
+      <Tbody>
         {records.map((record) => (
-          <TableRow key={record.id}>
-            <td className="rank">{record.rank}</td>
-            <td className="preview player">
+          <Tr key={record.id}>
+            <Td rank respvUnpadRank>{record.rank}</Td>
+            <Td player respvMb>
               <MPFormatLink
                 path={`/player/${record.player.login}`}
                 name={record.player.name}
               />
-            </td>
-            <td className="map">
+            </Td>
+            <Td map respvMb>
               <MPFormatLink
                 path={`/map/${record.map.gameId}`}
                 name={record.map.name}
               />
-            </td>
-            <td className="time">
+            </Td>
+            <Td time respvTime>
               <Time>{record.time}</Time>
-            </td>
-            <td className="date">
+            </Td>
+            <Td date respvAbsoluteDate>
               <Date onlyDate>{record.recordDate}</Date>
-            </td>
-          </TableRow>
+            </Td>
+          </Tr>
         ))}
-      </tbody>
-    </table>
+      </Tbody>
+    </Table>
   )
 }

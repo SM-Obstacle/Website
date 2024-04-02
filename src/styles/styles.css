@@ -300,6 +300,8 @@ main table a.mpstring {
     text-decoration: none;
 }
 
+/* --- */
+
 main table tr.additional,
 main table tr.unfolded ~ tr:not(unfolded):not(.additional) ~ tr.additional {
     max-height: 0;

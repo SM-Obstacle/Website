@@ -1,6 +1,6 @@
 "use client";
 
-import Link, { LinkProps } from "next/link";
+import Link, { LinkProps } from "@/components/Link";
 import { PropsWithChildren } from "react";
 
 export default function NoPropagationLink({

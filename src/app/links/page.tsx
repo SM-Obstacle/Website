@@ -1,11 +1,12 @@
 import { Metadata } from "next";
 import React from "react";
-import css from "./style.module.css";
 
 import { fetchGraphql } from "@/lib/utils";
 import { gql } from "../__generated__";
 import moment from "moment";
 import Markdown from "react-markdown";
+import { Article, LastUpdate } from "@/components/Article";
+import Link from "@/components/Link";
 
 const GET_RESOURCES_CONTENT = gql(/* GraphQL */ `
   query GetResourcesContent {
@@ -20,16 +21,22 @@ export const metadata: Metadata = {
   title: "RESOURCES",
 };
 
+const MdLink = (props: React.ComponentProps<'a'>) => (
+  <Link {...props as React.ComponentProps<typeof Link>} explicit />
+);
+
 export default async function Links() {
   const content = (await fetchGraphql(GET_RESOURCES_CONTENT)).resourcesContent;
   const date = moment(content.lastModified).format("DD/MM/YYYY");
 
   return (
-    <div className={css.resources}>
+    <Article>
       <div>
-        <Markdown>{content.content}</Markdown>
+        <Markdown components={{
+          "a": MdLink
+        }}>{content.content}</Markdown>
       </div>
-      <span className={css.lastUpdate}>Last update: {date}</span>
-    </div>
+      <LastUpdate>Last update: {date}</LastUpdate>
+    </Article>
   );
 }

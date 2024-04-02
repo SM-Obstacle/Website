@@ -9,6 +9,8 @@ import { RankedRecordOfMap } from "@/lib/ranked-record";
 import { fetchGraphql } from "@/lib/utils";
 import { ServerProps, getSortState } from "@/lib/server-props";
 import { parse, toPlainText } from "@/lib/mpformat/mpformat";
+import { ToolBarWrapper, ToolbarSpan, ToolbarTitle } from "@/components/ToolbarWrapper";
+import { Table, Tbody, Td, Th, Thead, Tr } from "@/components/Table";
 
 const MAP_RECORDS_FRAGMENT = gql(/* GraphQL */ `
   fragment MapRecords on Map {
@@ -54,9 +56,9 @@ const SORT_MAP_RECORDS = gql(/* GraphQL */ `
   }
 `);
 
-type SP = ServerProps<{ gameId: string }, { dateSortBy?: string, rankSortBy?: string }>;
+export type SP = ServerProps<{ gameId: string }, { dateSortBy?: string, rankSortBy?: string }>;
 
-type MapRecordsProperty = GetMapInfoQuery["map"] & {
+export type MapRecordsProperty = GetMapInfoQuery["map"] & {
   records: RankedRecordOfMap[];
 };
 
@@ -77,10 +79,13 @@ export async function generateMetadata(
   };
 }
 
-export default async function MapRecords({
+export async function _MapRecords({
   params,
   searchParams,
-}: SP) {
+  fetchMapInfo
+}: SP & {
+  fetchMapInfo: (gameId: string, dateSortBy?: SortState, rankSortBy?: SortState) => Promise<GetMapInfoQuery>,
+}) {
   const data = await fetchMapInfo(params.gameId, getSortState(searchParams["dateSortBy"]), getSortState(searchParams["rankSortBy"]));
   const mapInfo = data.map as MapRecordsProperty;
 
@@ -92,47 +97,51 @@ export default async function MapRecords({
 
   return (
     <>
-      <div id="toolbar_wrapper">
-        <h1><MPFormat>{mapInfo.name}</MPFormat></h1>
-        <span>{cpsNumberText}</span>
-        <span>
-          <MPFormatLink
+      <ToolBarWrapper>
+        <ToolbarTitle><MPFormat>{mapInfo.name}</MPFormat></ToolbarTitle>
+        <ToolbarSpan>{cpsNumberText}</ToolbarSpan>
+        <ToolbarSpan>
+          By <MPFormatLink
             path={`/player/${mapInfo.player.login}`}
             name={mapInfo.player.name}
           />
-        </span>
+        </ToolbarSpan>
         <MxButton gameId={mapInfo.gameId} />
-      </div>
+      </ToolBarWrapper>
 
-      <table>
-        <thead>
-          <tr>
-            <th className="rank"><span>Rank</span></th>
-            <th className="player"><span>Player</span></th>
-            <th className="time"><span>Time</span></th>
-            <th className="date"><span>Date</span></th>
-          </tr>
-        </thead>
-        <tbody>
+      <Table>
+        <Thead>
+          <Tr>
+            <Th rank hideRespv><span>Rank</span></Th>
+            <Th player padRespvFirst><span>Player</span></Th>
+            <Th time padRespvLast><span>Time</span></Th>
+            <Th date hideRespv><span>Date</span></Th>
+          </Tr>
+        </Thead>
+        <Tbody>
           {mapInfo.records.map((record) => (
-            <tr tabIndex={0} key={record.id}>
-              <td className="rank">{record.rank}</td>
-              <td className="player">
+            <Tr key={record.id}>
+              <Td rank respvUnpadRank>{record.rank}</Td>
+              <Td player respvMb>
                 <MPFormatLink
                   path={`/player/${record.player.login}`}
                   name={record.player.name}
                 />
-              </td>
-              <td className="time">
+              </Td>
+              <Td time respvTime>
                 <Time>{record.time}</Time>
-              </td>
-              <td className="date">
+              </Td>
+              <Td date respvAbsoluteDate>
                 <Date onlyDate>{record.recordDate}</Date>
-              </td>
-            </tr>
+              </Td>
+            </Tr>
           ))}
-        </tbody>
-      </table>
+        </Tbody>
+      </Table>
     </>
   );
+}
+
+export default function MapRecords(sp: SP) {
+  return _MapRecords({ ...sp, fetchMapInfo });
 }

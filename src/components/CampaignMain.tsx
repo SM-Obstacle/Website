@@ -1,28 +1,49 @@
 import CampaignPlayerRow from "@/app/event/[eventHandle]/[editionId]/CampaignPlayerRow";
 import { fetchSelectedPlayers } from "@/lib/mappack-fragments";
-import React from "react";
-import { HTMLAttributes, PropsWithChildren } from "react";
+import React, { CSSProperties } from "react";
+import { HTMLAttributes } from "react";
 import { MPFormatLink } from "./MPFormat";
 import NoPropagationLink from "./NoPropagationLink";
+import { ToolBarWrapper, ToolbarTitle } from "./ToolbarWrapper";
+import { css } from "../../styled-system/css";
+import Image from "next/image";
 
 export function CampaignHeader({
   title,
   authors,
   startDate,
-  ...rest
+  bannerImgUrl,
 }: {
   title: string,
   authors: React.ReactNode,
   startDate: string,
-} & HTMLAttributes<HTMLDivElement>) {
+  bannerImgUrl: string | null | undefined,
+}) {
+  const campaignWrapper = css({
+    background: "var(--bannerImgUrl)",
+    backgroundSize: "cover",
+    boxShadow: "inset 0 0 7em black",
+    border: "solid black 1px",
+  });
+  const backgroundUrl = bannerImgUrl ? `url(${bannerImgUrl})` : "inherit";
+  const campaignTitleStyles = css({
+    flexGrow: 1,
+    "& h1": {
+      fontSize: "2em",
+      fontWeight: 900,
+    }
+  });
+
   return (
-    <div id="toolbar_wrapper" {...rest}>
-      <div style={{ flexGrow: 1 }}>
-        <h1>{title}</h1>
+    <ToolBarWrapper style={{
+      "--bannerImgUrl": backgroundUrl,
+    } as CSSProperties} className={campaignWrapper}>
+      <div className={campaignTitleStyles}>
+        <ToolbarTitle>{title}</ToolbarTitle>
         {authors}
       </div>
       <span>Start date: {startDate}</span>
-    </div>
+    </ToolBarWrapper>
   );
 }
 
@@ -61,7 +82,6 @@ export function CampaignTable({
         {data.leaderboard?.map((player, i) => (
           <React.Fragment key={i}>
             <CampaignPlayerRow
-              unfold={player.ranks !== false}
               login={player.player.login}
             >
               <td className="rank">{player.rank}</td>

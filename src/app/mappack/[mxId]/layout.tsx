@@ -1,5 +1,4 @@
 import { gql } from "@/app/__generated__";
-import { ServerProps } from "@/lib/server-props";
 import { fetchGraphql } from "@/lib/utils";
 import { redirect } from "next/navigation";
 import { PropsWithChildren } from "react";
@@ -15,9 +14,7 @@ const GET_EVENT_EDITION_FROM_MX_ID = gql(/* GraphQL */ `
   }
 `);
 
-type SP = ServerProps<{ mxId: string }>;
-
-export default async function Layout({ params, children }: SP & PropsWithChildren) {
+export default async function Layout({ params, children }: { params: { mxId: string } } & PropsWithChildren) {
   const mxId = parseInt(params.mxId);
 
   const eventEdition = await fetchGraphql(GET_EVENT_EDITION_FROM_MX_ID, {

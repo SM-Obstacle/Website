@@ -1,5 +1,6 @@
 import { parse, toHTML, toPlainText } from "@/lib/mpformat/mpformat";
-import Link, { LinkProps } from "next/link";
+import Link, { LinkProps } from "./Link";
+import css from "../styles/mpformat.module.css";
 
 export default function MPFormat({
   children,
@@ -27,7 +28,7 @@ export function MPFormatLink({
     <Component
       title={toPlainText(parse(name))}
       href={path}
-      className="mpstring"
+      className={css.mpstring}
     >
       <MPFormat>{name}</MPFormat>
     </Component>

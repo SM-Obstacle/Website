@@ -57,6 +57,7 @@ export default async function Mappack({ params, searchParams }: SP) {
   return (
     <>
       <CampaignHeader
+        bannerImgUrl={null}
         title={mappack.mxName!}
         startDate={startDate}
         authors={mappack.mxAuthor && (

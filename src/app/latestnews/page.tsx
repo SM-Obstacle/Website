@@ -1,8 +1,9 @@
-import css from "../links/style.module.css";
+import { Article, LastUpdate } from "@/components/Article";
+import Link from "@/components/Link";
 
 export default function LatestNews() {
   return (
-    <div className={css.resources}>
+    <Article>
       <div>
         <h1>Obstacle 2.0 Release</h1>
         <iframe
@@ -24,11 +25,11 @@ export default function LatestNews() {
           </li>
           <li>
             <p><b>Titlepack menus</b>: A complete redesign made by ZenyoX and implemented by MiLTanT!</p>
-            <p>It should be clearer and more welcoming, and the new code should be more stable and maintainable coming forward. Some features are still a work in progress, but we think it's worth it to make the change now.</p>
+            <p>It should be clearer and more welcoming, and the new code should be more stable and maintainable coming forward. Some features are still a work in progress, but we think it&apos s worth it to make the change now.</p>
             <p>We hope you like it, suggestions appreciated :)</p>
           </li>
           <li>
-            <p><b>Database and Website</b>: <a href="https://obstacle.titlepack.io">obstacle.titlepack.io</a> is the new official home of Obstacle.</p>
+            <p><b>Database and Website</b>: <Link explicit href="https://obstacle.titlepack.io">obstacle.titlepack.io</Link> is the new official home of Obstacle.</p>
             <p>But actually, this is just the surface of an impressive work that ahmad accomplished over the last few months. The API and database have been rethought so that many features and security measures will be easier to implement in the future, as well as a better error reporting.</p>
             <p>Starting now, you will sometimes be prompted to authentificate yourself via Maniaplanet services when entering the titlepack. This should ensure that nobody is posting records in your name (which, if they raise cheating concerns in your own name, could get <i>you</i> banned).</p>
             <p>Informations like checkpoint times are now also stored in the database for future use.</p>
@@ -39,7 +40,7 @@ export default function LatestNews() {
             <ul>
               <li>Space items: asteroids, stars, and custom grounds to pair up with...</li>
               <li>Lunar Mod: A texture pack made specifically to work on openplanet void maps.</li>
-              <li>LaunchNoWings: A new launcher design with a design close to nadeo's but without those anoying wings :D</li>
+              <li>LaunchNoWings: A new launcher design with a design close to nadeo&apos s but without those anoying wings :D</li>
               <li>Conductor and Terrain Tools: Helper blocks to help with conducting the bases color and voiding the ground.</li>
             </ul>
           </li>
@@ -47,7 +48,7 @@ export default function LatestNews() {
         <p>Looking forward to see you in-game,</p>
         <p>MiLTanT</p>
       </div>
-      <span className={css.lastUpdate}>Last update: 30/06/2023</span>
-    </div>
+      <LastUpdate>Last update: 30/06/2023</LastUpdate>
+    </Article>
   );
 }
