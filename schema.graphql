@@ -61,6 +61,7 @@ type EventEditionMap {
 	player: Player!
 	name: Escaped!
 	reversed: Boolean!
+	relatedEventEditions: [EventEdition!]!
 	medalFor(reqLogin: String!): MedalPrice
 	ratings: [Rating!]!
 	averageRating: [PlayerRating!]!
@@ -103,6 +104,7 @@ type Map implements Node {
 	player: Player!
 	name: Escaped!
 	reversed: Boolean!
+	relatedEventEditions: [EventEdition!]!
 	medalFor(reqLogin: String!): MedalPrice
 	ratings: [Rating!]!
 	averageRating: [PlayerRating!]!
