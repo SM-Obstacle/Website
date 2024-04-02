@@ -4,7 +4,7 @@ import React, { CSSProperties } from "react";
 import { HTMLAttributes } from "react";
 import { MPFormatLink } from "./MPFormat";
 import NoPropagationLink from "./NoPropagationLink";
-import { ToolBarWrapper, ToolbarTitle } from "./ToolbarWrapper";
+import { ToolBarWrapper, ToolbarTitle, ToolbarTitleWrapper } from "./ToolbarWrapper";
 import { css } from "../../styled-system/css";
 import Image from "next/image";
 
@@ -26,22 +26,15 @@ export function CampaignHeader({
     border: "solid black 1px",
   });
   const backgroundUrl = bannerImgUrl ? `url(${bannerImgUrl})` : "inherit";
-  const campaignTitleStyles = css({
-    flexGrow: 1,
-    "& h1": {
-      fontSize: "2em",
-      fontWeight: 900,
-    }
-  });
 
   return (
     <ToolBarWrapper style={{
       "--bannerImgUrl": backgroundUrl,
     } as CSSProperties} className={campaignWrapper}>
-      <div className={campaignTitleStyles}>
+      <ToolbarTitleWrapper>
         <ToolbarTitle>{title}</ToolbarTitle>
         {authors}
-      </div>
+      </ToolbarTitleWrapper>
       <span>Start date: {startDate}</span>
     </ToolBarWrapper>
   );

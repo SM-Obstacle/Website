@@ -22,6 +22,16 @@ export const ToolbarTitle = styled('h1', {
   }
 });
 
+export const ToolbarTitleWrapper = styled("div", {
+  base: {
+    flexGrow: 1,
+    "& h1": {
+      fontSize: "2em",
+      fontWeight: 900,
+    }
+  }
+});
+
 export const ToolbarSpan = styled("span", {
   base: {
     ".ToolbarWrapper > &": {

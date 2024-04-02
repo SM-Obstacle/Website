@@ -9,8 +9,9 @@ import { RankedRecordOfMap } from "@/lib/ranked-record";
 import { fetchGraphql } from "@/lib/utils";
 import { ServerProps, getSortState } from "@/lib/server-props";
 import { parse, toPlainText } from "@/lib/mpformat/mpformat";
-import { ToolBarWrapper, ToolbarSpan, ToolbarTitle } from "@/components/ToolbarWrapper";
+import { ToolBarWrapper, ToolbarSpan, ToolbarTitle as RawToolbarTitle, ToolbarTitleWrapper } from "@/components/ToolbarWrapper";
 import { Table, Tbody, Td, Th, Thead, Tr } from "@/components/Table";
+import Link from "@/components/Link";
 
 const MAP_RECORDS_FRAGMENT = gql(/* GraphQL */ `
   fragment MapRecords on Map {
@@ -31,6 +32,13 @@ const GET_MAP_INFO = gql(/* GraphQL */ `
     $rankSortBy: SortState
   ) {
     map(gameId: $gameId) {
+      relatedEventEditions {
+        name
+        event {
+          handle
+        }
+        id
+      }
       gameId
       name
       cpsNumber
@@ -58,9 +66,7 @@ const SORT_MAP_RECORDS = gql(/* GraphQL */ `
 
 export type SP = ServerProps<{ gameId: string }, { dateSortBy?: string, rankSortBy?: string }>;
 
-export type MapRecordsProperty = GetMapInfoQuery["map"] & {
-  records: RankedRecordOfMap[];
-};
+export type MapRecordsProperty = { map: Omit<GetMapInfoQuery["map"], "relatedEventEditions" | "__typename"> };
 
 const fetchMapInfo = cache(async (gameId: string, dateSortBy?: SortState, rankSortBy?: SortState) => {
   return fetchGraphql(GET_MAP_INFO, { gameId, dateSortBy, rankSortBy });
@@ -79,16 +85,13 @@ export async function generateMetadata(
   };
 }
 
-export async function _MapRecords({
-  params,
-  searchParams,
-  fetchMapInfo
-}: SP & {
-  fetchMapInfo: (gameId: string, dateSortBy?: SortState, rankSortBy?: SortState) => Promise<GetMapInfoQuery>,
+export function MapRecordsContent<Q extends MapRecordsProperty>({
+  data,
+  toolbarTitle,
+}: {
+  data: Q,
+  toolbarTitle: React.ReactNode,
 }) {
-  const data = await fetchMapInfo(params.gameId, getSortState(searchParams["dateSortBy"]), getSortState(searchParams["rankSortBy"]));
-  const mapInfo = data.map as MapRecordsProperty;
-
   let cpsNumberText = "";
   const cpsNumber = data.map.cpsNumber;
   if (typeof cpsNumber === "number") {
@@ -98,15 +101,15 @@ export async function _MapRecords({
   return (
     <>
       <ToolBarWrapper>
-        <ToolbarTitle><MPFormat>{mapInfo.name}</MPFormat></ToolbarTitle>
+        {toolbarTitle}
         <ToolbarSpan>{cpsNumberText}</ToolbarSpan>
         <ToolbarSpan>
           By <MPFormatLink
-            path={`/player/${mapInfo.player.login}`}
-            name={mapInfo.player.name}
+            path={`/player/${data.map.player.login}`}
+            name={data.map.player.name}
           />
         </ToolbarSpan>
-        <MxButton gameId={mapInfo.gameId} />
+        <MxButton gameId={data.map.gameId} />
       </ToolBarWrapper>
 
       <Table>
@@ -119,7 +122,7 @@ export async function _MapRecords({
           </Tr>
         </Thead>
         <Tbody>
-          {mapInfo.records.map((record) => (
+          {data.map.records.map((record) => (
             <Tr key={record.id}>
               <Td rank respvUnpadRank>{record.rank}</Td>
               <Td player respvMb>
@@ -142,6 +145,28 @@ export async function _MapRecords({
   );
 }
 
-export default function MapRecords(sp: SP) {
-  return _MapRecords({ ...sp, fetchMapInfo });
+function ToolbarTitle({ data }: { data: GetMapInfoQuery }) {
+  const relatedEvent = data.map.relatedEventEditions && data.map.relatedEventEditions[0];
+  return relatedEvent ? (
+    <ToolbarTitleWrapper>
+      <RawToolbarTitle><MPFormat>{data.map.name}</MPFormat></RawToolbarTitle>
+      {<span>Related to <Link explicit href={`/event/${relatedEvent.event.handle}/${relatedEvent.id}/map/${data.map.gameId}`}>
+        {relatedEvent.name}
+      </Link></span>}
+    </ToolbarTitleWrapper>
+  ) : (
+    <RawToolbarTitle><MPFormat>{data.map.name}</MPFormat></RawToolbarTitle>
+  );
+}
+
+export default async function MapRecords(sp: SP) {
+  const data = await fetchMapInfo(
+    sp.params.gameId,
+    getSortState(sp.searchParams.dateSortBy),
+    getSortState(sp.searchParams.rankSortBy)
+  );
+
+  return (
+    <MapRecordsContent data={data} toolbarTitle={<ToolbarTitle data={data} />} />
+  );
 }

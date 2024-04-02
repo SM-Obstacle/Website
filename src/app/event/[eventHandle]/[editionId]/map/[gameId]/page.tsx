@@ -1,7 +1,10 @@
 import { gql } from "@/app/__generated__";
-import { SortState } from "@/app/__generated__/graphql";
+import { GetEventMapInfoQuery, GetMapInfoQuery, SortState } from "@/app/__generated__/graphql";
 import * as MapPage from "@/app/map/[gameId]/page";
-import { ServerProps } from "@/lib/server-props";
+import Link from "@/components/Link";
+import MPFormat from "@/components/MPFormat";
+import { ToolbarTitleWrapper, ToolbarTitle as RawToolbarTitle } from "@/components/ToolbarWrapper";
+import { ServerProps, getSortState } from "@/lib/server-props";
 import { fetchGraphql } from "@/lib/utils";
 import { cache } from "react";
 
@@ -17,6 +20,7 @@ const GET_EVENT_MAP_INFO = gql(/* GraphQL */ `
   ) {
     event(handle: $eventHandle) {
       edition(editionId: $editionId) {
+        name
         map(gameId: $gameId) {
           gameId
           name
@@ -42,12 +46,11 @@ const GET_EVENT_MAP_INFO = gql(/* GraphQL */ `
 const fetchMapInfo = cache(
   async (
     eventHandle: string,
-    rawEditionId: string,
+    editionId: number,
     gameId: string,
     dateSortBy?: SortState,
     rankSortBy?: SortState
   ) => {
-    const editionId = parseInt(rawEditionId);
     return fetchGraphql(GET_EVENT_MAP_INFO, {
       eventHandle,
       editionId,
@@ -58,27 +61,44 @@ const fetchMapInfo = cache(
   }
 );
 
-export default function EventMapRecords(
+function ToolbarTitle({
+  mapName,
+  mapUid,
+  eventHandle,
+  editionId,
+  eventName,
+}: {
+  mapName: string,
+  mapUid: string,
+  eventHandle: string,
+  editionId: number,
+  eventName: string,
+}) {
+  return (
+    <ToolbarTitleWrapper>
+      <RawToolbarTitle><MPFormat>{mapName}</MPFormat></RawToolbarTitle>
+      {<span>on <Link explicit href={`/event/${eventHandle}/${editionId}`}>
+        {eventName}
+      </Link> (see <Link explicit href={`/map/${mapUid}`}>original</Link>)</span>}
+    </ToolbarTitleWrapper>
+  );
+}
+
+export default async function EventMapRecords(
   sp: ServerProps<
     MapPage.SP["params"] & { eventHandle: string; editionId: string },
     MapPage.SP["searchParams"]
   >
 ) {
-  return MapPage._MapRecords({
-    ...sp,
-    fetchMapInfo: async (
-      gameId: string,
-      dateSortBy?: SortState,
-      rankSortBy?: SortState
-    ) =>
-      (
-        await fetchMapInfo(
-          sp.params.eventHandle,
-          sp.params.editionId,
-          gameId,
-          dateSortBy,
-          rankSortBy
-        )
-      ).event.edition!,
-  } as any);
+  const editionId = parseInt(sp.params.editionId);
+  const data = (await fetchMapInfo(sp.params.eventHandle,
+    editionId,
+    sp.params.gameId,
+    getSortState(sp.searchParams.dateSortBy),
+    getSortState(sp.searchParams.rankSortBy),
+  ));
+
+  return (
+    <MapPage.MapRecordsContent data={data.event.edition!} toolbarTitle={<ToolbarTitle mapName={data.event.edition?.map.name} mapUid={data.event.edition?.map.gameId} eventHandle={sp.params.eventHandle} editionId={editionId} eventName={data.event.edition?.name ?? ""} />} />
+  );
 }
