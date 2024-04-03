@@ -34,7 +34,6 @@ export const Tr = styled("div", {
     alignItems: "center",
     tableLayout: "fixed",
     width: "100%",
-    fontFamily: "var(--lato)",
     fontWeight: 700,
     userSelect: "none",
 
