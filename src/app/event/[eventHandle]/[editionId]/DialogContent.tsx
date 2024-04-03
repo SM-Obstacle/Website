@@ -7,6 +7,7 @@ import { Flex, styled } from "../../../../../styled-system/jsx";
 import { MPFormatLink } from "@/components/MPFormat";
 import Image, { ImageProps } from "next/image";
 import { cmpMedals } from "@/lib/utils";
+import { CampaignPrefixSpan } from "./page";
 
 const getImg = (medal: string) => `/Medals/${medal}.png`;
 
@@ -76,11 +77,13 @@ export default function DialogContent({
   editionId,
   eventName,
   data,
+  nbMaps,
 }: {
   eventHandle: string,
   editionId: number,
   eventName: string | null | undefined,
   data: Data
+  nbMaps: number,
 }) {
   const dataWithMedals = insertMedalsIn(data);
 
@@ -99,6 +102,34 @@ export default function DialogContent({
 
       <Table>
         <Thead>
+          <Tr>
+            <Th rank hideRespv>
+              <span>Rank</span>
+            </Th>
+            <Th campaignAttr padRespvFirst>
+              <CampaignPrefixSpan>Rank </CampaignPrefixSpan>
+              <span>Average</span>
+            </Th>
+            <Th campaignAttr>
+              <CampaignPrefixSpan>Map </CampaignPrefixSpan>
+              <span>Finished</span>
+            </Th>
+            <Th campaignAttr>
+              <span>Worst </span>
+              <CampaignPrefixSpan>Rank</CampaignPrefixSpan>
+            </Th>
+          </Tr>
+          <Tr>
+            <Td rank respvUnpadRank>{dataWithMedals.rank}</Td>
+            <Td campaignAttr>{dataWithMedals.rankAvg}</Td>
+            <Td campaignAttr>
+              <span>
+                {dataWithMedals.mapFinished}
+                <small>/{nbMaps}</small>
+              </span>
+            </Td>
+            <Td campaignAttr>{dataWithMedals.worstRank}</Td>
+          </Tr>
           <Tr justifyContent="flex-start">
             <Th flex={1}>Category</Th>
             <Th flex={.1} textAlign="right"><MedalImg mdl={dataWithMedals.medal} /></Th>

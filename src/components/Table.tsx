@@ -15,6 +15,7 @@ export const Thead = styled('div', {
   base: {
     fontSize: "25px",
     display: "flex",
+    flexDir: "column",
     justifyContent: "space-evenly",
   }
 }, { defaultProps: { className: "Thead" } });

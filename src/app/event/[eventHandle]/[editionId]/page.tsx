@@ -47,6 +47,10 @@ const GET_CAMPAIGN_PLAYER_INFO = gql(/* GraphQL */ `
             zonePath
             role
           }
+          rank
+          rankAvg
+          mapFinished
+          worstRank
           categorizedRanks {
             categoryName
             bannerImgUrl
@@ -98,7 +102,7 @@ export async function generateMetadata(
   };
 }
 
-const CampaignPrefixSpan = styled("span", {
+export const CampaignPrefixSpan = styled("span", {
   base: {
     "@media only screen and (max-width: 1300px)": {
       display: "none",
@@ -142,6 +146,7 @@ export default async function Campaign({ params: { editionId: rawEditionId, even
             editionId={editionId}
             eventName={event.edition?.name}
             data={playerInfo}
+            nbMaps={mappack?.nbMaps || 0}
           />
         </Dialog>
       )}
