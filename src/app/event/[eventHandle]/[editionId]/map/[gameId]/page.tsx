@@ -74,12 +74,16 @@ function ToolbarTitle({
   editionId: number,
   eventName: string,
 }) {
+  // FIXME: this should be removed when we correctly fill the maps of benchmark 2
+  // with this, it's not possible to go back to this page from the original map
+  const originalUid = mapUid.endsWith('_benchmark') ? mapUid.substring(0, mapUid.length - '_benchmark'.length) : mapUid;
+
   return (
     <ToolbarTitleWrapper>
       <RawToolbarTitle><MPFormat>{mapName}</MPFormat></RawToolbarTitle>
       {<span>on <Link explicit href={`/event/${eventHandle}/${editionId}`}>
         {eventName}
-      </Link> (see <Link explicit href={`/map/${mapUid}`}>original</Link>)</span>}
+      </Link> (see <Link explicit href={`/map/${originalUid}`}>original</Link>)</span>}
     </ToolbarTitleWrapper>
   );
 }
