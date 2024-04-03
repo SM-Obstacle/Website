@@ -1,5 +1,5 @@
 import { gql } from "../__generated__/gql";
-import Time, { Date } from "@/components/Time";
+import Time, { Date, formatDate } from "@/components/Time";
 import { MPFormatLink } from "@/components/MPFormat";
 import { ServerProps, getSortState } from "@/lib/server-props";
 import { fetchGraphql } from "@/lib/utils";
@@ -58,7 +58,7 @@ export default async function LatestRecords({
             <Td time respvTime>
               <Time>{record.time}</Time>
             </Td>
-            <Td date respvAbsoluteDate>
+            <Td date respvAbsoluteDate title={formatDate(record.recordDate, false)}>
               <Date onlyDate>{record.recordDate}</Date>
             </Td>
           </Tr>

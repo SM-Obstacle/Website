@@ -19,8 +19,12 @@ export function formatTime(time: number): string {
   );
 }
 
+export function formatDate(date: string, onlyDate = true) {
+  return moment(date).format(onlyDate ? "DD/MM/YYYY" : "HH:mm:ss")
+}
+
 export function Date({ children, onlyDate }: { children: string; onlyDate?: boolean }) {
-  return moment(children).format(onlyDate ? "DD/MM/YYYY" : "HH:mm:ss")
+  return formatDate(children, onlyDate);
 }
 
 export default function Time({ children }: { children: number }) {

@@ -4,7 +4,7 @@ import { Metadata } from "next";
 import { cache } from "react";
 import MxButton from "./MxButton";
 import MPFormat, { MPFormatLink } from "@/components/MPFormat";
-import Time, { Date } from "@/components/Time";
+import Time, { Date, formatDate } from "@/components/Time";
 import { RankedRecordOfMap } from "@/lib/ranked-record";
 import { fetchGraphql } from "@/lib/utils";
 import { ServerProps, getSortState } from "@/lib/server-props";
@@ -134,7 +134,7 @@ export function MapRecordsContent<Q extends MapRecordsProperty>({
               <Td time respvTime>
                 <Time>{record.time}</Time>
               </Td>
-              <Td date respvAbsoluteDate>
+              <Td date respvAbsoluteDate title={formatDate(record.recordDate, false)}>
                 <Date onlyDate>{record.recordDate}</Date>
               </Td>
             </Tr>

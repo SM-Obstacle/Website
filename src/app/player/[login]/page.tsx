@@ -2,7 +2,7 @@ import { gql } from "@/app/__generated__";
 import { GetPlayerInfoQuery, SortState } from "@/app/__generated__/graphql";
 import MPFormat, { MPFormatLink } from "@/components/MPFormat";
 import { Table, Tbody, Td, Th, Thead, Tr } from "@/components/Table";
-import Time, { Date } from "@/components/Time";
+import Time, { Date, formatDate } from "@/components/Time";
 import { parse, toPlainText } from "@/lib/mpformat/mpformat";
 import { RankedRecordOfPlayer } from "@/lib/ranked-record";
 import { ServerProps, getSortState } from "@/lib/server-props";
@@ -103,7 +103,7 @@ export default async function PlayerRecords({
               <Td time respvTime>
                 <Time>{record.time}</Time>
               </Td>
-              <Td date respvAbsoluteDate>
+              <Td date respvAbsoluteDate title={formatDate(record.recordDate, false)}>
                 <Date onlyDate>{record.recordDate}</Date>
               </Td>
             </Tr>
