@@ -3,7 +3,7 @@ import PlayerToolbar from "@/app/player/[login]/PlayerToolbar";
 import { Table, Tbody, Td, Th, Thead, Tr } from "@/components/Table";
 import GroupedRows from "./GroupedRows";
 import { FaCircle } from "react-icons/fa";
-import { Flex, styled } from "../../../../../styled-system/jsx";
+import { Box, Flex, styled } from "../../../../../styled-system/jsx";
 import { MPFormatLink } from "@/components/MPFormat";
 import Image, { ImageProps } from "next/image";
 import { cmpMedals } from "@/lib/utils";
@@ -72,6 +72,24 @@ function insertMedalsIn(data: Data) {
   return withMedals;
 }
 
+const EventRowInfo = styled(Flex, {
+  base: {
+    justifyContent: "space-evenly",
+    alignItems: "center",
+    tableLayout: "fixed",
+  },
+  variants: {
+    head: {
+      true: {
+        pe: "10px",
+        "@media only screen and (max-width: 870px)": {
+          ps: "40px",
+        },
+      }
+    },
+  }
+});
+
 export default function DialogContent({
   eventHandle,
   editionId,
@@ -100,73 +118,110 @@ export default function DialogContent({
         {" on "}{eventName}
       </PlayerToolbar>
 
-      <Table>
-        <Thead>
-          <Tr>
-            <Th rank hideRespv>
-              <span>Rank</span>
-            </Th>
-            <Th campaignAttr padRespvFirst>
-              <CampaignPrefixSpan>Rank </CampaignPrefixSpan>
-              <span>Average</span>
-            </Th>
-            <Th campaignAttr>
-              <CampaignPrefixSpan>Map </CampaignPrefixSpan>
-              <span>Finished</span>
-            </Th>
-            <Th campaignAttr>
-              <span>Worst </span>
-              <CampaignPrefixSpan>Rank</CampaignPrefixSpan>
-            </Th>
-          </Tr>
-          <Tr>
-            <Td rank respvUnpadRank>{dataWithMedals.rank}</Td>
-            <Td campaignAttr>{dataWithMedals.rankAvg}</Td>
-            <Td campaignAttr>
-              <span>
-                {dataWithMedals.mapFinished}
-                <small>/{nbMaps}</small>
-              </span>
-            </Td>
-            <Td campaignAttr>{dataWithMedals.worstRank}</Td>
-          </Tr>
-          <Tr justifyContent="flex-start">
-            <Th flex={1}>Category</Th>
-            <Th flex={.1} textAlign="right"><MedalImg mdl={dataWithMedals.medal} /></Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {dataWithMedals.categorizedRanks.map((category, i) => category.ranks.length > 0 && (
-            <GroupedRows
-              key={i}
-              medal={<MedalImg mdl={category.medal} />}
-              head={<CategoryName>
-                {category.hexColor && <FaCircle color={`#${category.hexColor}`} />}
-                {category.categoryName}
-              </CategoryName>}
-            >
-              <Flex alignItems="center">
-                <Th rank hideRespv>Rank</Th>
-                <Th map padRespvFirst>Map</Th>
-                <Th hideRespv textAlign="right" minWidth={200}>Medals</Th>
+      <Tbody>
+
+        {/**
+         * Unfinished maps
+         */}
+
+        {data.unfinishedMaps.length > 0 && (
+          <>
+            <GroupedRows head={<CategoryName>Unfinished maps</CategoryName>}>
+              <Flex alignItems="center" justifyContent="space-between">
+                <Th>Map</Th>
+                <Th textAlign="right" minWidth={200}>Last rank</Th>
               </Flex>
-              {category.ranks.map((rank, j) => (
-                <Tr bgColor="black!" key={j}>
-                  <Td rank respvUnpadRank>{rank.rank}<small>/{rank.map.lastRank}</small></Td>
+              {data.unfinishedMaps.map((map) => (
+                <Tr bgColor="black!" key={map.map.gameId}>
                   <Td map respvMb>
                     <MPFormatLink
-                      path={`/event/${eventHandle}/${editionId}/map/${rank.map.map.gameId}`}
-                      name={rank.map.map.name} />
+                      path={`/event/${eventHandle}/${editionId}/map/${map.map.gameId}`}
+                      name={map.map.name}
+                    />
                   </Td>
-                  <Td textAlign="right" minWidth={200}>
-                    <MedalImg mdl={rank.medal} />
-                  </Td>
+                  <Td textAlign="right">{map.lastRank}</Td>
                 </Tr>
               ))}
             </GroupedRows>
-          ))}
-        </Tbody>
-      </Table>
+
+            <hr />
+          </>
+        )}
+
+        {/**
+         * Event row info
+         */}
+
+        <EventRowInfo head>
+          <Th rank hideRespv>
+            <span>Rank</span>
+          </Th>
+          <Th campaignAttr padRespvFirst player>
+            <CampaignPrefixSpan>Rank </CampaignPrefixSpan>
+            <span>Average</span>
+          </Th>
+          <Th campaignAttr alignRightSm>
+            <CampaignPrefixSpan>Map </CampaignPrefixSpan>
+            <span>Finished</span>
+          </Th>
+          <Th campaignAttr date hideRespv>
+            <span>Worst </span>
+            <CampaignPrefixSpan>Rank</CampaignPrefixSpan>
+          </Th>
+        </EventRowInfo>
+        <EventRowInfo>
+          <Td rank respvUnpadRank>{dataWithMedals.rank}</Td>
+          <Td campaignAttr player>{dataWithMedals.rankAvg}</Td>
+          <Td campaignAttr alignRightSm>
+            <span>
+              {dataWithMedals.mapFinished}
+              <small>/{nbMaps}</small>
+            </span>
+          </Td>
+          <Td campaignAttr date hideRespv>{dataWithMedals.worstRank}</Td>
+        </EventRowInfo>
+
+        <hr />
+
+        {/**
+         * Finished maps
+         */}
+
+        <Flex justifyContent="flex-start">
+          <Th flex={1}>Category</Th>
+          <Th flex={.1} textAlign="right"><MedalImg mdl={dataWithMedals.medal} /></Th>
+        </Flex>
+
+        {dataWithMedals.categorizedRanks.map((category, i) => category.ranks.length > 0 && (
+          <GroupedRows
+            key={i}
+            medal={<MedalImg mdl={category.medal} />}
+            head={<CategoryName>
+              {category.hexColor && <FaCircle color={`#${category.hexColor}`} />}
+              {category.categoryName}
+            </CategoryName>}
+          >
+            <Flex alignItems="center">
+              <Th rank hideRespv>Rank</Th>
+              <Th map padRespvFirst>Map</Th>
+              <Th hideRespv textAlign="right" minWidth={200}>Medals</Th>
+            </Flex>
+            {category.ranks.map((rank, j) => (
+              <Tr bgColor="black!" key={j}>
+                <Td rank respvUnpadRank>{rank.rank}<small>/{rank.map.lastRank}</small></Td>
+                <Td map respvMb>
+                  <MPFormatLink
+                    path={`/event/${eventHandle}/${editionId}/map/${rank.map.map.gameId}`}
+                    name={rank.map.map.name} />
+                </Td>
+                <Td textAlign="right" minWidth={200}>
+                  <MedalImg mdl={rank.medal} />
+                </Td>
+              </Tr>
+            ))}
+          </GroupedRows>
+        ))}
+      </Tbody>
     </>
   );
 }

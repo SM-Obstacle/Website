@@ -81,7 +81,7 @@ export default function Dialog({ login, children }: { login: string } & PropsWit
   return (
     <StyledDialog ref={ref} onClick={handleClose}>
       <CloseButton type="button" onClick={closeModal}>✕</CloseButton>
-      <Box display="flex" flexDirection="column" height="100%" overflowY="auto">
+      <Box display="flex" flexDirection="column" height="100%">
         {children}
       </Box>
     </StyledDialog>

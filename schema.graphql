@@ -81,6 +81,7 @@ type EventEditionPlayer {
 	mapFinished: Int!
 	worstRank: Int!
 	categorizedRanks: [EventEditionPlayerCategorizedRank!]!
+	unfinishedMaps: [EventEditionMapExt!]!
 }
 
 type EventEditionPlayerCategorizedRank {

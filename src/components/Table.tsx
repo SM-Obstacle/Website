@@ -24,7 +24,7 @@ export const Tbody = styled("div", {
   base: {
     fontSize: "20px",
     display: "block",
-    overflowY: "auto",
+    overflowY: "scroll",
   }
 }, { defaultProps: { className: "Tbody" } });
 
@@ -34,7 +34,6 @@ export const Tr = styled("div", {
     justifyContent: "space-evenly",
     alignItems: "center",
     tableLayout: "fixed",
-    width: "100%",
     fontWeight: 700,
     userSelect: "none",
 
@@ -124,6 +123,13 @@ const ThTd = styled("div", {
         }
       }
     },
+    alignRightSm: {
+      true: {
+        "@media only screen and (max-width: 870px)": {
+          textAlign: "right",
+        }
+      }
+    },
     map: {
       true: {
         flex: 2,
@@ -143,7 +149,14 @@ const ThTd = styled("div", {
         minWidth: 200,
         textAlign: "right",
       }
-    }
+    },
+    hideRespv: {
+      true: {
+        "@media only screen and (max-width: 870px)": {
+          display: "none",
+        }
+      }
+    },
   }
 });
 
@@ -153,13 +166,6 @@ export const Th = styled(ThTd, {
     fontWeight: 900,
   },
   variants: {
-    hideRespv: {
-      true: {
-        "@media only screen and (max-width: 870px)": {
-          display: "none",
-        }
-      }
-    },
     padRespvFirst: {
       true: {
         "@media only screen and (max-width: 870px)": {

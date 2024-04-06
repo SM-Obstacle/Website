@@ -74,6 +74,13 @@ const GET_CAMPAIGN_PLAYER_INFO = gql(/* GraphQL */ `
               }
             }
           }
+          unfinishedMaps {
+            map {
+              gameId
+              name
+            }
+            lastRank
+          }
         }
       }
     }
@@ -180,13 +187,13 @@ export default async function Campaign({ params: { editionId: rawEditionId, even
               <CampaignPrefixSpan>Rank </CampaignPrefixSpan>
               <span>Average</span>
             </Th>
-            <Th campaignAttr>
+            <Th campaignAttr alignRightSm>
               <CampaignPrefixSpan>Map </CampaignPrefixSpan>
               <span>Finished</span>
             </Th>
-            <Th campaignAttr>
-              <span>Worst </span>
-              <CampaignPrefixSpan>Rank</CampaignPrefixSpan>
+            <Th campaignAttr date hideRespv>
+              <span>Worst</span>
+              <CampaignPrefixSpan> Rank</CampaignPrefixSpan>
             </Th>
           </Tr>
         </Thead>
@@ -202,13 +209,13 @@ export default async function Campaign({ params: { editionId: rawEditionId, even
                 />
               </Td>
               <Td campaignAttr>{player.rankAvg}</Td>
-              <Td campaignAttr>
+              <Td campaignAttr alignRightSm>
                 <span>
                   {player.mapFinished}
                   <small>/{mappack?.nbMaps}</small>
                 </span>
               </Td>
-              <Td campaignAttr>{player.worstRank}</Td>
+              <Td campaignAttr date hideRespv>{player.worstRank}</Td>
             </CampaignPlayerRow>
           ))}
         </Tbody>
