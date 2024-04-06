@@ -12,6 +12,10 @@ const HeadRow = styled(Tr, {
     justifyContent: "flex-start",
     borderBottom: "solid black 2px",
     zIndex: 2000,
+
+    _hover: {
+      cursor: "pointer",
+    }
   }
 });
 

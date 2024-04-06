@@ -157,6 +157,15 @@ const ThTd = styled("div", {
         }
       }
     },
+    medal: {
+      true: {
+        minWidth: 200,
+        textAlign: "right",
+        "@media only screen and (max-width: 870px)": {
+          minWidth: 100,
+        }
+      }
+    }
   }
 });
 

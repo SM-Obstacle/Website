@@ -8,6 +8,7 @@ import { MPFormatLink } from "@/components/MPFormat";
 import Image, { ImageProps } from "next/image";
 import { cmpMedals } from "@/lib/utils";
 import { CampaignPrefixSpan } from "./page";
+import Time from "@/components/Time";
 
 const getImg = (medal: string) => `/Medals/${medal}.png`;
 
@@ -121,6 +122,41 @@ export default function DialogContent({
       <Tbody>
 
         {/**
+         * Event row info
+         */}
+
+        <EventRowInfo head>
+          <Th rank hideRespv>
+            <span>Rank</span>
+          </Th>
+          <Th campaignAttr padRespvFirst player>
+            <CampaignPrefixSpan>Rank </CampaignPrefixSpan>
+            <span>Average</span>
+          </Th>
+          <Th campaignAttr alignRightSm>
+            <CampaignPrefixSpan>Map </CampaignPrefixSpan>
+            <span>Finished</span>
+          </Th>
+          <Th campaignAttr date hideRespv>
+            <span>Worst</span>
+            <CampaignPrefixSpan> Rank</CampaignPrefixSpan>
+          </Th>
+        </EventRowInfo>
+        <EventRowInfo>
+          <Td rank respvUnpadRank>{dataWithMedals.rank}</Td>
+          <Td campaignAttr player>{dataWithMedals.rankAvg}</Td>
+          <Td campaignAttr alignRightSm>
+            <span>
+              {dataWithMedals.mapFinished}
+              <small>/{nbMaps}</small>
+            </span>
+          </Td>
+          <Td campaignAttr date hideRespv>{dataWithMedals.worstRank}</Td>
+        </EventRowInfo>
+
+        <hr />
+
+        {/**
          * Unfinished maps
          */}
 
@@ -149,46 +185,11 @@ export default function DialogContent({
         )}
 
         {/**
-         * Event row info
-         */}
-
-        <EventRowInfo head>
-          <Th rank hideRespv>
-            <span>Rank</span>
-          </Th>
-          <Th campaignAttr padRespvFirst player>
-            <CampaignPrefixSpan>Rank </CampaignPrefixSpan>
-            <span>Average</span>
-          </Th>
-          <Th campaignAttr alignRightSm>
-            <CampaignPrefixSpan>Map </CampaignPrefixSpan>
-            <span>Finished</span>
-          </Th>
-          <Th campaignAttr date hideRespv>
-            <span>Worst </span>
-            <CampaignPrefixSpan>Rank</CampaignPrefixSpan>
-          </Th>
-        </EventRowInfo>
-        <EventRowInfo>
-          <Td rank respvUnpadRank>{dataWithMedals.rank}</Td>
-          <Td campaignAttr player>{dataWithMedals.rankAvg}</Td>
-          <Td campaignAttr alignRightSm>
-            <span>
-              {dataWithMedals.mapFinished}
-              <small>/{nbMaps}</small>
-            </span>
-          </Td>
-          <Td campaignAttr date hideRespv>{dataWithMedals.worstRank}</Td>
-        </EventRowInfo>
-
-        <hr />
-
-        {/**
          * Finished maps
          */}
 
         <Flex justifyContent="flex-start">
-          <Th flex={1}>Category</Th>
+          <Th flex={1}>Finished maps</Th>
           <Th flex={.1} textAlign="right"><MedalImg mdl={dataWithMedals.medal} /></Th>
         </Flex>
 
@@ -204,7 +205,8 @@ export default function DialogContent({
             <Flex alignItems="center">
               <Th rank hideRespv>Rank</Th>
               <Th map padRespvFirst>Map</Th>
-              <Th hideRespv textAlign="right" minWidth={200}>Medals</Th>
+              <Th time padRespvLast hideRespv>Time</Th>
+              <Th hideRespv medal>Medals</Th>
             </Flex>
             {category.ranks.map((rank, j) => (
               <Tr bgColor="black!" key={j}>
@@ -214,7 +216,10 @@ export default function DialogContent({
                     path={`/event/${eventHandle}/${editionId}/map/${rank.map.map.gameId}`}
                     name={rank.map.map.name} />
                 </Td>
-                <Td textAlign="right" minWidth={200}>
+                <Td time respvTime>
+                  <Time>{rank.time}</Time>
+                </Td>
+                <Td medal>
                   <MedalImg mdl={rank.medal} />
                 </Td>
               </Tr>
