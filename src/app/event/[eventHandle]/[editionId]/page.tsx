@@ -22,6 +22,7 @@ const GET_CAMPAIGN_LEADERBOARD = gql(/* GraphQL */ `
       }
       edition(editionId: $editionId) {
         name
+        subtitle
         startDate
         bannerImgUrl
         admins {
@@ -139,6 +140,8 @@ export default async function Campaign({ params: { editionId: rawEditionId, even
   })).event;
   const mappack = event.edition!.mappack;
 
+  const eventName = event.edition?.name + (event.edition?.subtitle ? ` ${event.edition?.subtitle}` : '');
+
   const playerInfo = (await fetchPlayerInfo(searchParams, eventHandle, editionId))?.event.edition?.player;
 
   const startDate = moment(event.edition!.startDate).format("DD/MM/YYYY");
@@ -151,14 +154,14 @@ export default async function Campaign({ params: { editionId: rawEditionId, even
           <DialogContent
             eventHandle={eventHandle}
             editionId={editionId}
-            eventName={event.edition?.name}
+            eventName={eventName}
             data={playerInfo}
             nbMaps={mappack?.nbMaps || 0}
           />
         </Dialog>
       )}
       <CampaignHeader
-        title={event.edition!.name}
+        title={eventName}
         startDate={startDate}
         authors={admins.length > 0 && (
           <span>By {admins.map((player, i) => (

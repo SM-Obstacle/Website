@@ -45,6 +45,7 @@ type EventEdition {
 	admins: [Player!]!
 	event: Event!
 	name: String!
+	subtitle: String
 	startDate: NaiveDateTime!
 	bannerImgUrl: String
 	player(login: String!): EventEditionPlayer!

@@ -4,7 +4,7 @@ import { Metadata } from "next";
 import { cache } from "react";
 import MxButton from "./MxButton";
 import MPFormat, { MPFormatLink } from "@/components/MPFormat";
-import Time, { Date, formatDate } from "@/components/Time";
+import Time, { Date, formatDate, formatFull } from "@/components/Time";
 import { RankedRecordOfMap } from "@/lib/ranked-record";
 import { fetchGraphql } from "@/lib/utils";
 import { ServerProps, getSortState } from "@/lib/server-props";
@@ -34,6 +34,7 @@ const GET_MAP_INFO = gql(/* GraphQL */ `
     map(gameId: $gameId) {
       relatedEventEditions {
         name
+        subtitle
         event {
           handle
         }
@@ -134,7 +135,7 @@ export function MapRecordsContent<Q extends MapRecordsProperty>({
               <Td time respvTime>
                 <Time>{record.time}</Time>
               </Td>
-              <Td date respvAbsoluteDate title={formatDate(record.recordDate, false)}>
+              <Td date respvAbsoluteDate title={formatFull(record.recordDate)}>
                 <Date onlyDate>{record.recordDate}</Date>
               </Td>
             </Tr>
@@ -151,7 +152,7 @@ function ToolbarTitle({ data }: { data: GetMapInfoQuery }) {
     <ToolbarTitleWrapper>
       <RawToolbarTitle><MPFormat>{data.map.name}</MPFormat></RawToolbarTitle>
       {<span>Related to <Link explicit href={`/event/${relatedEvent.event.handle}/${relatedEvent.id}/map/${data.map.gameId}`}>
-        {relatedEvent.name}
+        {relatedEvent.name + (relatedEvent.subtitle ? " " + relatedEvent.subtitle : '')}
       </Link></span>}
     </ToolbarTitleWrapper>
   ) : (

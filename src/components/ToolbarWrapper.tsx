@@ -18,7 +18,8 @@ export const ToolbarTitle = styled('h1', {
       fontSize: "2em",
       flexGrow: 1,
       fontWeight: 900,
-    }
+    },
+    textShadow: "2px 2px 10px black",
   }
 });
 

@@ -21,6 +21,7 @@ const GET_EVENT_MAP_INFO = gql(/* GraphQL */ `
     event(handle: $eventHandle) {
       edition(editionId: $editionId) {
         name
+        subtitle
         map(gameId: $gameId) {
           gameId
           name
@@ -102,7 +103,21 @@ export default async function EventMapRecords(
     getSortState(sp.searchParams.rankSortBy),
   ));
 
+  const eventName = data.event.edition?.name
+    + (data.event.edition?.subtitle ? " " + data.event.edition?.subtitle : '');
+
   return (
-    <MapPage.MapRecordsContent data={data.event.edition!} toolbarTitle={<ToolbarTitle mapName={data.event.edition?.map.name} mapUid={data.event.edition?.map.gameId} eventHandle={sp.params.eventHandle} editionId={editionId} eventName={data.event.edition?.name ?? ""} />} />
+    <MapPage.MapRecordsContent
+      data={data.event.edition!}
+      toolbarTitle={(
+        <ToolbarTitle
+          mapName={data.event.edition?.map.name}
+          mapUid={data.event.edition?.map.gameId}
+          eventHandle={sp.params.eventHandle}
+          editionId={editionId}
+          eventName={eventName}
+        />
+      )}
+    />
   );
 }
