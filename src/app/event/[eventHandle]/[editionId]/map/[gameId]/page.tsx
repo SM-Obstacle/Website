@@ -76,7 +76,6 @@ function ToolbarTitle({
   eventName: string,
 }) {
   // FIXME: this should be removed when we correctly fill the maps of benchmark 2
-  // with this, it's not possible to go back to this page from the original map
   const originalUid = mapUid.endsWith('_benchmark') ? mapUid.substring(0, mapUid.length - '_benchmark'.length) : mapUid;
 
   return (
