@@ -1,12 +1,19 @@
 import CampaignPlayerRow from "@/app/event/[eventHandle]/[editionId]/CampaignPlayerRow";
 import { fetchSelectedPlayers } from "@/lib/mappack-fragments";
 import React, { CSSProperties } from "react";
-import { HTMLAttributes } from "react";
 import { MPFormatLink } from "./MPFormat";
 import NoPropagationLink from "./NoPropagationLink";
 import { ToolBarWrapper, ToolbarTitle, ToolbarTitleWrapper } from "./ToolbarWrapper";
 import { css } from "../../styled-system/css";
-import Image from "next/image";
+import { styled } from "../../styled-system/jsx";
+
+export const CampaignPrefixSpan = styled("span", {
+  base: {
+    "@media only screen and (max-width: 1300px)": {
+      display: "none",
+    }
+  }
+});
 
 export function CampaignHeader({
   title,
@@ -32,7 +39,7 @@ export function CampaignHeader({
       "--bannerImgUrl": backgroundUrl,
     } as CSSProperties} className={campaignWrapper}>
       <ToolbarTitleWrapper>
-        <ToolbarTitle>{title}</ToolbarTitle>
+        <ToolbarTitle withShadow>{title}</ToolbarTitle>
         {authors}
       </ToolbarTitleWrapper>
       <span>Start date: {startDate}</span>

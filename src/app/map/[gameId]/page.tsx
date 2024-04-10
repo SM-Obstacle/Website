@@ -148,7 +148,7 @@ export function MapRecordsContent<Q extends MapRecordsProperty>({
 
 function ToolbarTitle({ data }: { data: GetMapInfoQuery }) {
   const relatedEvent = data.map.relatedEventEditions && data.map.relatedEventEditions[0];
-  const mapUid = relatedEvent.event.handle == "benchmark" && relatedEvent.id == 2
+  const mapUid = relatedEvent?.event.handle == "benchmark" && relatedEvent.id == 2
     ? data.map.gameId + "_benchmark" : data.map.gameId;
   return relatedEvent ? (
     <ToolbarTitleWrapper>

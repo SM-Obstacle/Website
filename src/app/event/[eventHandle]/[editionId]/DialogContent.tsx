@@ -7,8 +7,8 @@ import { Box, Flex, styled } from "../../../../../styled-system/jsx";
 import { MPFormatLink } from "@/components/MPFormat";
 import Image, { ImageProps } from "next/image";
 import { cmpMedals } from "@/lib/utils";
-import { CampaignPrefixSpan } from "./page";
 import Time from "@/components/Time";
+import { CampaignPrefixSpan } from "@/components/CampaignMain";
 
 const getImg = (medal: string) => `/Medals/${medal}.png`;
 

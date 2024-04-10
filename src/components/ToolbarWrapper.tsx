@@ -19,7 +19,13 @@ export const ToolbarTitle = styled('h1', {
       flexGrow: 1,
       fontWeight: 900,
     },
-    textShadow: "2px 2px 10px black",
+  },
+  variants: {
+    withShadow: {
+      true: {
+        textShadow: "2px 2px 10px black",
+      }
+    }
   }
 });
 

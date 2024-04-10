@@ -5,7 +5,7 @@ import { Metadata } from "next";
 import React from "react";
 import { ServerProps } from "@/lib/server-props";
 import moment from "moment";
-import { CampaignHeader } from "@/components/CampaignMain";
+import { CampaignHeader, CampaignPrefixSpan } from "@/components/CampaignMain";
 import CampaignPlayerRow from "./CampaignPlayerRow";
 import NoPropagationLink from "@/components/NoPropagationLink";
 import { Table, Tbody, Td, Th, Thead, Tr } from "@/components/Table";
@@ -109,14 +109,6 @@ export async function generateMetadata(
     title: event.edition!.name,
   };
 }
-
-export const CampaignPrefixSpan = styled("span", {
-  base: {
-    "@media only screen and (max-width: 1300px)": {
-      display: "none",
-    }
-  }
-});
 
 async function fetchPlayerInfo(searchParams: SP["searchParams"], eventHandle: string, editionId: number) {
   const player = Array.isArray(searchParams.player) ? searchParams.player[0] : searchParams.player;
