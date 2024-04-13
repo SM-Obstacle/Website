@@ -49,6 +49,7 @@ const Main = styled('main', {
     width: "80%",
     maxHeight: "85%",
     maxWidth: "70em",
+    position: "relative",
 
     display: "flex",
     flexDirection: "column",

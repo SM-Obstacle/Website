@@ -14,12 +14,6 @@ type CheckpointTimes {
 	time: Int!
 }
 
-input CreateEditionParams {
-	editionId: Int!
-	bannerImgUrl: String
-	mxId: Int!
-}
-
 scalar Escaped
 
 type Event {
@@ -153,6 +147,7 @@ type Mappack {
 	mxName: String
 	leaderboard: [MappackPlayer!]!
 	player(login: String!): MappackPlayer!
+	nextUpdateIn: Int
 }
 
 type MappackMap {
@@ -192,19 +187,7 @@ type MedalTimes {
 	championTime: Int!
 }
 
-type MutableEvent {
-	createEdition(params: CreateEditionParams!): EventEdition!
-	handle: String!
-	cooldown: Int
-	admins: [Player!]!
-	categories: [EventCategory!]!
-	editions: [EventEdition!]!
-	lastEdition: EventEdition
-	edition(editionId: Int!): EventEdition
-}
-
 type MutationRoot {
-	event(handle: String!): MutableEvent!
 	updateResourcesContent(text: String!): ResourcesContent!
 	calcMappackScores(mappackId: String!): Mappack!
 }

@@ -12,6 +12,7 @@ import { Table, Tbody, Td, Th, Thead, Tr } from "@/components/Table";
 import { styled } from "../../../../../styled-system/jsx";
 import Dialog from "./Dialog";
 import DialogContent from "./DialogContent";
+import Countdown from "./Countdown";
 
 const GET_CAMPAIGN_LEADERBOARD = gql(/* GraphQL */ `
   query GetCampaignLeaderboard($eventHandle: String!, $editionId: Int!) {
@@ -123,6 +124,27 @@ async function fetchPlayerInfo(searchParams: SP["searchParams"], eventHandle: st
   });
 }
 
+const NextUpdateLabel = styled("div", {
+  base: {
+    position: "absolute",
+    bottom: 0,
+    right: 0,
+    zIndex: 100,
+    transform: "translate3d(0, 0, 0)",
+    bg: "black",
+    borderTopLeftRadius: 10,
+    padding: 1,
+  }
+});
+
+function NextUpdateIn({ nextUpdateIn }: { nextUpdateIn: number }) {
+  return (
+    <NextUpdateLabel>
+      Next update in <Countdown start={nextUpdateIn} />
+    </NextUpdateLabel>
+  );
+}
+
 export default async function Campaign({ params: { editionId: rawEditionId, eventHandle }, searchParams }: SP) {
   const editionId = parseInt(rawEditionId);
 
@@ -215,6 +237,8 @@ export default async function Campaign({ params: { editionId: rawEditionId, even
           ))}
         </Tbody>
       </Table>
+
+      {mappack?.nextUpdateIn && <NextUpdateIn nextUpdateIn={mappack.nextUpdateIn} />}
     </>
   );
 }

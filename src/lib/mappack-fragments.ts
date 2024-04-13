@@ -3,6 +3,7 @@ import { MappackLbFragment, MappackPlayerInfoFragment, MappackPlayerInfoFragment
 
 export const MAPPACK_LB_FRAGMENT = gql(/* GraphQL */ `
   fragment MappackLb on Mappack {
+    nextUpdateIn
     nbMaps
     leaderboard {
       rank
