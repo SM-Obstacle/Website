@@ -10,9 +10,9 @@ import CampaignPlayerRow from "./CampaignPlayerRow";
 import NoPropagationLink from "@/components/NoPropagationLink";
 import { Table, Tbody, Td, Th, Thead, Tr } from "@/components/Table";
 import { styled } from "../../../../../styled-system/jsx";
-import Dialog from "./Dialog";
 import DialogContent from "./DialogContent";
 import Countdown from "./Countdown";
+import Dialog from "./Dialog";
 
 const GET_CAMPAIGN_LEADERBOARD = gql(/* GraphQL */ `
   query GetCampaignLeaderboard($eventHandle: String!, $editionId: Int!) {

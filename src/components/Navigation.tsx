@@ -8,6 +8,10 @@ import { MutableRefObject, forwardRef, useCallback, useEffect, useRef } from "re
 import { DiscriminatedUnion } from "@/lib/utils";
 import Link, { NavLink, NavSpan } from "./Link";
 import { styled } from "../../styled-system/jsx";
+import { CiSearch } from "react-icons/ci";
+import { FaSearch } from "react-icons/fa";
+import { IoSearchOutline } from "react-icons/io5";
+import Dialog from "./Dialog";
 
 type NormalPage = {
   label: string,
@@ -246,6 +250,50 @@ const DropdownContentItem = styled(NavLink, {
   },
 });
 
+const StyledSearchButton = styled("div", {
+  base: {
+    display: "flex",
+    justifyContent: "enter",
+    alignItems: "center",
+    padding: 1,
+    borderRadius: 10,
+    gap: 3,
+
+    _hover: {
+      cursor: "pointer",
+      background: "black",
+    }
+  }
+});
+
+const SearchButtonTxt = styled("span", {
+  base: {
+    "@media only screen and (min-width: 870px)": {
+      display: "none",
+    }
+  }
+});
+
+function SearchButton() {
+  const ref = useRef<HTMLDialogElement | null>(null);
+
+  const handleClick = () => {
+    ref.current?.showModal();
+  };
+
+  return (
+    <>
+      <Dialog ref={ref} open={false}>salut</Dialog>
+      <ListItem>
+        <StyledSearchButton onClick={handleClick}>
+          <SearchButtonTxt>Search</SearchButtonTxt>
+          <IoSearchOutline />
+        </StyledSearchButton>
+      </ListItem>
+    </>
+  )
+}
+
 function Menu({
   events,
   checkboxRef,
@@ -254,14 +302,11 @@ function Menu({
   checkboxRef: MutableRefObject<HTMLInputElement | null>,
 }) {
   const pathname = usePathname();
-  const isActive = useCallback((link: string) => {
-    return pathname === link;
-  }, [pathname]);
+  const isActive = useCallback((link: string) => pathname === link, [pathname]);
 
   useEffect(() => {
     if (checkboxRef.current?.checked) {
       checkboxRef.current.checked = false;
-      console.log("unchecking");
     }
   }, [pathname, checkboxRef]);
 
@@ -298,6 +343,7 @@ function Menu({
           </DropdownContentWrapper>
         </Dropdown>
       ))}
+      <SearchButton />
     </List>
   );
 }
