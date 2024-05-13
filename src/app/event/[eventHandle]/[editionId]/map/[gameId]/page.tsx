@@ -26,7 +26,6 @@ const GET_EVENT_MAP_INFO = gql(/* GraphQL */ `
           gameId
           name
           cpsNumber
-          reversed
           player {
             login
             name
