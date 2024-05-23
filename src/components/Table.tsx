@@ -35,7 +35,6 @@ export const Tr = styled("div", {
     alignItems: "center",
     tableLayout: "fixed",
     fontWeight: 700,
-    userSelect: "none",
 
     ".Thead &": {
       pe: "10px", // align with scrollbar padding of tbody
@@ -173,6 +172,7 @@ export const Th = styled(ThTd, {
   base: {
     padding: "12px 8px",
     fontWeight: 900,
+    userSelect: "none",
   },
   variants: {
     padRespvFirst: {
