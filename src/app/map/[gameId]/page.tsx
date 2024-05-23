@@ -12,6 +12,7 @@ import { parse, toPlainText } from "@/lib/mpformat/mpformat";
 import { ToolBarWrapper, ToolbarSpan, ToolbarTitle as RawToolbarTitle, ToolbarTitleWrapper } from "@/components/ToolbarWrapper";
 import { Table, Tbody, Td, Th, Thead, Tr } from "@/components/Table";
 import Link from "@/components/Link";
+import { redirect } from "next/navigation";
 
 const MAP_RECORDS_FRAGMENT = gql(/* GraphQL */ `
   fragment MapRecords on Map {
@@ -66,6 +67,8 @@ const SORT_MAP_RECORDS = gql(/* GraphQL */ `
 
 export type SP = ServerProps<{ gameId: string }, { dateSortBy?: string, rankSortBy?: string }>;
 
+type Item<Array> = Array extends (infer T)[] ? T : never;
+type RelatedEventEdition = Item<GetMapInfoQuery["map"]["relatedEventEditions"]>;
 export type MapRecordsProperty = { map: Omit<GetMapInfoQuery["map"], "relatedEventEditions" | "__typename"> };
 
 const fetchMapInfo = cache(async (gameId: string, dateSortBy?: SortState, rankSortBy?: SortState) => {
@@ -145,10 +148,15 @@ export function MapRecordsContent<Q extends MapRecordsProperty>({
   );
 }
 
-function ToolbarTitle({ data }: { data: GetMapInfoQuery }) {
-  const relatedEvent = data.map.relatedEventEditions && data.map.relatedEventEditions[0];
-  const mapUid = relatedEvent?.event.handle == "benchmark" && relatedEvent.id == 2
-    ? data.map.gameId + "_benchmark" : data.map.gameId;
+function ToolbarTitle({
+  data,
+  mapUid,
+  relatedEvent,
+}: {
+  data: GetMapInfoQuery,
+  mapUid: string,
+  relatedEvent: RelatedEventEdition,
+}) {
   return relatedEvent ? (
     <ToolbarTitleWrapper>
       <RawToolbarTitle><MPFormat>{data.map.name}</MPFormat></RawToolbarTitle>
@@ -168,7 +176,14 @@ export default async function MapRecords(sp: SP) {
     getSortState(sp.searchParams.rankSortBy)
   );
 
+  const relatedEvent = data.map.relatedEventEditions && data.map.relatedEventEditions[0];
+  if (relatedEvent?.event.handle === "benchmark" && relatedEvent.id === 2 && (data.map.gameId + "").endsWith("_benchmark")) {
+    return redirect(`/event/benchmark/2/map/${data.map.gameId}`);
+  }
+  const mapUid = relatedEvent?.event.handle == "benchmark" && relatedEvent.id == 2
+    ? data.map.gameId + "_benchmark" : data.map.gameId;
+
   return (
-    <MapRecordsContent data={data} toolbarTitle={<ToolbarTitle data={data} />} />
+    <MapRecordsContent data={data} toolbarTitle={<ToolbarTitle data={data} relatedEvent={relatedEvent} mapUid={mapUid} />} />
   );
 }
