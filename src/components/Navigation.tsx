@@ -3,10 +3,9 @@
 import { GetEventListQuery } from "@/app/__generated__/graphql";
 import { usePathname } from "next/navigation";
 import { css as css2 } from "../../styled-system/css";
-import css from "../styles/nav.module.scss";
 import { MutableRefObject, forwardRef, useCallback, useEffect, useRef } from "react";
 import { DiscriminatedUnion } from "@/lib/utils";
-import Link, { NavLink, NavSpan } from "./Link";
+import { NavLink, NavSpan } from "./Link";
 import { styled } from "../../styled-system/jsx";
 
 type NormalPage = {
@@ -254,14 +253,11 @@ function Menu({
   checkboxRef: MutableRefObject<HTMLInputElement | null>,
 }) {
   const pathname = usePathname();
-  const isActive = useCallback((link: string) => {
-    return pathname === link;
-  }, [pathname]);
+  const isActive = useCallback((link: string) => pathname === link, [pathname]);
 
   useEffect(() => {
     if (checkboxRef.current?.checked) {
       checkboxRef.current.checked = false;
-      console.log("unchecking");
     }
   }, [pathname, checkboxRef]);
 

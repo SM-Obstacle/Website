@@ -55,7 +55,6 @@ type EventEditionMap {
 	cpsNumber: Int
 	player: Player!
 	name: Escaped!
-	reversed: Boolean!
 	relatedEventEditions: [EventEdition!]!
 	medalFor(reqLogin: String!): MedalPrice
 	ratings: [Rating!]!
@@ -103,7 +102,6 @@ type Map implements Node {
 	cpsNumber: Int
 	player: Player!
 	name: Escaped!
-	reversed: Boolean!
 	relatedEventEditions: [EventEdition!]!
 	medalFor(reqLogin: String!): MedalPrice
 	ratings: [Rating!]!
@@ -333,6 +331,8 @@ enum SortState {
 }
 
 
+directive @include(if: Boolean!) on FIELD | FRAGMENT_SPREAD | INLINE_FRAGMENT
+directive @skip(if: Boolean!) on FIELD | FRAGMENT_SPREAD | INLINE_FRAGMENT
 schema {
 	query: QueryRoot
 	mutation: MutationRoot
