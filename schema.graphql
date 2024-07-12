@@ -42,6 +42,7 @@ type EventEdition {
 	subtitle: String
 	startDate: NaiveDateTime!
 	bannerImgUrl: String
+	expiresIn: Int
 	player(login: String!): EventEditionPlayer!
 	map(gameId: String!): EventEditionMap!
 	categories: [EventCategory!]!

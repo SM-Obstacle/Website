@@ -25,6 +25,7 @@ const GET_CAMPAIGN_LEADERBOARD = gql(/* GraphQL */ `
         name
         subtitle
         startDate
+        expiresIn
         bannerImgUrl
         admins {
           login
@@ -230,13 +231,20 @@ export default async function Campaign({ params: { editionId: rawEditionId, even
         </Tbody>
       </Table>
 
-      {mappack?.nextUpdateIn ? (
-        <BottomRightInfo>
-          Next update in <Countdown start={mappack.nextUpdateIn} />
-        </BottomRightInfo>
-      ) : (
-        <BottomRightInfo color='red'>Expired</BottomRightInfo>
-      )}
+      {mappack?.nextUpdateIn ?
+        event.edition?.expiresIn
+          && event.edition.expiresIn >= 0
+          && event.edition.expiresIn < mappack.nextUpdateIn ? (
+          <BottomRightInfo color='orange'>
+            Expires in <Countdown start={event.edition.expiresIn} />
+          </BottomRightInfo>
+        ) : (
+          <BottomRightInfo>
+            Next update in <Countdown start={mappack.nextUpdateIn} />
+          </BottomRightInfo>
+        ) : (
+          <BottomRightInfo color='red'>Expired</BottomRightInfo>
+        )}
     </>
   );
 }
