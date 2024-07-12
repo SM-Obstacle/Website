@@ -47,10 +47,10 @@ function insertMedalsIn(data: Data) {
       ...category,
       ranks: category.ranks.map((rank) => ({
         ...rank,
-        medal: rank.time < rank.map.medalTimes.championTime ? Medal.Champion
-          : rank.time < rank.map.medalTimes.goldTime ? Medal.Gold
-            : rank.time < rank.map.medalTimes.silverTime ? Medal.Silver
-              : rank.time < rank.map.medalTimes.bronzeTime ? Medal.Bronze
+        medal: rank.time <= rank.map.medalTimes.championTime ? Medal.Champion
+          : rank.time <= rank.map.medalTimes.goldTime ? Medal.Gold
+            : rank.time <= rank.map.medalTimes.silverTime ? Medal.Silver
+              : rank.time <= rank.map.medalTimes.bronzeTime ? Medal.Bronze
                 : null
       }))
     }))
