@@ -23,12 +23,14 @@ const GET_EVENT_MAP_INFO = gql(/* GraphQL */ `
         name
         subtitle
         map(gameId: $gameId) {
-          gameId
-          name
-          cpsNumber
-          player {
-            login
+          map {
+            gameId
             name
+            cpsNumber
+            player {
+              login
+              name
+            }
           }
           records(rankSortBy: $rankSortBy, dateSortBy: $dateSortBy) {
             player {
@@ -94,19 +96,33 @@ export default async function EventMapRecords(
   >
 ) {
   const editionId = parseInt(sp.params.editionId);
-  const data = (await fetchMapInfo(sp.params.eventHandle,
+  const dataRaw = await fetchMapInfo(sp.params.eventHandle,
     editionId,
     sp.params.gameId,
     getSortState(sp.searchParams.dateSortBy),
     getSortState(sp.searchParams.rankSortBy),
-  ));
+  );
+  // : )
+  const data = {
+    ...dataRaw,
+    event: {
+      ...dataRaw.event,
+      edition: {
+        ...dataRaw.event.edition,
+        map: {
+          ...dataRaw.event.edition!.map.map,
+          records: dataRaw.event.edition!.map.records,
+        }
+      }
+    },
+  };
 
   const eventName = data.event.edition?.name
     + (data.event.edition?.subtitle ? " " + data.event.edition?.subtitle : '');
 
   return (
     <MapPage.MapRecordsContent
-      data={data.event.edition!}
+      data={data.event.edition}
       toolbarTitle={(
         <ToolbarTitle
           mapName={data.event.edition?.map.name}

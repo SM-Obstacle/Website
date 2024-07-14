@@ -50,16 +50,7 @@ type EventEdition {
 
 type EventEditionMap {
 	edition: EventEdition!
-	id: ID!
-	gameId: Escaped!
-	playerId: ID!
-	cpsNumber: Int
-	player: Player!
-	name: Escaped!
-	relatedEventEditions: [EventEdition!]!
-	medalFor(reqLogin: String!): MedalPrice
-	ratings: [Rating!]!
-	averageRating: [PlayerRating!]!
+	map: Map!
 	records(rankSortBy: SortState, dateSortBy: SortState): [RankedRecord!]!
 }
 
