@@ -32,6 +32,9 @@ const GET_EVENT_MAP_INFO = gql(/* GraphQL */ `
               name
             }
           }
+          originalMap {
+            gameId
+          }
           records(rankSortBy: $rankSortBy, dateSortBy: $dateSortBy) {
             player {
               login
@@ -76,15 +79,12 @@ function ToolbarTitle({
   editionId: number,
   eventName: string,
 }) {
-  // FIXME: this should be removed when we correctly fill the maps of benchmark 2
-  const originalUid = mapUid.endsWith('_benchmark') ? mapUid.substring(0, mapUid.length - '_benchmark'.length) : mapUid;
-
   return (
     <ToolbarTitleWrapper>
       <RawToolbarTitle><MPFormat>{mapName}</MPFormat></RawToolbarTitle>
       {<span>on <Link explicit href={`/event/${eventHandle}/${editionId}`}>
         {eventName}
-      </Link> (see <Link explicit href={`/map/${originalUid}`}>original</Link>)</span>}
+      </Link> (see <Link explicit href={`/map/${mapUid}`}>original</Link>)</span>}
     </ToolbarTitleWrapper>
   );
 }
@@ -125,8 +125,8 @@ export default async function EventMapRecords(
       data={data.event.edition}
       toolbarTitle={(
         <ToolbarTitle
-          mapName={data.event.edition?.map.name}
-          mapUid={data.event.edition?.map.gameId}
+          mapName={data.event.edition.map.name}
+          mapUid={dataRaw.event.edition?.map.originalMap?.gameId || data.event.edition.map.gameId}
           eventHandle={sp.params.eventHandle}
           editionId={editionId}
           eventName={eventName}

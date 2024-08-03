@@ -4,17 +4,24 @@ type Banishment {
 	duration: Int!
 	wasReprieved: Boolean!
 	reason: String!
-	player: Player!
-	banishedBy: Player!
+	player: Player
+	banishedBy: Player
 }
 
 
-type CheckpointTimes {
+"""
+Represents the time on a checkpoint on a map associated to a record.
+"""
+type CheckpointTime {
+	"""
+	The checkpoint number. It starts at 0.
+	"""
 	cpNum: Int!
+	"""
+	The time in milliseconds on this checkpoint.
+	"""
 	time: Int!
 }
-
-scalar Escaped
 
 type Event {
 	handle: String!
@@ -26,10 +33,29 @@ type Event {
 	edition(editionId: Int!): EventEdition
 }
 
+"""
+An event category in an event.
+"""
 type EventCategory {
+	"""
+	The handle of the category.
+	"""
 	handle: String!
+	"""
+	The name of the category.
+	"""
 	name: String!
+	"""
+	The optional URL to the banner image.
+	
+	This is currently used in the Obstacle Titlepack menu.
+	"""
 	bannerImgUrl: String
+	"""
+	The hex color of the category.
+	
+	For example, for the White category, it is "fff".
+	"""
 	hexColor: String
 }
 
@@ -51,6 +77,7 @@ type EventEdition {
 type EventEditionMap {
 	edition: EventEdition!
 	map: Map!
+	originalMap: Map
 	records(rankSortBy: SortState, dateSortBy: SortState): [RankedRecord!]!
 }
 
@@ -71,7 +98,7 @@ type EventEditionPlayer {
 }
 
 type EventEditionPlayerCategorizedRank {
-	categoryName: Escaped!
+	categoryName: String!
 	bannerImgUrl: String
 	hexColor: String
 	nbMaps: Int!
@@ -89,13 +116,12 @@ type EventEditionPlayerRank {
 
 type Map implements Node {
 	id: ID!
-	gameId: Escaped!
+	gameId: String!
 	playerId: ID!
 	cpsNumber: Int
 	player: Player!
-	name: Escaped!
-	relatedEventEditions: [EventEdition!]!
-	medalFor(reqLogin: String!): MedalPrice
+	name: String!
+	relatedEventEditions: [RelatedEdition!]!
 	ratings: [Rating!]!
 	averageRating: [PlayerRating!]!
 	records(rankSortBy: SortState, dateSortBy: SortState): [RankedRecord!]!
@@ -156,24 +182,47 @@ type MappackPlayer {
 	lastMedal: Medal
 }
 
+"""
+Represents a medal.
+"""
 enum Medal {
+	"""
+	The bronze medal.
+	"""
 	BRONZE
+	"""
+	The silver medal.
+	"""
 	SILVER
+	"""
+	The gold medal.
+	"""
 	GOLD
+	"""
+	The champion/author medal.
+	"""
 	CHAMPION
 }
 
-type MedalPrice {
-	priceDate: NaiveDateTime!
-	medal: Medal!
-	map: Map!
-	player: Player!
-}
-
+"""
+Represents the medal times, in milliseconds.
+"""
 type MedalTimes {
+	"""
+	The time of the bronze medal.
+	"""
 	bronzeTime: Int!
+	"""
+	The time of the silver medal.
+	"""
 	silverTime: Int!
+	"""
+	The time of the gold medal.
+	"""
 	goldTime: Int!
+	"""
+	The time of the champion/author medal.
+	"""
 	championTime: Int!
 }
 
@@ -219,8 +268,8 @@ type PageInfo {
 
 type Player implements Node {
 	id: ID!
-	login: Escaped!
-	name: Escaped!
+	login: String!
+	name: String!
 	zonePath: String
 	banishments: [Banishment!]!
 	role: PlayerRole!
@@ -289,8 +338,8 @@ type RankedRecord {
 	rank: Int!
 	map: Map!
 	player: Player!
-	averageCpsTimes: [CheckpointTimes!]!
-	cpsTimes: [CheckpointTimes!]!
+	averageCpsTimes: [CheckpointTime!]!
+	cpsTimes: [CheckpointTime!]!
 	time: Int!
 	respawnCount: Int!
 	tryCount: Int!
@@ -305,15 +354,46 @@ type Rating {
 	ratingDate: NaiveDateTime!
 }
 
+"""
+The rating kinds of a player on a map.
+
+This isn't yet used in-game.
+"""
 enum RatingKind {
+	"""
+	The rating of the route.
+	"""
 	ROUTE
+	"""
+	The rating of the decoration.
+	"""
 	DECO
+	"""
+	The rating of the smoothness.
+	"""
 	SMOOTHNESS
+	"""
+	The rating of the difficulty.
+	"""
 	DIFFICULTY
 }
 
+type RelatedEdition {
+	map: Map!
+	edition: EventEdition!
+}
+
+"""
+The content of the website "Resources" page.
+"""
 type ResourcesContent {
+	"""
+	The content of the page, in markdown.
+	"""
 	content: String!
+	"""
+	The UTC date of the last edit of the page.
+	"""
 	lastModified: NaiveDateTime!
 }
 

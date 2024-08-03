@@ -34,12 +34,17 @@ const GET_MAP_INFO = gql(/* GraphQL */ `
   ) {
     map(gameId: $gameId) {
       relatedEventEditions {
-        name
-        subtitle
-        event {
-          handle
+        map {
+          gameId
         }
-        id
+        edition {
+          name
+          subtitle
+          event {
+            handle
+          }
+          id
+        }
       }
       gameId
       name
@@ -150,18 +155,16 @@ export function MapRecordsContent<Q extends MapRecordsProperty>({
 
 function ToolbarTitle({
   data,
-  mapUid,
   relatedEvent,
 }: {
   data: GetMapInfoQuery,
-  mapUid: string,
   relatedEvent: RelatedEventEdition,
 }) {
   return relatedEvent ? (
     <ToolbarTitleWrapper>
       <RawToolbarTitle><MPFormat>{data.map.name}</MPFormat></RawToolbarTitle>
-      {<span>Related to <Link explicit href={`/event/${relatedEvent.event.handle}/${relatedEvent.id}/map/${mapUid}`}>
-        {relatedEvent.name + (relatedEvent.subtitle ? " " + relatedEvent.subtitle : '')}
+      {<span>Related to <Link explicit href={`/event/${relatedEvent.edition.event.handle}/${relatedEvent.edition.id}/map/${relatedEvent.map.gameId}`}>
+        {relatedEvent.edition.name + (relatedEvent.edition.subtitle ? " " + relatedEvent.edition.subtitle : '')}
       </Link></span>}
     </ToolbarTitleWrapper>
   ) : (
@@ -177,13 +180,10 @@ export default async function MapRecords(sp: SP) {
   );
 
   const relatedEvent = data.map.relatedEventEditions && data.map.relatedEventEditions[0];
-  if (relatedEvent?.event.handle === "benchmark" && relatedEvent.id === 2 && (data.map.gameId + "").endsWith("_benchmark")) {
-    return redirect(`/event/benchmark/2/map/${data.map.gameId}`);
-  }
-  const mapUid = relatedEvent?.event.handle == "benchmark" && relatedEvent.id == 2
-    ? data.map.gameId + "_benchmark" : data.map.gameId;
 
   return (
-    <MapRecordsContent data={data} toolbarTitle={<ToolbarTitle data={data} relatedEvent={relatedEvent} mapUid={mapUid} />} />
+    <MapRecordsContent data={data} toolbarTitle={
+      <ToolbarTitle data={data} relatedEvent={relatedEvent} />
+    } />
   );
 }
