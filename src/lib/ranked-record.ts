@@ -26,3 +26,10 @@ export interface RankedRecordOfPlayer extends RankedRecord {
 }
 
 export interface GlobalRankedRecord extends RankedRecordOfMap, RankedRecordOfPlayer {}
+
+export enum Medal {
+  Bronze = "BRONZE",
+  Silver = "SILVER",
+  Gold = "GOLD",
+  Champion = "AUTHOR",
+}

@@ -84,7 +84,7 @@ type EventEditionMap {
 type EventEditionMapExt {
 	map: Map!
 	lastRank: Int!
-	medalTimes: MedalTimes!
+	medalTimes: MedalTimes
 }
 
 type EventEditionPlayer {
@@ -179,29 +179,6 @@ type MappackPlayer {
 	rankAvg: Float!
 	mapFinished: Int!
 	worstRank: Int!
-	lastMedal: Medal
-}
-
-"""
-Represents a medal.
-"""
-enum Medal {
-	"""
-	The bronze medal.
-	"""
-	BRONZE
-	"""
-	The silver medal.
-	"""
-	SILVER
-	"""
-	The gold medal.
-	"""
-	GOLD
-	"""
-	The champion/author medal.
-	"""
-	CHAMPION
 }
 
 """

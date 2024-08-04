@@ -1,6 +1,6 @@
-import { Medal } from "@/app/__generated__/graphql";
 import { IncrementalPayload, TypedDocumentNode } from "@apollo/client";
 import { print } from "graphql";
+import { Medal } from "./ranked-record";
 
 // TODO: throw on error
 export async function fetchGraphql<O, P = { [key: string]: any }>(

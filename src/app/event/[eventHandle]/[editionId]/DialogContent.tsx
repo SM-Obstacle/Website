@@ -1,4 +1,4 @@
-import { GetCampaignPlayerInfoQuery, Medal } from "@/app/__generated__/graphql";
+import { GetCampaignPlayerInfoQuery } from "@/app/__generated__/graphql";
 import PlayerToolbar from "@/app/player/[login]/PlayerToolbar";
 import { Table, Tbody, Td, Th, Thead, Tr } from "@/components/Table";
 import GroupedRows from "./GroupedRows";
@@ -9,6 +9,7 @@ import Image, { ImageProps } from "next/image";
 import { cmpMedals } from "@/lib/utils";
 import Time from "@/components/Time";
 import { CampaignPrefixSpan } from "@/components/CampaignMain";
+import { Medal } from "@/lib/ranked-record";
 
 const getImg = (medal: string) => `/Medals/${medal}.png`;
 
@@ -47,10 +48,10 @@ function insertMedalsIn(data: Data) {
       ...category,
       ranks: category.ranks.map((rank) => ({
         ...rank,
-        medal: rank.time <= rank.map.medalTimes.championTime ? Medal.Champion
-          : rank.time <= rank.map.medalTimes.goldTime ? Medal.Gold
-            : rank.time <= rank.map.medalTimes.silverTime ? Medal.Silver
-              : rank.time <= rank.map.medalTimes.bronzeTime ? Medal.Bronze
+        medal: rank.time <= (rank.map.medalTimes?.championTime || -1) ? Medal.Champion
+          : rank.time <= (rank.map.medalTimes?.goldTime || -1) ? Medal.Gold
+            : rank.time <= (rank.map.medalTimes?.silverTime || -1) ? Medal.Silver
+              : rank.time <= (rank.map.medalTimes?.bronzeTime || -1) ? Medal.Bronze
                 : null
       }))
     }))
