@@ -23,6 +23,13 @@ type CheckpointTime {
 	time: Int!
 }
 
+"""
+Implement the DateTime<Utc> scalar
+
+The input/output is a string in RFC3339 format.
+"""
+scalar DateTime
+
 type Event {
 	handle: String!
 	cooldown: Int
@@ -320,7 +327,7 @@ type RankedRecord {
 	time: Int!
 	respawnCount: Int!
 	tryCount: Int!
-	recordDate: NaiveDateTime!
+	recordDate: DateTime!
 	flags: Int!
 }
 
@@ -357,6 +364,7 @@ enum RatingKind {
 
 type RelatedEdition {
 	map: Map!
+	redirectToEvent: Boolean!
 	edition: EventEdition!
 }
 
@@ -382,6 +390,7 @@ enum SortState {
 
 directive @include(if: Boolean!) on FIELD | FRAGMENT_SPREAD | INLINE_FRAGMENT
 directive @skip(if: Boolean!) on FIELD | FRAGMENT_SPREAD | INLINE_FRAGMENT
+directive @specifiedBy(url: String!) on SCALAR
 schema {
 	query: QueryRoot
 	mutation: MutationRoot

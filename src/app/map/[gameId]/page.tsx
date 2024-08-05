@@ -37,6 +37,7 @@ const GET_MAP_INFO = gql(/* GraphQL */ `
         map {
           gameId
         }
+        redirectToEvent
         edition {
           name
           subtitle
@@ -180,6 +181,10 @@ export default async function MapRecords(sp: SP) {
   );
 
   const relatedEvent = data.map.relatedEventEditions && data.map.relatedEventEditions[0];
+
+  if (relatedEvent.redirectToEvent) {
+    return redirect(`/event/${relatedEvent.edition.event.handle}/${relatedEvent.edition.id}/map/${sp.params.gameId}`);
+  }
 
   return (
     <MapRecordsContent data={data} toolbarTitle={
