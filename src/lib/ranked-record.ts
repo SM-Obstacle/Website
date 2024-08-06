@@ -31,5 +31,5 @@ export enum Medal {
   Bronze = "BRONZE",
   Silver = "SILVER",
   Gold = "GOLD",
-  Champion = "AUTHOR",
+  Champion = "CHAMPION",
 }

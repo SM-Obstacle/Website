@@ -1,7 +1,7 @@
 type Banishment {
 	id: Int!
 	dateBan: NaiveDateTime!
-	duration: Int!
+	duration: Int
 	wasReprieved: Boolean!
 	reason: String!
 	player: Player
@@ -364,6 +364,13 @@ enum RatingKind {
 
 type RelatedEdition {
 	map: Map!
+	"""
+	Tells the website to redirect to the event map page instead of the regular map page.
+	
+	This avoids to have access to the `/map/X_benchmark` page for example, because a Benchmark
+	map won't have any record in this context. Thus, it should be redirected to
+	`/event/benchmark/2/map/X_benchmark`.
+	"""
 	redirectToEvent: Boolean!
 	edition: EventEdition!
 }

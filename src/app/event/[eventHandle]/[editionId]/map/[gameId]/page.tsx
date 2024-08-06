@@ -74,7 +74,7 @@ function ToolbarTitle({
   eventName,
 }: {
   mapName: string,
-  mapUid: string,
+  mapUid?: string,
   eventHandle: string,
   editionId: number,
   eventName: string,
@@ -84,7 +84,11 @@ function ToolbarTitle({
       <RawToolbarTitle><MPFormat>{mapName}</MPFormat></RawToolbarTitle>
       {<span>on <Link explicit href={`/event/${eventHandle}/${editionId}`}>
         {eventName}
-      </Link> (see <Link explicit href={`/map/${mapUid}`}>original</Link>)</span>}
+      </Link> {mapUid && (
+        <>
+          (see <Link explicit href={`/map/${mapUid}`}>original</Link>)
+        </>
+      )} </span>}
     </ToolbarTitleWrapper>
   );
 }
@@ -126,7 +130,7 @@ export default async function EventMapRecords(
       toolbarTitle={(
         <ToolbarTitle
           mapName={data.event.edition.map.name}
-          mapUid={dataRaw.event.edition?.map.originalMap?.gameId || data.event.edition.map.gameId}
+          mapUid={dataRaw.event.edition?.map.originalMap?.gameId}
           eventHandle={sp.params.eventHandle}
           editionId={editionId}
           eventName={eventName}
