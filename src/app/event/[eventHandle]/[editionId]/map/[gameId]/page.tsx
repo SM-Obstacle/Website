@@ -1,6 +1,7 @@
 import { gql } from "@/app/__generated__";
 import { GetEventMapInfoQuery, GetMapInfoQuery, SortState } from "@/app/__generated__/graphql";
 import * as MapPage from "@/app/map/[gameId]/page";
+import * as MapRecordsContent from "@/app/map/[gameId]/MapRecordsContent";
 import Link from "@/components/Link";
 import MPFormat from "@/components/MPFormat";
 import { ToolbarTitleWrapper, ToolbarTitle as RawToolbarTitle } from "@/components/ToolbarWrapper";
@@ -125,7 +126,7 @@ export default async function EventMapRecords(
     + (data.event.edition?.subtitle ? " " + data.event.edition?.subtitle : '');
 
   return (
-    <MapPage.MapRecordsContent
+    <MapRecordsContent.MapRecordsContent
       data={data.event.edition}
       toolbarTitle={(
         <ToolbarTitle

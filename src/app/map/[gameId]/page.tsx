@@ -2,17 +2,16 @@ import { gql } from "@/app/__generated__";
 import { GetMapInfoQuery, SortState } from "@/app/__generated__/graphql";
 import { Metadata } from "next";
 import { cache } from "react";
-import MxButton from "./MxButton";
-import MPFormat, { MPFormatLink } from "@/components/MPFormat";
-import Time, { Date, formatDate, formatFull } from "@/components/Time";
+import MPFormat from "@/components/MPFormat";
+import { Date, formatDate } from "@/components/Time";
 import { RankedRecordOfMap } from "@/lib/ranked-record";
 import { fetchGraphql } from "@/lib/utils";
 import { ServerProps, getSortState } from "@/lib/server-props";
 import { parse, toPlainText } from "@/lib/mpformat/mpformat";
-import { ToolBarWrapper, ToolbarSpan, ToolbarTitle as RawToolbarTitle, ToolbarTitleWrapper } from "@/components/ToolbarWrapper";
-import { Table, Tbody, Td, Th, Thead, Tr } from "@/components/Table";
+import { ToolbarTitle as RawToolbarTitle, ToolbarTitleWrapper } from "@/components/ToolbarWrapper";
 import Link from "@/components/Link";
 import { redirect } from "next/navigation";
+import { MapRecordsContent } from "./MapRecordsContent";
 
 const MAP_RECORDS_FRAGMENT = gql(/* GraphQL */ `
   fragment MapRecords on Map {
@@ -92,66 +91,6 @@ export async function generateMetadata(
   return {
     title: toPlainText(parse(mapInfo.name)),
   };
-}
-
-export function MapRecordsContent<Q extends MapRecordsProperty>({
-  data,
-  toolbarTitle,
-}: {
-  data: Q,
-  toolbarTitle: React.ReactNode,
-}) {
-  let cpsNumberText = "";
-  const cpsNumber = data.map.cpsNumber;
-  if (typeof cpsNumber === "number") {
-    cpsNumberText = `${cpsNumber} cp${cpsNumber > 1 ? 's' : ''}`
-  }
-
-  return (
-    <>
-      <ToolBarWrapper>
-        {toolbarTitle}
-        <ToolbarSpan>{cpsNumberText}</ToolbarSpan>
-        <ToolbarSpan>
-          By <MPFormatLink
-            path={`/player/${data.map.player.login}`}
-            name={data.map.player.name}
-          />
-        </ToolbarSpan>
-        <MxButton gameId={data.map.gameId} />
-      </ToolBarWrapper>
-
-      <Table>
-        <Thead>
-          <Tr>
-            <Th rank hideRespv><span>Rank</span></Th>
-            <Th player padRespvFirst><span>Player</span></Th>
-            <Th time padRespvLast><span>Time</span></Th>
-            <Th date hideRespv><span>Date</span></Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {data.map.records.map((record) => (
-            <Tr key={record.id}>
-              <Td rank respvUnpadRank>{record.rank}</Td>
-              <Td player respvMb>
-                <MPFormatLink
-                  path={`/player/${record.player.login}`}
-                  name={record.player.name}
-                />
-              </Td>
-              <Td time respvTime>
-                <Time>{record.time}</Time>
-              </Td>
-              <Td date respvAbsoluteDate title={formatFull(record.recordDate)}>
-                <Date onlyDate>{record.recordDate}</Date>
-              </Td>
-            </Tr>
-          ))}
-        </Tbody>
-      </Table>
-    </>
-  );
 }
 
 function ToolbarTitle({
