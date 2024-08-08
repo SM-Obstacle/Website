@@ -1,5 +1,5 @@
 import { gql } from "@/app/__generated__";
-import { GetEventMapInfoQuery, GetMapInfoQuery, SortState } from "@/app/__generated__/graphql";
+import { SortState } from "@/app/__generated__/graphql";
 import * as MapPage from "@/app/map/[gameId]/page";
 import * as MapRecordsContent from "@/app/map/[gameId]/MapRecordsContent";
 import Link from "@/components/Link";
@@ -33,6 +33,7 @@ const GET_EVENT_MAP_INFO = gql(/* GraphQL */ `
               name
             }
           }
+          linkToOriginal
           originalMap {
             gameId
           }
@@ -131,7 +132,10 @@ export default async function EventMapRecords(
       toolbarTitle={(
         <ToolbarTitle
           mapName={data.event.edition.map.name}
-          mapUid={dataRaw.event.edition?.map.originalMap?.gameId}
+          mapUid={dataRaw.event.edition?.map.originalMap?.gameId
+            || dataRaw.event.edition?.map.linkToOriginal && data.event.edition.map.gameId
+            || undefined
+          }
           eventHandle={sp.params.eventHandle}
           editionId={editionId}
           eventName={eventName}

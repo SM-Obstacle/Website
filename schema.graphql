@@ -84,6 +84,7 @@ type EventEdition {
 type EventEditionMap {
 	edition: EventEdition!
 	map: Map!
+	linkToOriginal: Boolean!
 	originalMap: Map
 	records(rankSortBy: SortState, dateSortBy: SortState): [RankedRecord!]!
 }
