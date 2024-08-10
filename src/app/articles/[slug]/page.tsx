@@ -1,9 +1,10 @@
 import { gql } from "@/app/__generated__";
-import { Article, LastUpdate, MdLink } from "@/components/Article";
+import { Article, LastUpdate, MdImg, MdLink } from "@/components/Article";
 import { ServerProps } from "@/lib/server-props";
 import { fetchGraphql } from "@/lib/utils";
 import moment from "moment";
 import { redirect } from "next/navigation";
+import { MdImage } from "react-icons/md";
 import Markdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 
@@ -32,6 +33,7 @@ export default async function ArticlePage(sp: ServerProps<{ slug: string }>) {
         <Markdown
           rehypePlugins={[rehypeRaw]}
           components={{
+            "img": MdImg,
             "a": MdLink,
           }}
         >{content.content}</Markdown>

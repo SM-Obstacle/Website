@@ -1,5 +1,6 @@
 import { styled } from "../../styled-system/jsx";
 import Link from "./Link";
+import { css } from "../../styled-system/css";
 
 export const LastUpdate = styled("span", {
   base: {
@@ -24,3 +25,9 @@ export const Article = styled("div", {
 export const MdLink = (props: React.ComponentProps<'a'>) => (
   <Link {...props as React.ComponentProps<typeof Link>} explicit />
 );
+
+export const MdImg = (props: React.ComponentProps<'img'>) => (
+  <img {...props} className={css({
+    maxWidth: "100%",
+  })} />
+)

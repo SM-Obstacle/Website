@@ -1,4 +1,4 @@
-import { Article, LastUpdate, MdLink } from "@/components/Article";
+import { Article, LastUpdate, MdImg, MdLink } from "@/components/Article";
 import Link from "@/components/Link";
 import { gql } from "../__generated__";
 import { fetchGraphql } from "@/lib/utils";
@@ -28,6 +28,7 @@ export default async function LatestNews() {
         <Markdown
           rehypePlugins={[rehypeRaw]}
           components={{
+            "img": MdImg,
             "a": MdLink,
           }}
         >{content.content}</Markdown>
