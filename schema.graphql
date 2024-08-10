@@ -1,3 +1,9 @@
+type Article {
+	date: DateTime!
+	authors: [Player!]!
+	content: String!
+}
+
 type Banishment {
 	id: Int!
 	dateBan: NaiveDateTime!
@@ -303,6 +309,8 @@ enum PlayerRole {
 }
 
 type QueryRoot {
+	latestNews: Article
+	article(slug: String!): Article
 	resourcesContent: ResourcesContent!
 	eventEditionFromMxId(mxId: Int!): EventEdition
 	mappack(mappackId: String!): Mappack!

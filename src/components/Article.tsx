@@ -1,4 +1,5 @@
 import { styled } from "../../styled-system/jsx";
+import Link from "./Link";
 
 export const LastUpdate = styled("span", {
   base: {
@@ -19,3 +20,7 @@ export const Article = styled("div", {
     overflowY: "auto",
   }
 });
+
+export const MdLink = (props: React.ComponentProps<'a'>) => (
+  <Link {...props as React.ComponentProps<typeof Link>} explicit />
+);
