@@ -5,6 +5,7 @@ import { fetchGraphql } from "@/lib/utils";
 import moment from "moment";
 import { redirect } from "next/navigation";
 import Markdown from "react-markdown";
+import rehypeRaw from "rehype-raw";
 
 const GET_LAST_ARTICLE_CONTENT = gql(/* GraphQL */ `
   query GetLatestNews {
@@ -24,9 +25,11 @@ export default async function LatestNews() {
   return (
     <Article>
       <div>
-        <Markdown components={{
-          "a": MdLink,
-        }}
+        <Markdown
+          rehypePlugins={[rehypeRaw]}
+          components={{
+            "a": MdLink,
+          }}
         >{content.content}</Markdown>
       </div>
       <LastUpdate>Date: {date}</LastUpdate>
