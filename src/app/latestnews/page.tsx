@@ -1,4 +1,4 @@
-import { Article, LastUpdate, MdImg, MdLink } from "@/components/Article";
+import { Article, LastUpdate, MdIframe, MdImg, MdLink } from "@/components/Article";
 import Link from "@/components/Link";
 import { gql } from "../__generated__";
 import { fetchGraphql } from "@/lib/utils";
@@ -6,6 +6,7 @@ import moment from "moment";
 import { redirect } from "next/navigation";
 import Markdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
+import { css } from "../../../styled-system/css";
 
 const GET_LAST_ARTICLE_CONTENT = gql(/* GraphQL */ `
   query GetLatestNews {
@@ -28,6 +29,7 @@ export default async function LatestNews() {
         <Markdown
           rehypePlugins={[rehypeRaw]}
           components={{
+            "iframe": MdIframe,
             "img": MdImg,
             "a": MdLink,
           }}

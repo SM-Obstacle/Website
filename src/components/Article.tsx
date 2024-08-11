@@ -19,6 +19,10 @@ export const Article = styled("div", {
     justifyContent: "space-between",
     alignItems: "flex-start",
     overflowY: "auto",
+
+    "@media only screen and (max-width: 870px)": {
+      flexDir: "column",
+    }
   }
 });
 
@@ -27,7 +31,9 @@ export const MdLink = (props: React.ComponentProps<'a'>) => (
 );
 
 export const MdImg = (props: React.ComponentProps<'img'>) => (
-  <img {...props} className={css({
-    maxWidth: "100%",
-  })} />
+  <img {...props} className={css({ maxWidth: "100%" })} />
+)
+
+export const MdIframe = (props: React.ComponentProps<'iframe'>) => (
+  <iframe {...props} className={css({ maxWidth: "100%" })} />
 )

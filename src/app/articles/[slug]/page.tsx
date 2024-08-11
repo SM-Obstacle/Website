@@ -1,5 +1,5 @@
 import { gql } from "@/app/__generated__";
-import { Article, LastUpdate, MdImg, MdLink } from "@/components/Article";
+import { Article, LastUpdate, MdIframe, MdImg, MdLink } from "@/components/Article";
 import { ServerProps } from "@/lib/server-props";
 import { fetchGraphql } from "@/lib/utils";
 import moment from "moment";
@@ -33,6 +33,7 @@ export default async function ArticlePage(sp: ServerProps<{ slug: string }>) {
         <Markdown
           rehypePlugins={[rehypeRaw]}
           components={{
+            "iframe": MdIframe,
             "img": MdImg,
             "a": MdLink,
           }}
