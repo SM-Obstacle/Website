@@ -20,7 +20,7 @@ export function formatTime(time: number, withMs = true): string {
 }
 
 export function formatDate(date: string, onlyDate = true) {
-  return moment.utc(date).format(onlyDate ? "DD/MM/YYYY" : "HH:mm:ss")
+  return moment.utc(date).local().format(onlyDate ? "DD/MM/YYYY" : "HH:mm:ss")
 }
 
 export const formatFull = (date: string) => formatDate(date, true) + " " + formatDate(date, false);
