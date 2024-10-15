@@ -19,14 +19,22 @@ export function formatTime(time: number, withMs = true): string {
   );
 }
 
-export function formatDate(date: string, onlyDate = true) {
-  return moment.utc(date).local().format(onlyDate ? "DD/MM/YYYY" : "HH:mm:ss")
+function formatDateImpl(date: string, f: string) {
+  return moment.utc(date).local().format(f)
 }
 
-export const formatFull = (date: string) => formatDate(date, true) + " " + formatDate(date, false);
+export function formatDate(date: string) {
+  return formatDateImpl(date, "DD/MM/YYYY");
+}
+
+export function formatDateTime(date: string) {
+  return formatDateImpl(date, "HH:mm:ss")
+}
+
+export const formatFull = (date: string) => formatDate(date) + " " + formatDateTime(date);
 
 export function Date({ children, onlyDate }: { children: string; onlyDate?: boolean }) {
-  return formatDate(children, onlyDate);
+  return onlyDate ? formatDate(children) : formatDateTime(children);
 }
 
 export default function Time({ children }: { children: number }) {
