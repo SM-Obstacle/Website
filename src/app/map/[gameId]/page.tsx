@@ -3,8 +3,6 @@ import { GetMapInfoQuery, SortState } from "@/app/__generated__/graphql";
 import { Metadata } from "next";
 import { cache } from "react";
 import MPFormat from "@/components/MPFormat";
-import { Date, formatDate } from "@/components/Time";
-import { RankedRecordOfMap } from "@/lib/ranked-record";
 import { fetchGraphql } from "@/lib/utils";
 import { ServerProps, getSortState } from "@/lib/server-props";
 import { parse, toPlainText } from "@/lib/mpformat/mpformat";
