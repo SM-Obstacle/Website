@@ -19,24 +19,6 @@ export function formatTime(time: number, withMs = true): string {
   );
 }
 
-function formatDateImpl(date: string, f: string) {
-  return moment.utc(date).local().format(f)
-}
-
-export function formatDate(date: string) {
-  return formatDateImpl(date, "DD/MM/YYYY");
-}
-
-export function formatDateTime(date: string) {
-  return formatDateImpl(date, "HH:mm:ss")
-}
-
-export const formatFull = (date: string) => formatDate(date) + " " + formatDateTime(date);
-
-export function Date({ children, onlyDate }: { children: string; onlyDate?: boolean }) {
-  return onlyDate ? formatDate(children) : formatDateTime(children);
-}
-
 export default function Time({ children }: { children: number }) {
   return formatTime(children);
 }

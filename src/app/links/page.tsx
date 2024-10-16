@@ -3,10 +3,9 @@ import React from "react";
 
 import { fetchGraphql } from "@/lib/utils";
 import { gql } from "../__generated__";
-import moment from "moment";
 import Markdown from "react-markdown";
 import { Article, LastUpdate, MdLink } from "@/components/Article";
-import Link from "@/components/Link";
+import Date from "@/components/Date";
 
 const GET_RESOURCES_CONTENT = gql(/* GraphQL */ `
   query GetResourcesContent {
@@ -23,7 +22,6 @@ export const metadata: Metadata = {
 
 export default async function Links() {
   const content = (await fetchGraphql(GET_RESOURCES_CONTENT)).resourcesContent;
-  const date = moment(content.lastModified).format("DD/MM/YYYY");
 
   return (
     <Article>
@@ -32,7 +30,7 @@ export default async function Links() {
           "a": MdLink
         }}>{content.content}</Markdown>
       </div>
-      <LastUpdate>Last update: {date}</LastUpdate>
+      <LastUpdate>Last update: <Date onlyDate>{content.lastModified}</Date></LastUpdate>
     </Article>
   );
 }

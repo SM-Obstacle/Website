@@ -2,9 +2,8 @@ import { gql } from "@/app/__generated__";
 import { Article, LastUpdate, MdIframe, MdImg, MdLink } from "@/components/Article";
 import { ServerProps } from "@/lib/server-props";
 import { fetchGraphql } from "@/lib/utils";
-import moment from "moment";
+import Date from "@/components/Date";
 import { redirect } from "next/navigation";
-import { MdImage } from "react-icons/md";
 import Markdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 
@@ -25,8 +24,6 @@ export default async function ArticlePage(sp: ServerProps<{ slug: string }>) {
   // TODO: find a better way to tell that there isn't any last article
   if (!content) return redirect("/");
 
-  const date = moment(content.date).format("DD/MM/YYYY");
-
   return (
     <Article>
       <div>
@@ -39,7 +36,7 @@ export default async function ArticlePage(sp: ServerProps<{ slug: string }>) {
           }}
         >{content.content}</Markdown>
       </div>
-      <LastUpdate>Date: {date}</LastUpdate>
+      <LastUpdate>Date: <Date onlyDate>{content.date}</Date></LastUpdate>
     </Article>
   );
 }

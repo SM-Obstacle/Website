@@ -1,6 +1,7 @@
 import { MPFormatLink } from "@/components/MPFormat";
 import { Table, Thead, Tr, Th, Tbody, Td } from "@/components/Table";
-import Time, { formatFull, Date } from "@/components/Time";
+import Time from "@/components/Time";
+import Date from "@/components/Date";
 import { ToolBarWrapper, ToolbarSpan } from "@/components/ToolbarWrapper";
 import MxButton from "./MxButton";
 import { MapRecordsProperty } from "./page";
@@ -65,7 +66,7 @@ export function MapRecordsContent<Q extends MapRecordsProperty>({
               <Td time respvTime>
                 <Time>{record.time}</Time>
               </Td>
-              <Td date respvAbsoluteDate title={formatFull(record.recordDate)}>
+              <Td date respvAbsoluteDate>
                 <Date onlyDate>{record.recordDate}</Date>
               </Td>
             </Tr>
