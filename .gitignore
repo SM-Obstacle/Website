@@ -41,3 +41,4 @@ styled-system-studio
 
 # graphql-codegen
 __generated__
+/.env
