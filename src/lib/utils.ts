@@ -29,7 +29,7 @@ export async function fetchGraphql<O, P = { [key: string]: any }>(
 }
 
 export function getApiHost() {
-  return process.env.RECORDS_API_HOST || "http://192.168.31.228:3001";
+  return process.env.RECORDS_API_HOST || "http://127.0.0.1:3001";
 }
 
 export function getGraphqlApiUrl() {
