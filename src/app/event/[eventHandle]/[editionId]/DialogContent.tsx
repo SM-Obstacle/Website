@@ -10,17 +10,7 @@ import { cmpMedals } from "@/lib/utils";
 import Time from "@/components/Time";
 import { CampaignPrefixSpan } from "@/components/CampaignMain";
 import { Medal } from "@/lib/ranked-record";
-
-const getImg = (medal: string) => `/Medals/${medal}.png`;
-
-const MedalImg = ({ mdl }: { mdl: Medal | null }) => mdl && (
-  <Image
-    src={getImg(mdl.toLowerCase())}
-    alt={mdl}
-    width={20}
-    height={20}
-  />
-);
+import { MedalImg } from "@/components/MedalImg";
 
 const CategoryName = styled(Td, {
   base: {

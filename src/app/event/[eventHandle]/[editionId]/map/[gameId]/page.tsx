@@ -8,6 +8,8 @@ import { ToolbarTitleWrapper, ToolbarTitle as RawToolbarTitle } from "@/componen
 import { ServerProps, getSortState } from "@/lib/server-props";
 import { fetchGraphql } from "@/lib/utils";
 import { cache } from "react";
+import { MapContent, MedalRecord, RankedRecordLine, RecordLine } from "@/lib/map-page-types";
+import { Medal } from "@/lib/ranked-record";
 
 export const generateMetadata = MapPage.generateMetadata;
 
@@ -36,6 +38,12 @@ const GET_EVENT_MAP_INFO = gql(/* GraphQL */ `
           linkToOriginal
           originalMap {
             gameId
+          }
+          medalTimes {
+            bronzeTime
+            silverTime
+            goldTime
+            championTime
           }
           records(rankSortBy: $rankSortBy, dateSortBy: $dateSortBy) {
             player {
@@ -117,6 +125,7 @@ export default async function EventMapRecords(
         ...dataRaw.event.edition,
         map: {
           ...dataRaw.event.edition!.map.map,
+          medalTimes: dataRaw.event.edition!.map.medalTimes,
           records: dataRaw.event.edition!.map.records,
         }
       }
@@ -126,9 +135,30 @@ export default async function EventMapRecords(
   const eventName = data.event.edition?.name
     + (data.event.edition?.subtitle ? " " + data.event.edition?.subtitle : '');
 
+  let records = data.event.edition.map.records.map((record) => new RankedRecordLine(record.id, record.rank, record.player, record.time, record.recordDate) as RecordLine);
+
+  if (data.event.edition.map.medalTimes) {
+    records.push(
+      new MedalRecord(data.event.edition.map.medalTimes.bronzeTime, Medal.Bronze),
+      new MedalRecord(data.event.edition.map.medalTimes.silverTime, Medal.Silver),
+      new MedalRecord(data.event.edition.map.medalTimes.goldTime, Medal.Gold),
+      new MedalRecord(data.event.edition.map.medalTimes.championTime, Medal.Champion),
+    );
+    records.sort((a, b) => a.time - b.time);
+  }
+
+  const content = {
+    map: {
+      gameId: data.event.edition.map.gameId,
+      player: data.event.edition.map.player,
+      cpsNumber: data.event.edition.map.cpsNumber ?? undefined,
+      records: records,
+    }
+  } satisfies MapContent;
+
   return (
     <MapRecordsContent.MapRecordsContent
-      data={data.event.edition}
+      data={content}
       toolbarTitle={(
         <ToolbarTitle
           mapName={data.event.edition.map.name}
