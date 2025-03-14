@@ -14,9 +14,11 @@ const nextConfig = {
     redirects: async () => [
         {
             source: "/storm",
-            destination: "/event/storm/2",
+            destination: "/event/storm_runners/2",
             permanent: true,
         },
+        // TODO: move the redirects of /campaign to a new src/app/campaign/page.tsx file
+        // which would fetch for the latest edition
         {
             source: "/campaign/29",
             destination: "/event/campaign/1",
@@ -24,7 +26,7 @@ const nextConfig = {
         },
         {
             source: "/campaign/storm",
-            destination: "/event/storm/2",
+            destination: "/event/storm_runners/2",
             permanent: true,
         },
         {
