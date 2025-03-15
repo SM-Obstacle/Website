@@ -10,6 +10,7 @@ import { ToolbarTitle as RawToolbarTitle, ToolbarTitleWrapper } from "@/componen
 import Link from "@/components/Link";
 import { redirect } from "next/navigation";
 import { MapRecordsContent } from "./MapRecordsContent";
+import { MapContent, RankedRecordLine } from "@/lib/map-page-types";
 
 const MAP_RECORDS_FRAGMENT = gql(/* GraphQL */ `
   fragment MapRecords on Map {
@@ -123,8 +124,17 @@ export default async function MapRecords(sp: SP) {
     return redirect(`/event/${relatedEvent.edition.event.handle}/${relatedEvent.edition.id}/map/${sp.params.gameId}`);
   }
 
+  const content = {
+    map: {
+      gameId: data.map.gameId,
+      player: data.map.player,
+      cpsNumber: data.map.cpsNumber ?? undefined,
+      records: data.map.records.map((record) => new RankedRecordLine(record.id, record.rank, record.player, record.time, record.recordDate))
+    }
+  } satisfies MapContent;
+
   return (
-    <MapRecordsContent data={data} toolbarTitle={
+    <MapRecordsContent data={content} toolbarTitle={
       <ToolbarTitle data={data} relatedEvent={relatedEvent} />
     } />
   );
