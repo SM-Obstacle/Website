@@ -4,13 +4,22 @@ import Time from "@/components/Time";
 import Date from "@/components/Date";
 import { ToolBarWrapper, ToolbarSpan } from "@/components/ToolbarWrapper";
 import MxButton from "./MxButton";
-import { MapRecordsProperty } from "./page";
+import { MapContent, MedalRecord, RankedRecordLine } from "@/lib/map-page-types";
+import { MedalImg } from "@/components/MedalImg";
+import { Medal } from "@/lib/ranked-record";
 
-export function MapRecordsContent<Q extends MapRecordsProperty>({
+const medalToText = (mdl: Medal) => {
+  if (mdl === Medal.Champion) {
+    return "Author time";
+  }
+  return `${mdl[0] + mdl.slice(1).toLowerCase()} time`;
+}
+
+export function MapRecordsContent({
   data,
   toolbarTitle,
 }: {
-  data: Q;
+  data: MapContent;
   toolbarTitle: React.ReactNode;
 }) {
   let cpsNumberText = "";
@@ -52,7 +61,7 @@ export function MapRecordsContent<Q extends MapRecordsProperty>({
           </Tr>
         </Thead>
         <Tbody>
-          {data.map.records.map((record) => (
+          {data.map.records.map((record) => record instanceof RankedRecordLine ? (
             <Tr key={record.id}>
               <Td rank respvUnpadRank>
                 {record.rank}
@@ -70,7 +79,20 @@ export function MapRecordsContent<Q extends MapRecordsProperty>({
                 <Date onlyDate>{record.recordDate}</Date>
               </Td>
             </Tr>
-          ))}
+          ) : record instanceof MedalRecord ? (
+            <Tr key={`record_medal_${record.medal}`}>
+              <Td rank respvUnpadRank>
+                <MedalImg mdl={record.medal} />
+              </Td>
+              <Td player respvMb>
+                {medalToText(record.medal)}
+              </Td>
+              <Td time respvTime>
+                <Time>{record.time}</Time>
+              </Td>
+              <Td date respvAbsoluteDate></Td>
+            </Tr>
+          ) : null)}
         </Tbody>
       </Table>
     </>

@@ -93,6 +93,7 @@ type EventEditionMap {
 	linkToOriginal: Boolean!
 	originalMap: Map
 	records(rankSortBy: SortState, dateSortBy: SortState): [RankedRecord!]!
+	medalTimes: MedalTimes
 }
 
 type EventEditionMapExt {
@@ -136,7 +137,6 @@ type Map implements Node {
 	player: Player!
 	name: String!
 	relatedEventEditions: [RelatedEdition!]!
-	ratings: [Rating!]!
 	averageRating: [PlayerRating!]!
 	records(rankSortBy: SortState, dateSortBy: SortState): [RankedRecord!]!
 }
@@ -215,11 +215,6 @@ type MedalTimes {
 	The time of the champion/author medal.
 	"""
 	championTime: Int!
-}
-
-type MutationRoot {
-	updateResourcesContent(text: String!): ResourcesContent!
-	calcMappackScores(mappackId: String!): Mappack!
 }
 
 """
@@ -314,7 +309,6 @@ type QueryRoot {
 	resourcesContent: ResourcesContent!
 	eventEditionFromMxId(mxId: Int!): EventEdition
 	mappack(mappackId: String!): Mappack!
-	banishments: [Banishment!]!
 	event(handle: String!): Event!
 	events: [Event!]!
 	players(after: String, before: String, first: Int, last: Int): PlayerConnection!
@@ -338,13 +332,6 @@ type RankedRecord {
 	tryCount: Int!
 	recordDate: DateTime!
 	flags: Int!
-}
-
-type Rating {
-	ratings: [PlayerRating!]!
-	player: Player!
-	map: Map!
-	ratingDate: NaiveDateTime!
 }
 
 """
@@ -409,5 +396,4 @@ directive @skip(if: Boolean!) on FIELD | FRAGMENT_SPREAD | INLINE_FRAGMENT
 directive @specifiedBy(url: String!) on SCALAR
 schema {
 	query: QueryRoot
-	mutation: MutationRoot
 }
