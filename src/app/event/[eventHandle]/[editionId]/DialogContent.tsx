@@ -116,6 +116,10 @@ export default function DialogContent({
   nbMaps: number,
 }) {
   const dataWithMedals = insertMedalsIn(data);
+  const hasMedals = dataWithMedals.medalCount.bronze > 0
+    || dataWithMedals.medalCount.silver > 0
+    || dataWithMedals.medalCount.gold > 0
+    || dataWithMedals.medalCount.champion > 0;
 
   return (
     <>
@@ -165,14 +169,18 @@ export default function DialogContent({
           <Td campaignAttr date hideRespv>{dataWithMedals.worstRank}</Td>
         </EventRowInfo>
 
-        <hr />
+        {hasMedals && (
+          <>
+            <hr />
 
-        <Flex justifyContent="center" alignItems="center" gap={10}>
-          <Flex alignItems="center" gap={2}>{dataWithMedals.medalCount.bronze}{" "}<MedalImg mdl={Medal.Bronze} /></Flex>
-          <Flex alignItems="center" gap={2}>{dataWithMedals.medalCount.silver}{" "}<MedalImg mdl={Medal.Silver} /></Flex>
-          <Flex alignItems="center" gap={2}>{dataWithMedals.medalCount.gold}{" "}<MedalImg mdl={Medal.Gold} /></Flex>
-          <Flex alignItems="center" gap={2}>{dataWithMedals.medalCount.champion}{" "}<MedalImg mdl={Medal.Champion} /></Flex>
-        </Flex>
+            <Flex justifyContent="center" alignItems="center" gap={10}>
+              <Flex alignItems="center" gap={2}>{dataWithMedals.medalCount.bronze}{" "}<MedalImg mdl={Medal.Bronze} /></Flex>
+              <Flex alignItems="center" gap={2}>{dataWithMedals.medalCount.silver}{" "}<MedalImg mdl={Medal.Silver} /></Flex>
+              <Flex alignItems="center" gap={2}>{dataWithMedals.medalCount.gold}{" "}<MedalImg mdl={Medal.Gold} /></Flex>
+              <Flex alignItems="center" gap={2}>{dataWithMedals.medalCount.champion}{" "}<MedalImg mdl={Medal.Champion} /></Flex>
+            </Flex>
+          </>
+        )}
 
         <hr />
 
