@@ -195,7 +195,9 @@ export default function DialogContent({
                       name={map.map.name}
                     />
                   </Td>
-                  <Td textAlign="right">{map.lastRank}</Td>
+                  {map.lastRank > 0 && (
+                    <Td textAlign="right">{map.lastRank}</Td>
+                  )}
                 </Tr>
               ))}
             </GroupedRows>
