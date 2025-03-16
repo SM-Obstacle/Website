@@ -32,16 +32,35 @@ function reduceMedals<T extends { medal: Medal | null }>(input: T[]) {
 }
 
 function insertMedalsIn(data: Data) {
+  let medalCount = {
+    bronze: 0,
+    silver: 0,
+    gold: 0,
+    champion: 0,
+  };
+
   const categoriesRanksWithMedals = {
     ...data,
     categorizedRanks: data.categorizedRanks.map((category) => ({
       ...category,
       ranks: category.ranks.map((rank) => ({
         ...rank,
-        medal: rank.time <= (rank.map.medalTimes?.championTime || -1) ? Medal.Champion
-          : rank.time <= (rank.map.medalTimes?.goldTime || -1) ? Medal.Gold
-            : rank.time <= (rank.map.medalTimes?.silverTime || -1) ? Medal.Silver
-              : rank.time <= (rank.map.medalTimes?.bronzeTime || -1) ? Medal.Bronze
+        medal: rank.time <= (rank.map.medalTimes?.championTime || -1) ? (() => {
+          medalCount.champion++;
+          return Medal.Champion;
+        })()
+          : rank.time <= (rank.map.medalTimes?.goldTime || -1) ? (() => {
+            medalCount.gold++;
+            return Medal.Gold;
+          })()
+            : rank.time <= (rank.map.medalTimes?.silverTime || -1) ? (() => {
+              medalCount.silver++;
+              return Medal.Silver;
+            })()
+              : rank.time <= (rank.map.medalTimes?.bronzeTime || -1) ? (() => {
+                medalCount.bronze++;
+                return Medal.Bronze;
+              })()
                 : null
       }))
     }))
@@ -58,6 +77,7 @@ function insertMedalsIn(data: Data) {
 
   const withMedals = {
     ...categoriesWithMedals,
+    medalCount,
     medal: reduceMedals(categoriesWithMedals.categorizedRanks),
   };
 
@@ -144,6 +164,15 @@ export default function DialogContent({
           </Td>
           <Td campaignAttr date hideRespv>{dataWithMedals.worstRank}</Td>
         </EventRowInfo>
+
+        <hr />
+
+        <Flex justifyContent="center" alignItems="center" gap={10}>
+          <Flex alignItems="center" gap={2}>{dataWithMedals.medalCount.bronze}{" "}<MedalImg mdl={Medal.Bronze} /></Flex>
+          <Flex alignItems="center" gap={2}>{dataWithMedals.medalCount.silver}{" "}<MedalImg mdl={Medal.Silver} /></Flex>
+          <Flex alignItems="center" gap={2}>{dataWithMedals.medalCount.gold}{" "}<MedalImg mdl={Medal.Gold} /></Flex>
+          <Flex alignItems="center" gap={2}>{dataWithMedals.medalCount.champion}{" "}<MedalImg mdl={Medal.Champion} /></Flex>
+        </Flex>
 
         <hr />
 
