@@ -116,10 +116,8 @@ export default function DialogContent({
   nbMaps: number,
 }) {
   const dataWithMedals = insertMedalsIn(data);
-  const hasMedals = dataWithMedals.medalCount.bronze > 0
-    || dataWithMedals.medalCount.silver > 0
-    || dataWithMedals.medalCount.gold > 0
-    || dataWithMedals.medalCount.champion > 0;
+  const hasMedals = dataWithMedals.categorizedRanks
+    .some((rank) => rank.ranks.some((rank) => rank.map.medalTimes));
 
   return (
     <>
