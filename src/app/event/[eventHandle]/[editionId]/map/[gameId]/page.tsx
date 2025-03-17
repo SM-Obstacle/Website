@@ -144,7 +144,7 @@ export default async function EventMapRecords(
       new MedalRecord(data.event.edition.map.medalTimes.goldTime, Medal.Gold),
       new MedalRecord(data.event.edition.map.medalTimes.championTime, Medal.Champion),
     );
-    records.sort((a, b) => a.time - b.time);
+    records.sort((a, b) => (a.time - b.time) || -(a.sortPriority - b.sortPriority));
   }
 
   const content = {

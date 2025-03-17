@@ -6,10 +6,12 @@ export interface Player {
 }
 
 export interface RecordLine {
+  sortPriority: number;
   time: number;
 }
 
 export class RankedRecordLine implements RecordLine {
+  sortPriority = 2;
   id: number;
   rank: number;
   player: Player;
@@ -26,6 +28,7 @@ export class RankedRecordLine implements RecordLine {
 }
 
 export class MedalRecord implements RecordLine {
+  sortPriority = -1;
   time: number;
   medal: Medal;
 
