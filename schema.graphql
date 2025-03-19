@@ -1,9 +1,3 @@
-type Article {
-	date: DateTime!
-	authors: [Player!]!
-	content: String!
-}
-
 type Banishment {
 	id: Int!
 	dateBan: NaiveDateTime!
@@ -304,9 +298,6 @@ enum PlayerRole {
 }
 
 type QueryRoot {
-	latestNews: Article
-	article(slug: String!): Article
-	resourcesContent: ResourcesContent!
 	eventEditionFromMxId(mxId: Int!): EventEdition
 	mappack(mappackId: String!): Mappack!
 	event(handle: String!): Event!
@@ -369,20 +360,6 @@ type RelatedEdition {
 	"""
 	redirectToEvent: Boolean!
 	edition: EventEdition!
-}
-
-"""
-The content of the website "Resources" page.
-"""
-type ResourcesContent {
-	"""
-	The content of the page, in markdown.
-	"""
-	content: String!
-	"""
-	The UTC date of the last edit of the page.
-	"""
-	lastModified: NaiveDateTime!
 }
 
 enum SortState {
