@@ -14,8 +14,8 @@ const GET_EVENT_EDITION_FROM_MX_ID = gql(/* GraphQL */ `
   }
 `);
 
-export default async function Layout({ params, children }: { params: { mxId: string } } & PropsWithChildren) {
-  const mxId = parseInt(params.mxId);
+export default async function Layout({ params, children }: { params: Promise<{ mxId: string }> } & PropsWithChildren) {
+  const mxId = parseInt((await params).mxId);
 
   const eventEdition = await fetchGraphql(GET_EVENT_EDITION_FROM_MX_ID, {
     mxId,
