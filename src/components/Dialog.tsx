@@ -101,5 +101,6 @@ const Dialog = forwardRef<HTMLDialogElement | null, Omit<React.ComponentProps<ty
     <DialogInner {...props} forwardedRef={innerRef} />
   )
 });
+Dialog.displayName = "DialogInner";
 
 export default Dialog;
