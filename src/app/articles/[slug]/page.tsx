@@ -7,8 +7,13 @@ import rehypeRaw from "rehype-raw";
 import { fetchArticles } from "@/lib/article";
 
 export default async function ArticlePage(sp: ServerProps<{ slug: string }>) {
+  const params = await sp.params;
+  if (params.slug === '__resources__') {
+    return redirect("/");
+  }
+
   const articles = await fetchArticles();
-  const article = articles[(await sp.params).slug];
+  const article = articles[params.slug];
   // TODO: find a better way to tell that there isn't any article
   if (!article || article.hide) {
     return redirect("/");
