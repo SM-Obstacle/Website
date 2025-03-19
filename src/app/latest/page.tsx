@@ -23,9 +23,8 @@ const GET_RECORDS = gql(/* GraphQL */ `
   }
 `);
 
-export default async function LatestRecords({
-  searchParams
-}: ServerProps<{}, { dateSortBy?: string }>) {
+export default async function LatestRecords(props: ServerProps<{}, { dateSortBy?: string }>) {
+  const searchParams = await props.searchParams;
   const dateSortBy = getSortState(searchParams.dateSortBy);
   const records = (await fetchGraphql(GET_RECORDS, { dateSortBy })).records as GlobalRankedRecord[];
 

@@ -79,12 +79,9 @@ const fetchMapInfo = cache(async (gameId: string, dateSortBy?: SortState, rankSo
   return fetchGraphql(GET_MAP_INFO, { gameId, dateSortBy, rankSortBy });
 });
 
-export async function generateMetadata(
-  {
-    params,
-    searchParams,
-  }: SP,
-): Promise<Metadata> {
+export async function generateMetadata(props: SP): Promise<Metadata> {
+  const params = await props.params;
+  const searchParams = await props.searchParams;
   const mapInfo = (await fetchMapInfo(params.gameId, getSortState(searchParams["dateSortBy"]), getSortState(searchParams["rankSortBy"]))).map;
 
   return {
@@ -112,16 +109,19 @@ function ToolbarTitle({
 }
 
 export default async function MapRecords(sp: SP) {
+  const params = await sp.params;
+  const searchParams = await sp.searchParams;
+
   const data = await fetchMapInfo(
-    sp.params.gameId,
-    getSortState(sp.searchParams.dateSortBy),
-    getSortState(sp.searchParams.rankSortBy)
+    params.gameId,
+    getSortState(searchParams.dateSortBy),
+    getSortState(searchParams.rankSortBy)
   );
 
   const relatedEvent = data.map.relatedEventEditions && data.map.relatedEventEditions[0];
 
   if (relatedEvent?.redirectToEvent) {
-    return redirect(`/event/${relatedEvent.edition.event.handle}/${relatedEvent.edition.id}/map/${sp.params.gameId}`);
+    return redirect(`/event/${relatedEvent.edition.event.handle}/${relatedEvent.edition.id}/map/${params.gameId}`);
   }
 
   const content = {

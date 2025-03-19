@@ -38,7 +38,7 @@ export default async function GiveTokenPage({
             </h2>
           )}
           <ul>
-            <li>State: <code>{searchParams.state}</code></li>
+            <li>State: <code>{(await searchParams).state}</code></li>
             <li>Response: <code>{JSON.stringify(err)}</code></li>
           </ul>
         </>

@@ -54,12 +54,9 @@ const fetchPlayerInfo = cache(async (login: string, dateSortBy?: SortState) => {
 
 type SP = ServerProps<{ login: string }, { dateSortBy?: string }>;
 
-export async function generateMetadata(
-  {
-    params,
-    searchParams,
-  }: SP,
-): Promise<Metadata> {
+export async function generateMetadata(props: SP): Promise<Metadata> {
+  const params = await props.params;
+  const searchParams = await props.searchParams;
   const playerInfo = (await fetchPlayerInfo(params.login, getSortState(searchParams.dateSortBy))).player;
 
   return {
@@ -67,10 +64,10 @@ export async function generateMetadata(
   };
 }
 
-export default async function PlayerRecords({
-  params,
-  searchParams,
-}: SP) {
+export default async function PlayerRecords(props: SP) {
+  const params = await props.params;
+  const searchParams = await props.searchParams;
+
   const data = await fetchPlayerInfo(params.login, getSortState(searchParams["dateSortBy"]));
 
   return (

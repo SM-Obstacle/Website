@@ -46,7 +46,10 @@ type SP = ServerProps<{
 }, { player?: string | string[] }
 >;
 
-export default async function Mappack({ params, searchParams }: SP) {
+export default async function Mappack(props: SP) {
+  const params = await props.params;
+  const searchParams = await props.searchParams;
+
   const mappack = (await fetchGraphql(GET_MAPPACK_LEADERBOARD, {
     mappackId: params.mxId,
   })).mappack;

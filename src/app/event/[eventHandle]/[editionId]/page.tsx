@@ -99,11 +99,12 @@ type SP = ServerProps<
 >;
 
 export async function generateMetadata(
-  { params: { editionId: rawEditionId, eventHandle } }: SP,
+  props: SP,
 ): Promise<Metadata> {
-  const editionId = parseInt(rawEditionId);
+  const params = await props.params;
+  const editionId = parseInt(params.editionId);
   const event = (await fetchGraphql(GET_CAMPAIGN_LEADERBOARD, {
-    eventHandle,
+    eventHandle: params.eventHandle,
     editionId,
   })).event;
 
@@ -112,7 +113,7 @@ export async function generateMetadata(
   };
 }
 
-async function fetchPlayerInfo(searchParams: SP["searchParams"], eventHandle: string, editionId: number) {
+async function fetchPlayerInfo(searchParams: Awaited<SP["searchParams"]>, eventHandle: string, editionId: number) {
   const player = Array.isArray(searchParams.player) ? searchParams.player[0] : searchParams.player;
   if (!player) {
     return undefined;
@@ -138,18 +139,21 @@ const BottomRightInfo = styled("div", {
   }
 });
 
-export default async function Campaign({ params: { editionId: rawEditionId, eventHandle }, searchParams }: SP) {
-  const editionId = parseInt(rawEditionId);
+export default async function Campaign(props: SP) {
+  const params = await props.params;
+  const searchParams = await props.searchParams;
+
+  const editionId = parseInt(params.editionId);
 
   const event = (await fetchGraphql(GET_CAMPAIGN_LEADERBOARD, {
-    eventHandle,
+    eventHandle: params.eventHandle,
     editionId,
   })).event;
   const mappack = event.edition!.mappack;
 
   const eventName = event.edition?.name + (event.edition?.subtitle ? ` ${event.edition?.subtitle}` : '');
 
-  const playerInfo = (await fetchPlayerInfo(searchParams, eventHandle, editionId))?.event.edition?.player;
+  const playerInfo = (await fetchPlayerInfo(searchParams, params.eventHandle, editionId))?.event.edition?.player;
 
   const startDate = moment(event.edition!.startDate).format("DD/MM/YYYY");
   const admins = event.edition!.admins.length > 0 ? event.edition!.admins : event.admins;
@@ -159,7 +163,7 @@ export default async function Campaign({ params: { editionId: rawEditionId, even
       {playerInfo && (
         <Dialog login={playerInfo.player.login}>
           <DialogContent
-            eventHandle={eventHandle}
+            eventHandle={params.eventHandle}
             editionId={editionId}
             eventName={eventName}
             data={playerInfo}

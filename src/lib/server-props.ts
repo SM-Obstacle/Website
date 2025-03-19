@@ -13,6 +13,6 @@ export type Params = {
 }
 
 export type ServerProps<P = Params, S = SearchParams> = {
-  params: P,
-  searchParams: S,
+  params: Promise<P>,
+  searchParams: Promise<S>,
 }

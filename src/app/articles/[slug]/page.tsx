@@ -8,7 +8,7 @@ import { fetchArticles } from "@/lib/article";
 
 export default async function ArticlePage(sp: ServerProps<{ slug: string }>) {
   const articles = await fetchArticles();
-  const article = articles[sp.params.slug];
+  const article = articles[(await sp.params).slug];
   // TODO: find a better way to tell that there isn't any article
   if (!article || article.hide) {
     return redirect("/");

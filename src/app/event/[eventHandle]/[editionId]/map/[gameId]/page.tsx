@@ -105,16 +105,19 @@ function ToolbarTitle({
 
 export default async function EventMapRecords(
   sp: ServerProps<
-    MapPage.SP["params"] & { eventHandle: string; editionId: string },
-    MapPage.SP["searchParams"]
+    Awaited<MapPage.SP["params"]> & { eventHandle: string; editionId: string },
+    Awaited<MapPage.SP["searchParams"]>
   >
 ) {
-  const editionId = parseInt(sp.params.editionId);
-  const dataRaw = await fetchMapInfo(sp.params.eventHandle,
+  const params = await sp.params;
+  const searchParams = await sp.searchParams;
+
+  const editionId = parseInt(params.editionId);
+  const dataRaw = await fetchMapInfo(params.eventHandle,
     editionId,
-    sp.params.gameId,
-    getSortState(sp.searchParams.dateSortBy),
-    getSortState(sp.searchParams.rankSortBy),
+    params.gameId,
+    getSortState(searchParams.dateSortBy),
+    getSortState(searchParams.rankSortBy),
   );
   // : )
   const data = {
@@ -166,7 +169,7 @@ export default async function EventMapRecords(
             || dataRaw.event.edition?.map.linkToOriginal && data.event.edition.map.gameId
             || undefined
           }
-          eventHandle={sp.params.eventHandle}
+          eventHandle={params.eventHandle}
           editionId={editionId}
           eventName={eventName}
         />
