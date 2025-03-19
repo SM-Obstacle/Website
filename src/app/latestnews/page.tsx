@@ -1,24 +1,22 @@
 import { Article, LastUpdate, MdIframe, MdImg, MdLink } from "@/components/Article";
 import Date from "@/components/Date";
-import { gql } from "../__generated__";
-import { fetchGraphql } from "@/lib/utils";
+import { fetchArticles } from "@/lib/article";
 import { redirect } from "next/navigation";
 import Markdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
 
-const GET_LAST_ARTICLE_CONTENT = gql(/* GraphQL */ `
-  query GetLatestNews {
-    latestNews {
-      content
-      date
-    }
-  }
-`);
-
 export default async function LatestNews() {
-  const content = (await fetchGraphql(GET_LAST_ARTICLE_CONTENT)).latestNews;
+  const articles = await fetchArticles();
+  const lastArticle = Object.values(articles).reduce((previous, current) => {
+    if (current.date > previous.date) {
+      return current;
+    }
+    return previous;
+  });
   // TODO: find a better way to tell that there isn't any last article
-  if (!content) return redirect("/");
+  if (!lastArticle) return redirect("/");
+
+  const content = await lastArticle.fetchContent();
 
   return (
     <Article>
@@ -30,9 +28,9 @@ export default async function LatestNews() {
             "img": MdImg,
             "a": MdLink,
           }}
-        >{content.content}</Markdown>
+        >{content}</Markdown>
       </div>
-      <LastUpdate>Date: <Date onlyDate>{content.date}</Date></LastUpdate>
+      <LastUpdate>Date: <Date onlyDate>{lastArticle.date}</Date></LastUpdate>
     </Article>
   );
 }

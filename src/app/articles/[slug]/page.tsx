@@ -1,28 +1,20 @@
-import { gql } from "@/app/__generated__";
 import { Article, LastUpdate, MdIframe, MdImg, MdLink } from "@/components/Article";
 import { ServerProps } from "@/lib/server-props";
-import { fetchGraphql } from "@/lib/utils";
 import Date from "@/components/Date";
 import { redirect } from "next/navigation";
 import Markdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
-
-const GET_ARTICLE = gql(/* GraphQL */ `
-  query GetArticle($slug: String!) {
-    article(slug: $slug) {
-      content
-      date
-    }
-  }
-`);
+import { fetchArticles } from "@/lib/article";
 
 export default async function ArticlePage(sp: ServerProps<{ slug: string }>) {
-  const content = (await fetchGraphql(GET_ARTICLE, {
-    slug: sp.params.slug,
-  })).article;
+  const articles = await fetchArticles();
+  const article = articles[sp.params.slug];
+  // TODO: find a better way to tell that there isn't any article
+  if (!article || article.hide) {
+    return redirect("/");
+  }
 
-  // TODO: find a better way to tell that there isn't any last article
-  if (!content) return redirect("/");
+  const content = await article.fetchContent();
 
   return (
     <Article>
@@ -34,9 +26,9 @@ export default async function ArticlePage(sp: ServerProps<{ slug: string }>) {
             "img": MdImg,
             "a": MdLink,
           }}
-        >{content.content}</Markdown>
+        >{content}</Markdown>
       </div>
-      <LastUpdate>Date: <Date onlyDate>{content.date}</Date></LastUpdate>
+      <LastUpdate>Date: <Date onlyDate>{article.date}</Date></LastUpdate>
     </Article>
   );
 }
