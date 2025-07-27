@@ -11,6 +11,7 @@ import Link from "@/components/Link";
 import { redirect } from "next/navigation";
 import { MapRecordsContent } from "./MapRecordsContent";
 import { MapContent, RankedRecordLine } from "@/lib/map-page-types";
+import React from "react";
 
 const MAP_RECORDS_FRAGMENT = gql(/* GraphQL */ `
   fragment MapRecords on Map {
@@ -91,17 +92,24 @@ export async function generateMetadata(props: SP): Promise<Metadata> {
 
 function ToolbarTitle({
   data,
-  relatedEvent,
+  relatedEvents,
 }: {
   data: GetMapInfoQuery,
-  relatedEvent: RelatedEventEdition,
+  relatedEvents: RelatedEventEdition[],
 }) {
-  return relatedEvent ? (
+  return relatedEvents.length > 0 ? (
     <ToolbarTitleWrapper>
       <RawToolbarTitle><MPFormat>{data.map.name}</MPFormat></RawToolbarTitle>
-      {<span>Related to <Link explicit href={`/event/${relatedEvent.edition.event.handle}/${relatedEvent.edition.id}/map/${relatedEvent.map.gameId}`}>
-        {relatedEvent.edition.name + (relatedEvent.edition.subtitle ? " " + relatedEvent.edition.subtitle : '')}
-      </Link></span>}
+      <span>
+        Related to {relatedEvents.map((relatedEvent, i) => (
+          <React.Fragment key={i}>
+            <Link explicit href={`/event/${relatedEvent.edition.event.handle}/${relatedEvent.edition.id}/map/${relatedEvent.map.gameId}`}>
+              {relatedEvent.edition.name + (relatedEvent.edition.subtitle ? " " + relatedEvent.edition.subtitle : '')}
+            </Link>
+            {i < relatedEvents.length - 1 ? ", " : null}
+          </React.Fragment>
+        ))}
+      </span>
     </ToolbarTitleWrapper>
   ) : (
     <RawToolbarTitle><MPFormat>{data.map.name}</MPFormat></RawToolbarTitle>
@@ -118,9 +126,9 @@ export default async function MapRecords(sp: SP) {
     getSortState(searchParams.rankSortBy)
   );
 
-  const relatedEvent = data.map.relatedEventEditions && data.map.relatedEventEditions[0];
-
-  if (relatedEvent?.redirectToEvent) {
+  // If there is only one related event edition and it has a redirect, we redirect to the event map page.
+  if (data.map.relatedEventEditions?.length === 1 && data.map.relatedEventEditions[0].redirectToEvent) {
+    const relatedEvent = data.map.relatedEventEditions[0];
     return redirect(`/event/${relatedEvent.edition.event.handle}/${relatedEvent.edition.id}/map/${params.gameId}`);
   }
 
@@ -135,7 +143,7 @@ export default async function MapRecords(sp: SP) {
 
   return (
     <MapRecordsContent data={content} toolbarTitle={
-      <ToolbarTitle data={data} relatedEvent={relatedEvent} />
+      <ToolbarTitle data={data} relatedEvents={data.map.relatedEventEditions} />
     } />
   );
 }
