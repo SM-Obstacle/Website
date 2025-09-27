@@ -2,7 +2,7 @@
 
 import type { PropsWithChildren } from "react";
 import { Tr } from "@/components/Table";
-import useSelectPlayer from "@/hooks/select-player";
+import useToggleSelectPlayer from "@/hooks/select-player";
 
 export default function CampaignPlayerRow({
   login,
@@ -10,7 +10,7 @@ export default function CampaignPlayerRow({
 }: {
   login: string;
 } & PropsWithChildren) {
-  const selectPlayer = useSelectPlayer(login);
+  const toggleSelectPlayer = useToggleSelectPlayer(login);
 
-  return <Tr onClick={selectPlayer}>{children}</Tr>;
+  return <Tr onClick={toggleSelectPlayer}>{children}</Tr>;
 }

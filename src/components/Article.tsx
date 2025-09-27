@@ -31,8 +31,10 @@ export const MdLink = (props: React.ComponentProps<"a">) => (
   <Link {...(props as React.ComponentProps<typeof Link>)} explicit />
 );
 
-export const MdImg = (props: React.ComponentProps<typeof Image>) => (
-  <Image {...props} className={css({ maxWidth: "100%" })} />
+export const MdImg = (props: React.ComponentProps<"img">) => (
+  // biome-ignore lint/a11y/useAltText: The alt text is provided by the caller.
+  // biome-ignore lint/performance/noImgElement: The img element is used in a Markdown context.
+  <img {...props} className={css({ maxWidth: "100%" })} />
 );
 
 export const MdIframe = (props: React.ComponentProps<"iframe">) => (

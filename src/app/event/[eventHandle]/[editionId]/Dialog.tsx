@@ -1,7 +1,7 @@
 "use client";
 
 import DialogInner from "@/components/Dialog";
-import useSelectPlayer from "@/hooks/select-player";
+import useToggleSelectPlayer from "@/hooks/select-player";
 
 export default function Dialog({
   login,
@@ -9,6 +9,6 @@ export default function Dialog({
 }: {
   login: string;
 } & React.PropsWithChildren) {
-  const selectPlayer = useSelectPlayer(login);
-  return <DialogInner onClose={selectPlayer}>{children}</DialogInner>;
+  const toggleSelectPlayer = useToggleSelectPlayer(login);
+  return <DialogInner onClose={toggleSelectPlayer}>{children}</DialogInner>;
 }
