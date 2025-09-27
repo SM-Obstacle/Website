@@ -23,6 +23,7 @@ export default async function Layout({
   const eventEdition = await query({
     query: GET_EVENT_EDITION_FROM_MX_ID,
     variables: { mxId },
+    errorPolicy: "all",
   });
 
   if (eventEdition.data?.eventEditionFromMxId) {

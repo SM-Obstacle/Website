@@ -45,16 +45,28 @@ const _SORT_PLAYER_RECORDS = gql(/* GraphQL */ `
 `);
 
 const fetchPlayerInfo = cache(async (login: string, dateSortBy?: SortState) => {
-  return query({ query: GET_PLAYER_INFO, variables: { login, dateSortBy } });
+  return query({
+    query: GET_PLAYER_INFO,
+    variables: { login, dateSortBy },
+    errorPolicy: "all",
+  });
 });
 
-type SP = ServerProps<{ login: string }, { dateSortBy?: string }>;
+type SP = ServerProps<
+  { login: string },
+  { dateSortBy?: keyof typeof SortState }
+>;
 
 export async function generateMetadata(props: SP): Promise<Metadata> {
   const params = await props.params;
   const searchParams = await props.searchParams;
   const playerInfo = (
-    await fetchPlayerInfo(params.login, getSortState(searchParams.dateSortBy))
+    await fetchPlayerInfo(
+      params.login,
+      searchParams.dateSortBy
+        ? getSortState(searchParams.dateSortBy)
+        : undefined,
+    )
   ).data?.player;
 
   return {
@@ -68,10 +80,12 @@ export default async function PlayerRecords(props: SP) {
 
   const data = await fetchPlayerInfo(
     params.login,
-    getSortState(searchParams.dateSortBy),
+    searchParams.dateSortBy ? getSortState(searchParams.dateSortBy) : undefined,
   );
 
-  return (
+  return data.error ? (
+    data.error.message
+  ) : (
     <>
       <PlayerToolbar
         role={data.data?.player.role ?? ""}

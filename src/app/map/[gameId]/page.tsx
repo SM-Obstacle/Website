@@ -75,7 +75,7 @@ const _SORT_MAP_RECORDS = gql(/* GraphQL */ `
 
 export type SP = ServerProps<
   { gameId: string },
-  { dateSortBy?: string; rankSortBy?: string }
+  { dateSortBy?: keyof typeof SortState; rankSortBy?: keyof typeof SortState }
 >;
 
 type Item<Array> = Array extends (infer T)[] ? T : never;
@@ -89,6 +89,7 @@ const fetchMapInfo = cache(
     return query({
       query: GET_MAP_INFO,
       variables: { gameId, dateSortBy, rankSortBy },
+      errorPolicy: "all",
     });
   },
 );
@@ -99,8 +100,12 @@ export async function generateMetadata(props: SP): Promise<Metadata> {
   const mapInfo = (
     await fetchMapInfo(
       params.gameId,
-      getSortState(searchParams.dateSortBy),
-      getSortState(searchParams.rankSortBy),
+      searchParams.dateSortBy
+        ? getSortState(searchParams.dateSortBy)
+        : undefined,
+      searchParams.rankSortBy
+        ? getSortState(searchParams.rankSortBy)
+        : undefined,
     )
   ).data?.map;
 
@@ -154,8 +159,8 @@ export default async function MapRecords(sp: SP) {
 
   const data = await fetchMapInfo(
     params.gameId,
-    getSortState(searchParams.dateSortBy),
-    getSortState(searchParams.rankSortBy),
+    searchParams.dateSortBy ? getSortState(searchParams.dateSortBy) : undefined,
+    searchParams.rankSortBy ? getSortState(searchParams.rankSortBy) : undefined,
   );
 
   // If there is only one related event edition and it has a redirect, we redirect to the event map page.
@@ -187,7 +192,9 @@ export default async function MapRecords(sp: SP) {
     },
   } satisfies MapContent;
 
-  return data.data ? (
+  return data.error ? (
+    data.error.message
+  ) : data.data ? (
     <MapRecordsContent
       data={content}
       toolbarTitle={
@@ -198,6 +205,6 @@ export default async function MapRecords(sp: SP) {
       }
     />
   ) : (
-    <p>Error</p>
+    "Something went wrong."
   );
 }

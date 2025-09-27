@@ -40,6 +40,7 @@ async function fetchPlayers(
         login,
         mappackId,
       },
+      errorPolicy: "all",
     }).then((data) => data.data?.mappack);
   };
 
@@ -61,12 +62,13 @@ export default async function Mappack(props: SP) {
   const params = await props.params;
   const searchParams = await props.searchParams;
 
-  const mappack = (
-    await query({
-      query: GET_MAPPACK_LEADERBOARD,
-      variables: { mappackId: params.mxId },
-    })
-  ).data?.mappack;
+  const { data: mappackLbData, error } = await query({
+    query: GET_MAPPACK_LEADERBOARD,
+    variables: { mappackId: params.mxId },
+    errorPolicy: "all",
+  });
+
+  const mappack = mappackLbData?.mappack;
   const data = await fetchPlayers(
     params.mxId,
     mappack,
@@ -75,7 +77,9 @@ export default async function Mappack(props: SP) {
 
   const startDate = moment(mappack?.mxCreatedAt).format("DD/MM/YYYY");
 
-  return (
+  return error ? (
+    error.message
+  ) : (
     <>
       <CampaignHeader
         bannerImgUrl={null}

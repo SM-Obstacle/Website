@@ -83,6 +83,7 @@ const fetchMapInfo = cache(
         dateSortBy,
         rankSortBy,
       },
+      errorPolicy: "all",
     });
   },
 );
@@ -140,8 +141,8 @@ export default async function EventMapRecords(
     params.eventHandle,
     editionId,
     params.gameId,
-    getSortState(searchParams.dateSortBy),
-    getSortState(searchParams.rankSortBy),
+    searchParams.dateSortBy ? getSortState(searchParams.dateSortBy) : undefined,
+    searchParams.rankSortBy ? getSortState(searchParams.rankSortBy) : undefined,
   );
   // : )
   const data = {
@@ -161,7 +162,7 @@ export default async function EventMapRecords(
 
   const eventName =
     data.event.edition?.name +
-    (data.event.edition?.subtitle ? " " + data.event.edition?.subtitle : "");
+    (data.event.edition?.subtitle ? ` ${data.event.edition?.subtitle}` : "");
 
   const records = (data.data?.event.edition?.map.records ?? []).map(
     (record) =>
@@ -207,7 +208,9 @@ export default async function EventMapRecords(
     },
   } satisfies MapContent;
 
-  return (
+  return data.error ? (
+    data.error.message
+  ) : (
     <MapRecordsContent.MapRecordsContent
       data={content}
       toolbarTitle={

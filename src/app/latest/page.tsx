@@ -5,6 +5,7 @@ import Time from "@/components/Time";
 import type { GlobalRankedRecord } from "@/lib/ranked-record";
 import { getSortState, type ServerProps } from "@/lib/server-props";
 import { gql } from "../__generated__/gql";
+import type { SortState } from "../__generated__/graphql";
 import { query } from "../ApolloClient";
 
 const GET_RECORDS = gql(/* GraphQL */ `
@@ -24,18 +25,26 @@ const GET_RECORDS = gql(/* GraphQL */ `
 `);
 
 export default async function LatestRecords(
-  props: ServerProps<Record<string, never>, { dateSortBy?: string }>,
+  props: ServerProps<
+    Record<string, never>,
+    { dateSortBy?: keyof typeof SortState }
+  >,
 ) {
   const searchParams = await props.searchParams;
-  const dateSortBy = getSortState(searchParams.dateSortBy);
-  const records = (
-    await query({
-      query: GET_RECORDS,
-      variables: { dateSortBy },
-    })
-  ).data?.records as GlobalRankedRecord[];
+  const dateSortBy = searchParams.dateSortBy
+    ? getSortState(searchParams.dateSortBy)
+    : undefined;
 
-  return (
+  const { data, error } = await query({
+    query: GET_RECORDS,
+    variables: { dateSortBy },
+  });
+
+  const records = data?.records as GlobalRankedRecord[];
+
+  return error ? (
+    error.message
+  ) : (
     <Table>
       <Thead>
         <Tr>

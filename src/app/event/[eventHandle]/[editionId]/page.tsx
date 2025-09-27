@@ -112,6 +112,7 @@ export async function generateMetadata(props: SP): Promise<Metadata> {
         eventHandle: params.eventHandle,
         editionId,
       },
+      errorPolicy: "all",
     })
   ).data?.event;
 
@@ -139,6 +140,7 @@ async function fetchPlayerInfo(
       editionId,
       login: player,
     },
+    errorPolicy: "all",
   });
 }
 
@@ -161,15 +163,16 @@ export default async function Campaign(props: SP) {
 
   const editionId = parseInt(params.editionId, 10);
 
-  const event = (
-    await query({
-      query: GET_CAMPAIGN_LEADERBOARD,
-      variables: {
-        eventHandle: params.eventHandle,
-        editionId,
-      },
-    })
-  ).data?.event;
+  const { data, error } = await query({
+    query: GET_CAMPAIGN_LEADERBOARD,
+    variables: {
+      eventHandle: params.eventHandle,
+      editionId,
+    },
+    errorPolicy: "all",
+  });
+
+  const event = data?.event;
   const mappack = event?.edition?.mappack;
 
   const eventName =
@@ -186,7 +189,9 @@ export default async function Campaign(props: SP) {
       ? event?.edition?.admins ?? []
       : event?.admins ?? [];
 
-  return (
+  return error ? (
+    error.message
+  ) : (
     <>
       {playerInfo && (
         <Dialog login={playerInfo.player.login}>
