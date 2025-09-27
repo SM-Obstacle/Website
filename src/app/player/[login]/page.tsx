@@ -1,18 +1,17 @@
+import type { Metadata } from "next";
+import { cache } from "react";
 import { gql } from "@/app/__generated__";
-import { GetPlayerInfoQuery, SortState } from "@/app/__generated__/graphql";
+import type { SortState } from "@/app/__generated__/graphql";
+import { query } from "@/app/ApolloClient";
+import FormattedDate from "@/components/FormattedDate";
 import MPFormat, { MPFormatLink } from "@/components/MPFormat";
 import { Table, Tbody, Td, Th, Thead, Tr } from "@/components/Table";
 import Time from "@/components/Time";
-import Date from "@/components/Date";
 import { parse, toPlainText } from "@/lib/mpformat/mpformat";
-import { RankedRecordOfPlayer } from "@/lib/ranked-record";
-import { ServerProps, getSortState } from "@/lib/server-props";
-import { fetchGraphql } from "@/lib/utils";
-import { Metadata } from "next";
-import { cache } from "react";
+import { getSortState, type ServerProps } from "@/lib/server-props";
 import PlayerToolbar from "./PlayerToolbar";
 
-const PLAYER_RECORDS_FRAGMENT = gql(/* GraphQL */ `
+const _PLAYER_RECORDS_FRAGMENT = gql(/* GraphQL */ `
   fragment PlayerRecords on Player {
     records(dateSortBy: $dateSortBy) {
       map {
@@ -36,7 +35,8 @@ const GET_PLAYER_INFO = gql(/* GraphQL */ `
   }
 `);
 
-const SORT_PLAYER_RECORDS = gql(/* GraphQL */ `
+// FIXME: this seems to be unsused
+const _SORT_PLAYER_RECORDS = gql(/* GraphQL */ `
   query SortPlayerRecords($login: String!, $dateSortBy: SortState) {
     player(login: $login) {
       ...PlayerRecords
@@ -44,12 +44,8 @@ const SORT_PLAYER_RECORDS = gql(/* GraphQL */ `
   }
 `);
 
-type PlayerRecordsProperty = GetPlayerInfoQuery["player"] & {
-  records: RankedRecordOfPlayer[];
-};
-
 const fetchPlayerInfo = cache(async (login: string, dateSortBy?: SortState) => {
-  return fetchGraphql(GET_PLAYER_INFO, { login, dateSortBy });
+  return query({ query: GET_PLAYER_INFO, variables: { login, dateSortBy } });
 });
 
 type SP = ServerProps<{ login: string }, { dateSortBy?: string }>;
@@ -57,10 +53,12 @@ type SP = ServerProps<{ login: string }, { dateSortBy?: string }>;
 export async function generateMetadata(props: SP): Promise<Metadata> {
   const params = await props.params;
   const searchParams = await props.searchParams;
-  const playerInfo = (await fetchPlayerInfo(params.login, getSortState(searchParams.dateSortBy))).player;
+  const playerInfo = (
+    await fetchPlayerInfo(params.login, getSortState(searchParams.dateSortBy))
+  ).data?.player;
 
   return {
-    title: toPlainText(parse(playerInfo.name)),
+    title: toPlainText(parse(playerInfo?.name ?? "")),
   };
 }
 
@@ -68,30 +66,43 @@ export default async function PlayerRecords(props: SP) {
   const params = await props.params;
   const searchParams = await props.searchParams;
 
-  const data = await fetchPlayerInfo(params.login, getSortState(searchParams["dateSortBy"]));
+  const data = await fetchPlayerInfo(
+    params.login,
+    getSortState(searchParams.dateSortBy),
+  );
 
   return (
     <>
       <PlayerToolbar
-        role={data.player.role}
-        zonePath={data.player.zonePath}
+        role={data.data?.player.role ?? ""}
+        zonePath={data.data?.player.zonePath ?? ""}
       >
-        <MPFormat>{data.player.name}</MPFormat>
+        <MPFormat>{data.data?.player.name ?? ""}</MPFormat>
       </PlayerToolbar>
 
       <Table>
         <Thead>
           <Tr>
-            <Th rank hideRespv><span>Rank</span></Th>
-            <Th map padRespvFirst><span>Map</span></Th>
-            <Th time padRespvLast><span>Time</span></Th>
-            <Th date hideRespv><span>Date</span></Th>
+            <Th rank hideRespv>
+              <span>Rank</span>
+            </Th>
+            <Th map padRespvFirst>
+              <span>Map</span>
+            </Th>
+            <Th time padRespvLast>
+              <span>Time</span>
+            </Th>
+            <Th date hideRespv>
+              <span>Date</span>
+            </Th>
           </Tr>
         </Thead>
         <Tbody>
-          {data.player.records.map((record) => (
+          {(data.data?.player.records ?? []).map((record) => (
             <Tr key={record.id}>
-              <Td rank respvUnpadRank>{record.rank}</Td>
+              <Td rank respvUnpadRank>
+                {record.rank}
+              </Td>
               <Td map respvMb>
                 <MPFormatLink
                   path={`/map/${record.map.gameId}`}
@@ -102,12 +113,12 @@ export default async function PlayerRecords(props: SP) {
                 <Time>{record.time}</Time>
               </Td>
               <Td date respvAbsoluteDate>
-                <Date onlyDate>{record.recordDate}</Date>
+                <FormattedDate onlyDate>{record.recordDate}</FormattedDate>
               </Td>
             </Tr>
           ))}
         </Tbody>
       </Table>
     </>
-  )
+  );
 }

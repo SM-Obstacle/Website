@@ -1,8 +1,13 @@
 "use client";
 
-import { Td, Tr } from "@/components/Table";
-import { PropsWithChildren, useCallback, useEffect, useRef, useState } from "react";
+import {
+  type PropsWithChildren,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
+import { Td, Tr } from "@/components/Table";
 import { styled } from "../../../../../styled-system/jsx";
 
 const HeadRow = styled(Tr, {
@@ -15,24 +20,24 @@ const HeadRow = styled(Tr, {
 
     _hover: {
       cursor: "pointer",
-    }
-  }
+    },
+  },
 });
 
-const Rows = styled('div', {
+const Rows = styled("div", {
   base: {
     overflowY: "hidden",
     transition: "max-height .2s",
-  }
+  },
 });
 
 const ArrowTd = styled(Td, {
   base: {
-    flex: .1,
+    flex: 0.1,
     display: "flex",
     justifyContent: "flex-end",
     alignItems: "center",
-  }
+  },
 });
 
 export default function GroupedRows({
@@ -40,8 +45,8 @@ export default function GroupedRows({
   medal,
   children,
 }: {
-  head: React.ReactNode,
-  medal?: React.ReactNode,
+  head: React.ReactNode;
+  medal?: React.ReactNode;
 } & PropsWithChildren) {
   const [contentElem, setContentElem] = useState<HTMLDivElement | null>(null);
   const [opened, setOpened] = useState(true);
@@ -56,7 +61,7 @@ export default function GroupedRows({
     setOpened(!opened);
     if (contentElem) {
       if (!opened) {
-        contentElem.style.maxHeight = contentElem.scrollHeight + "px";
+        contentElem.style.maxHeight = `${contentElem.scrollHeight}px`;
       } else {
         contentElem.style.maxHeight = "1px";
       }
@@ -65,26 +70,18 @@ export default function GroupedRows({
 
   useEffect(() => {
     if (contentElem) {
-      contentElem.style.maxHeight = contentElem.scrollHeight + "px";
+      contentElem.style.maxHeight = `${contentElem.scrollHeight}px`;
     }
-  }, []);
+  }, [contentElem]);
 
   return (
     <div>
       <HeadRow onClick={toggleOpen}>
         {head}
-        {medal && (
-          <ArrowTd>
-            {medal}
-          </ArrowTd>
-        )}
-        <ArrowTd>
-          {opened ? <IoIosArrowDown /> : <IoIosArrowUp />}
-        </ArrowTd>
+        {medal && <ArrowTd>{medal}</ArrowTd>}
+        <ArrowTd>{opened ? <IoIosArrowDown /> : <IoIosArrowUp />}</ArrowTd>
       </HeadRow>
-      <Rows ref={contentRef}>
-        {children}
-      </Rows>
+      <Rows ref={contentRef}>{children}</Rows>
     </div>
   );
 }

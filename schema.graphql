@@ -1,25 +1,5 @@
-type Banishment {
-	id: Int!
-	dateBan: NaiveDateTime!
-	duration: Int
-	wasReprieved: Boolean!
-	reason: String!
-	player: Player
-	banishedBy: Player
-}
-
-
-"""
-Represents the time on a checkpoint on a map associated to a record.
-"""
 type CheckpointTime {
-	"""
-	The checkpoint number. It starts at 0.
-	"""
 	cpNum: Int!
-	"""
-	The time in milliseconds on this checkpoint.
-	"""
 	time: Int!
 }
 
@@ -40,29 +20,10 @@ type Event {
 	edition(editionId: Int!): EventEdition
 }
 
-"""
-An event category in an event.
-"""
 type EventCategory {
-	"""
-	The handle of the category.
-	"""
 	handle: String!
-	"""
-	The name of the category.
-	"""
 	name: String!
-	"""
-	The optional URL to the banner image.
-	
-	This is currently used in the Obstacle Titlepack menu.
-	"""
 	bannerImgUrl: String
-	"""
-	The hex color of the category.
-	
-	For example, for the White category, it is "fff".
-	"""
 	hexColor: String
 }
 
@@ -120,10 +81,7 @@ type EventEditionPlayerRank {
 	map: EventEditionMapExt!
 }
 
-
-
-
-type Map implements Node {
+type Map {
 	id: ID!
 	gameId: String!
 	playerId: ID!
@@ -133,35 +91,6 @@ type Map implements Node {
 	relatedEventEditions: [RelatedEdition!]!
 	averageRating: [PlayerRating!]!
 	records(rankSortBy: SortState, dateSortBy: SortState): [RankedRecord!]!
-}
-
-type MapConnection {
-	"""
-	Information to aid in pagination.
-	"""
-	pageInfo: PageInfo!
-	"""
-	A list of edges.
-	"""
-	edges: [MapEdge!]!
-	"""
-	A list of nodes.
-	"""
-	nodes: [Map!]!
-}
-
-"""
-An edge in a connection.
-"""
-type MapEdge {
-	"""
-	The item at the end of the edge
-	"""
-	node: Map!
-	"""
-	A cursor for use in pagination
-	"""
-	cursor: String!
 }
 
 type Mappack {
@@ -189,25 +118,10 @@ type MappackPlayer {
 	worstRank: Int!
 }
 
-"""
-Represents the medal times, in milliseconds.
-"""
 type MedalTimes {
-	"""
-	The time of the bronze medal.
-	"""
 	bronzeTime: Int!
-	"""
-	The time of the silver medal.
-	"""
 	silverTime: Int!
-	"""
-	The time of the gold medal.
-	"""
 	goldTime: Int!
-	"""
-	The time of the champion/author medal.
-	"""
 	championTime: Int!
 }
 
@@ -220,70 +134,13 @@ ISO 8601 combined date and time without timezone.
 """
 scalar NaiveDateTime
 
-interface Node {
-	id: ID!
-}
-
-"""
-Information about pagination in a connection
-"""
-type PageInfo {
-	"""
-	When paginating backwards, are there more items?
-	"""
-	hasPreviousPage: Boolean!
-	"""
-	When paginating forwards, are there more items?
-	"""
-	hasNextPage: Boolean!
-	"""
-	When paginating backwards, the cursor to continue.
-	"""
-	startCursor: String
-	"""
-	When paginating forwards, the cursor to continue.
-	"""
-	endCursor: String
-}
-
-type Player implements Node {
+type Player {
 	id: ID!
 	login: String!
 	name: String!
 	zonePath: String
-	banishments: [Banishment!]!
 	role: PlayerRole!
-	maps(after: String, before: String, first: Int, last: Int): MapConnection!
 	records(dateSortBy: SortState): [RankedRecord!]!
-}
-
-type PlayerConnection {
-	"""
-	Information to aid in pagination.
-	"""
-	pageInfo: PageInfo!
-	"""
-	A list of edges.
-	"""
-	edges: [PlayerEdge!]!
-	"""
-	A list of nodes.
-	"""
-	nodes: [Player!]!
-}
-
-"""
-An edge in a connection.
-"""
-type PlayerEdge {
-	"""
-	The item at the end of the edge
-	"""
-	node: Player!
-	"""
-	A cursor for use in pagination
-	"""
-	cursor: String!
 }
 
 type PlayerRating {
@@ -302,9 +159,6 @@ type QueryRoot {
 	mappack(mappackId: String!): Mappack!
 	event(handle: String!): Event!
 	events: [Event!]!
-	players(after: String, before: String, first: Int, last: Int): PlayerConnection!
-	maps(after: String, before: String, first: Int, last: Int): MapConnection!
-	node(id: ID!): Node
 	record(recordId: Int!): RankedRecord!
 	map(gameId: String!): Map!
 	player(login: String!): Player!
@@ -326,9 +180,7 @@ type RankedRecord {
 }
 
 """
-The rating kinds of a player on a map.
-
-This isn't yet used in-game.
+The various rating kinds available for a map.
 """
 enum RatingKind {
 	"""
@@ -367,9 +219,17 @@ enum SortState {
 	REVERSE
 }
 
-
+"""
+Directs the executor to include this field or fragment only when the `if` argument is true.
+"""
 directive @include(if: Boolean!) on FIELD | FRAGMENT_SPREAD | INLINE_FRAGMENT
+"""
+Directs the executor to skip this field or fragment when the `if` argument is true.
+"""
 directive @skip(if: Boolean!) on FIELD | FRAGMENT_SPREAD | INLINE_FRAGMENT
+"""
+Provides a scalar specification URL for specifying the behavior of custom scalar types.
+"""
 directive @specifiedBy(url: String!) on SCALAR
 schema {
 	query: QueryRoot

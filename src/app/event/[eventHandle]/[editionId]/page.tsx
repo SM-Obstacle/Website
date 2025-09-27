@@ -1,18 +1,18 @@
-import { gql } from "@/app/__generated__";
-import { MPFormatLink } from "@/components/MPFormat";
-import { fetchGraphql } from "@/lib/utils";
-import { Metadata } from "next";
-import React from "react";
-import { ServerProps } from "@/lib/server-props";
 import moment from "moment";
+import type { Metadata } from "next";
+import React from "react";
+import { gql } from "@/app/__generated__";
+import { query } from "@/app/ApolloClient";
 import { CampaignHeader, CampaignPrefixSpan } from "@/components/CampaignMain";
-import CampaignPlayerRow from "./CampaignPlayerRow";
+import { MPFormatLink } from "@/components/MPFormat";
 import NoPropagationLink from "@/components/NoPropagationLink";
 import { Table, Tbody, Td, Th, Thead, Tr } from "@/components/Table";
+import type { ServerProps } from "@/lib/server-props";
 import { styled } from "../../../../../styled-system/jsx";
-import DialogContent from "./DialogContent";
+import CampaignPlayerRow from "./CampaignPlayerRow";
 import Countdown from "./Countdown";
 import Dialog from "./Dialog";
+import DialogContent from "./DialogContent";
 
 const GET_CAMPAIGN_LEADERBOARD = gql(/* GraphQL */ `
   query GetCampaignLeaderboard($eventHandle: String!, $editionId: Int!) {
@@ -40,7 +40,11 @@ const GET_CAMPAIGN_LEADERBOARD = gql(/* GraphQL */ `
 `);
 
 const GET_CAMPAIGN_PLAYER_INFO = gql(/* GraphQL */ `
-  query GetCampaignPlayerInfo($eventHandle: String!, $editionId: Int!, $login: String!) {
+  query GetCampaignPlayerInfo(
+    $eventHandle: String!
+    $editionId: Int!
+    $login: String!
+  ) {
     event(handle: $eventHandle) {
       edition(editionId: $editionId) {
         player(login: $login) {
@@ -98,31 +102,43 @@ type SP = ServerProps<
   { player?: string | string[] }
 >;
 
-export async function generateMetadata(
-  props: SP,
-): Promise<Metadata> {
+export async function generateMetadata(props: SP): Promise<Metadata> {
   const params = await props.params;
-  const editionId = parseInt(params.editionId);
-  const event = (await fetchGraphql(GET_CAMPAIGN_LEADERBOARD, {
-    eventHandle: params.eventHandle,
-    editionId,
-  })).event;
+  const editionId = parseInt(params.editionId, 10);
+  const event = (
+    await query({
+      query: GET_CAMPAIGN_LEADERBOARD,
+      variables: {
+        eventHandle: params.eventHandle,
+        editionId,
+      },
+    })
+  ).data?.event;
 
   return {
-    title: event.edition!.name,
+    title: event?.edition?.name ?? "",
   };
 }
 
-async function fetchPlayerInfo(searchParams: Awaited<SP["searchParams"]>, eventHandle: string, editionId: number) {
-  const player = Array.isArray(searchParams.player) ? searchParams.player[0] : searchParams.player;
+async function fetchPlayerInfo(
+  searchParams: Awaited<SP["searchParams"]>,
+  eventHandle: string,
+  editionId: number,
+) {
+  const player = Array.isArray(searchParams.player)
+    ? searchParams.player[0]
+    : searchParams.player;
   if (!player) {
     return undefined;
   }
 
-  return await fetchGraphql(GET_CAMPAIGN_PLAYER_INFO, {
-    eventHandle,
-    editionId,
-    login: player,
+  return await query({
+    query: GET_CAMPAIGN_PLAYER_INFO,
+    variables: {
+      eventHandle,
+      editionId,
+      login: player,
+    },
   });
 }
 
@@ -136,27 +152,39 @@ const BottomRightInfo = styled("div", {
     bg: "black",
     borderTopLeftRadius: 10,
     padding: 1,
-  }
+  },
 });
 
 export default async function Campaign(props: SP) {
   const params = await props.params;
   const searchParams = await props.searchParams;
 
-  const editionId = parseInt(params.editionId);
+  const editionId = parseInt(params.editionId, 10);
 
-  const event = (await fetchGraphql(GET_CAMPAIGN_LEADERBOARD, {
-    eventHandle: params.eventHandle,
-    editionId,
-  })).event;
-  const mappack = event.edition!.mappack;
+  const event = (
+    await query({
+      query: GET_CAMPAIGN_LEADERBOARD,
+      variables: {
+        eventHandle: params.eventHandle,
+        editionId,
+      },
+    })
+  ).data?.event;
+  const mappack = event?.edition?.mappack;
 
-  const eventName = event.edition?.name + (event.edition?.subtitle ? ` ${event.edition?.subtitle}` : '');
+  const eventName =
+    event?.edition?.name +
+    (event?.edition?.subtitle ? ` ${event.edition.subtitle}` : "");
 
-  const playerInfo = (await fetchPlayerInfo(searchParams, params.eventHandle, editionId))?.event.edition?.player;
+  const playerInfo = (
+    await fetchPlayerInfo(searchParams, params.eventHandle, editionId)
+  )?.data?.event.edition?.player;
 
-  const startDate = moment(event.edition!.startDate).format("DD/MM/YYYY");
-  const admins = event.edition!.admins.length > 0 ? event.edition!.admins : event.admins;
+  const startDate = moment(event?.edition?.startDate).format("DD/MM/YYYY");
+  const admins =
+    (event?.edition?.admins.length ?? 0) > 0
+      ? event?.edition?.admins ?? []
+      : event?.admins ?? [];
 
   return (
     <>
@@ -174,18 +202,24 @@ export default async function Campaign(props: SP) {
       <CampaignHeader
         title={eventName}
         startDate={startDate}
-        authors={admins.length > 0 && (
-          <span>By {admins.map((player, i) => (
-            <React.Fragment key={`event_author_${player.login}`}>
-              <MPFormatLink
-                path={`/player/${player.login}`}
-                name={player.name}
-              />
-              {i < admins.length - 2 && ", " || i < admins.length - 1 && " and "}
-            </React.Fragment>
-          ))}</span>
-        )}
-        bannerImgUrl={event.edition!.bannerImgUrl}
+        authors={
+          admins.length > 0 && (
+            <span>
+              By{" "}
+              {admins.map((player, i) => (
+                <React.Fragment key={`event_author_${player.login}`}>
+                  <MPFormatLink
+                    path={`/player/${player.login}`}
+                    name={player.name}
+                  />
+                  {(i < admins.length - 2 && ", ") ||
+                    (i < admins.length - 1 && " and ")}
+                </React.Fragment>
+              ))}
+            </span>
+          )
+        }
+        bannerImgUrl={event?.edition?.bannerImgUrl}
       />
 
       <Table>
@@ -212,9 +246,14 @@ export default async function Campaign(props: SP) {
           </Tr>
         </Thead>
         <Tbody>
-          {mappack?.leaderboard?.map((player, i) => (
-            <CampaignPlayerRow key={i} login={player.player.login}>
-              <Td rank respvUnpadRank>{player.rank}</Td>
+          {mappack?.leaderboard?.map((player) => (
+            <CampaignPlayerRow
+              key={player.player.login}
+              login={player.player.login}
+            >
+              <Td rank respvUnpadRank>
+                {player.rank}
+              </Td>
               <Td player respvMb>
                 <MPFormatLink
                   component={NoPropagationLink}
@@ -229,26 +268,29 @@ export default async function Campaign(props: SP) {
                   <small>/{mappack?.nbMaps}</small>
                 </span>
               </Td>
-              <Td campaignAttr date hideRespv>{player.worstRank}</Td>
+              <Td campaignAttr date hideRespv>
+                {player.worstRank}
+              </Td>
             </CampaignPlayerRow>
           ))}
         </Tbody>
       </Table>
 
-      {mappack?.nextUpdateIn ?
-        event.edition?.expiresIn
-          && event.edition.expiresIn >= 0
-          && event.edition.expiresIn < mappack.nextUpdateIn ? (
-          <BottomRightInfo color='orange'>
+      {mappack?.nextUpdateIn ? (
+        event?.edition?.expiresIn &&
+        event?.edition?.expiresIn >= 0 &&
+        event?.edition?.expiresIn < mappack.nextUpdateIn ? (
+          <BottomRightInfo color="orange">
             Expires in <Countdown start={event.edition.expiresIn} />
           </BottomRightInfo>
         ) : (
           <BottomRightInfo>
             Next update in <Countdown start={mappack.nextUpdateIn} />
           </BottomRightInfo>
-        ) : (
-          <BottomRightInfo color='red'>Expired</BottomRightInfo>
-        )}
+        )
+      ) : (
+        <BottomRightInfo color="red">Expired</BottomRightInfo>
+      )}
     </>
   );
 }

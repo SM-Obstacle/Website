@@ -1,7 +1,7 @@
-import { gql } from "@/app/__generated__";
-import { fetchGraphql } from "@/lib/utils";
 import { redirect } from "next/navigation";
-import { PropsWithChildren } from "react";
+import type { PropsWithChildren } from "react";
+import { gql } from "@/app/__generated__";
+import { query } from "@/app/ApolloClient";
 
 const GET_EVENT_EDITION_FROM_MX_ID = gql(/* GraphQL */ `
   query GetEventEditionFromMxId($mxId: Int!) {
@@ -14,20 +14,22 @@ const GET_EVENT_EDITION_FROM_MX_ID = gql(/* GraphQL */ `
   }
 `);
 
-export default async function Layout({ params, children }: { params: Promise<{ mxId: string }> } & PropsWithChildren) {
-  const mxId = parseInt((await params).mxId);
+export default async function Layout({
+  params,
+  children,
+}: { params: Promise<{ mxId: string }> } & PropsWithChildren) {
+  const mxId = parseInt((await params).mxId, 10);
 
-  const eventEdition = await fetchGraphql(GET_EVENT_EDITION_FROM_MX_ID, {
-    mxId,
+  const eventEdition = await query({
+    query: GET_EVENT_EDITION_FROM_MX_ID,
+    variables: { mxId },
   });
 
-  if (eventEdition.eventEditionFromMxId) {
-    const handle = eventEdition.eventEditionFromMxId.event.handle;
-    const edition = eventEdition.eventEditionFromMxId.id;
+  if (eventEdition.data?.eventEditionFromMxId) {
+    const handle = eventEdition.data.eventEditionFromMxId.event.handle;
+    const edition = eventEdition.data.eventEditionFromMxId.id;
     return redirect(`/event/${handle}/${edition}`);
   }
 
-  return (
-    <>{children}</>
-  );
+  return <>{children}</>;
 }

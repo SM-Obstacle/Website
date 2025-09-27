@@ -1,19 +1,21 @@
-import { gql } from "@/app/__generated__";
-import { GetMapInfoQuery, SortState } from "@/app/__generated__/graphql";
-import { Metadata } from "next";
-import { cache } from "react";
-import MPFormat from "@/components/MPFormat";
-import { fetchGraphql } from "@/lib/utils";
-import { ServerProps, getSortState } from "@/lib/server-props";
-import { parse, toPlainText } from "@/lib/mpformat/mpformat";
-import { ToolbarTitle as RawToolbarTitle, ToolbarTitleWrapper } from "@/components/ToolbarWrapper";
-import Link from "@/components/Link";
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import React, { cache } from "react";
+import { gql } from "@/app/__generated__";
+import type { GetMapInfoQuery, SortState } from "@/app/__generated__/graphql";
+import { query } from "@/app/ApolloClient";
+import Link from "@/components/Link";
+import MPFormat from "@/components/MPFormat";
+import {
+  ToolbarTitle as RawToolbarTitle,
+  ToolbarTitleWrapper,
+} from "@/components/ToolbarWrapper";
+import { type MapContent, RankedRecordLine } from "@/lib/map-page-types";
+import { parse, toPlainText } from "@/lib/mpformat/mpformat";
+import { getSortState, type ServerProps } from "@/lib/server-props";
 import { MapRecordsContent } from "./MapRecordsContent";
-import { MapContent, RankedRecordLine } from "@/lib/map-page-types";
-import React from "react";
 
-const MAP_RECORDS_FRAGMENT = gql(/* GraphQL */ `
+const _MAP_RECORDS_FRAGMENT = gql(/* GraphQL */ `
   fragment MapRecords on Map {
     records(rankSortBy: $rankSortBy, dateSortBy: $dateSortBy) {
       player {
@@ -58,7 +60,8 @@ const GET_MAP_INFO = gql(/* GraphQL */ `
   }
 `);
 
-const SORT_MAP_RECORDS = gql(/* GraphQL */ `
+// FIXME: This seems to be unsused
+const _SORT_MAP_RECORDS = gql(/* GraphQL */ `
   query SortMapRecords(
     $gameId: String!
     $dateSortBy: SortState
@@ -70,23 +73,39 @@ const SORT_MAP_RECORDS = gql(/* GraphQL */ `
   }
 `);
 
-export type SP = ServerProps<{ gameId: string }, { dateSortBy?: string, rankSortBy?: string }>;
+export type SP = ServerProps<
+  { gameId: string },
+  { dateSortBy?: string; rankSortBy?: string }
+>;
 
 type Item<Array> = Array extends (infer T)[] ? T : never;
 type RelatedEventEdition = Item<GetMapInfoQuery["map"]["relatedEventEditions"]>;
-export type MapRecordsProperty = { map: Omit<GetMapInfoQuery["map"], "relatedEventEditions" | "__typename"> };
+export type MapRecordsProperty = {
+  map: Omit<GetMapInfoQuery["map"], "relatedEventEditions" | "__typename">;
+};
 
-const fetchMapInfo = cache(async (gameId: string, dateSortBy?: SortState, rankSortBy?: SortState) => {
-  return fetchGraphql(GET_MAP_INFO, { gameId, dateSortBy, rankSortBy });
-});
+const fetchMapInfo = cache(
+  async (gameId: string, dateSortBy?: SortState, rankSortBy?: SortState) => {
+    return query({
+      query: GET_MAP_INFO,
+      variables: { gameId, dateSortBy, rankSortBy },
+    });
+  },
+);
 
 export async function generateMetadata(props: SP): Promise<Metadata> {
   const params = await props.params;
   const searchParams = await props.searchParams;
-  const mapInfo = (await fetchMapInfo(params.gameId, getSortState(searchParams["dateSortBy"]), getSortState(searchParams["rankSortBy"]))).map;
+  const mapInfo = (
+    await fetchMapInfo(
+      params.gameId,
+      getSortState(searchParams.dateSortBy),
+      getSortState(searchParams.rankSortBy),
+    )
+  ).data?.map;
 
   return {
-    title: toPlainText(parse(mapInfo.name)),
+    title: toPlainText(parse(mapInfo?.name ?? "")),
   };
 }
 
@@ -94,17 +113,28 @@ function ToolbarTitle({
   data,
   relatedEvents,
 }: {
-  data: GetMapInfoQuery,
-  relatedEvents: RelatedEventEdition[],
+  data: GetMapInfoQuery;
+  relatedEvents: RelatedEventEdition[];
 }) {
   return relatedEvents.length > 0 ? (
     <ToolbarTitleWrapper>
-      <RawToolbarTitle><MPFormat>{data.map.name}</MPFormat></RawToolbarTitle>
+      <RawToolbarTitle>
+        <MPFormat>{data.map.name}</MPFormat>
+      </RawToolbarTitle>
       <span>
-        Related to {relatedEvents.map((relatedEvent, i) => (
-          <React.Fragment key={i}>
-            <Link explicit href={`/event/${relatedEvent.edition.event.handle}/${relatedEvent.edition.id}/map/${relatedEvent.map.gameId}`}>
-              {relatedEvent.edition.name + (relatedEvent.edition.subtitle ? " " + relatedEvent.edition.subtitle : '')}
+        Related to{" "}
+        {relatedEvents.map((relatedEvent, i) => (
+          <React.Fragment
+            key={`${relatedEvent.edition.event.handle}_${relatedEvent.edition.id}`}
+          >
+            <Link
+              explicit
+              href={`/event/${relatedEvent.edition.event.handle}/${relatedEvent.edition.id}/map/${relatedEvent.map.gameId}`}
+            >
+              {relatedEvent.edition.name +
+                (relatedEvent.edition.subtitle
+                  ? ` ${relatedEvent.edition.subtitle}`
+                  : "")}
             </Link>
             {i < relatedEvents.length - 1 ? ", " : null}
           </React.Fragment>
@@ -112,7 +142,9 @@ function ToolbarTitle({
       </span>
     </ToolbarTitleWrapper>
   ) : (
-    <RawToolbarTitle><MPFormat>{data.map.name}</MPFormat></RawToolbarTitle>
+    <RawToolbarTitle>
+      <MPFormat>{data.map.name}</MPFormat>
+    </RawToolbarTitle>
   );
 }
 
@@ -123,27 +155,49 @@ export default async function MapRecords(sp: SP) {
   const data = await fetchMapInfo(
     params.gameId,
     getSortState(searchParams.dateSortBy),
-    getSortState(searchParams.rankSortBy)
+    getSortState(searchParams.rankSortBy),
   );
 
   // If there is only one related event edition and it has a redirect, we redirect to the event map page.
-  if (data.map.relatedEventEditions?.length === 1 && data.map.relatedEventEditions[0].redirectToEvent) {
-    const relatedEvent = data.map.relatedEventEditions[0];
-    return redirect(`/event/${relatedEvent.edition.event.handle}/${relatedEvent.edition.id}/map/${params.gameId}`);
+  if (
+    data.data?.map.relatedEventEditions?.length === 1 &&
+    data.data?.map.relatedEventEditions[0].redirectToEvent
+  ) {
+    const relatedEvent = data.data?.map.relatedEventEditions[0];
+    return redirect(
+      `/event/${relatedEvent.edition.event.handle}/${relatedEvent.edition.id}/map/${params.gameId}`,
+    );
   }
 
   const content = {
     map: {
-      gameId: data.map.gameId,
-      player: data.map.player,
-      cpsNumber: data.map.cpsNumber ?? undefined,
-      records: data.map.records.map((record) => new RankedRecordLine(record.id, record.rank, record.player, record.time, record.recordDate))
-    }
+      gameId: data.data?.map.gameId ?? "",
+      player: data.data?.map.player ?? { login: "", name: "" },
+      cpsNumber: data.data?.map.cpsNumber ?? undefined,
+      records: (data.data?.map.records ?? []).map(
+        (record) =>
+          new RankedRecordLine(
+            record.id,
+            record.rank,
+            record.player,
+            record.time,
+            record.recordDate,
+          ),
+      ),
+    },
   } satisfies MapContent;
 
-  return (
-    <MapRecordsContent data={content} toolbarTitle={
-      <ToolbarTitle data={data} relatedEvents={data.map.relatedEventEditions} />
-    } />
+  return data.data ? (
+    <MapRecordsContent
+      data={content}
+      toolbarTitle={
+        <ToolbarTitle
+          data={data.data}
+          relatedEvents={data.data?.map.relatedEventEditions ?? []}
+        />
+      }
+    />
+  ) : (
+    <p>Error</p>
   );
 }

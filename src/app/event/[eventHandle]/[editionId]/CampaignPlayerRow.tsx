@@ -1,18 +1,16 @@
 "use client";
 
+import type { PropsWithChildren } from "react";
 import { Tr } from "@/components/Table";
 import useSelectPlayer from "@/hooks/select-player";
-import { PropsWithChildren } from "react";
 
 export default function CampaignPlayerRow({
   login,
   children,
 }: {
-  login: string,
+  login: string;
 } & PropsWithChildren) {
   const selectPlayer = useSelectPlayer(login);
 
-  return (
-    <Tr onClick={selectPlayer}>{children}</Tr>
-  );
+  return <Tr onClick={selectPlayer}>{children}</Tr>;
 }

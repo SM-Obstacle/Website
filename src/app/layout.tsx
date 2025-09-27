@@ -1,19 +1,16 @@
-import type { Metadata, Viewport } from "next";
-import "./globals.css";
-import "@/styles/globals.css";
-import {
-  forkawesomeManiaicons,
-  kenneyIcons,
-  lato,
-} from "./fonts";
 import Navigation from "@/components/Navigation";
+import "@/styles/globals.css";
+import type { Metadata, Viewport } from "next";
 import NextTopLoader from "nextjs-toploader";
-import { gql } from "./__generated__";
-import { fetchGraphql } from "@/lib/utils";
 import { styled } from "../../styled-system/jsx";
+import { gql } from "./__generated__";
+import { query } from "./ApolloClient";
+import { ApolloWrapper } from "./ApolloWrapper";
+import { forkawesomeManiaicons, kenneyIcons, lato } from "./fonts";
+import "./globals.css";
 
 export const viewport: Viewport = {
-  themeColor: '#060503',
+  themeColor: "#060503",
 };
 
 export const metadata: Metadata = {
@@ -28,22 +25,24 @@ const GET_EVENTS = gql(/* GraphQL */ `
   query GetEventList {
     events {
       handle
-      lastEdition { id }
+      lastEdition {
+        id
+      }
     }
   }
 `);
 
-const MainWrapper = styled('div', {
+const MainWrapper = styled("div", {
   base: {
     maxHeight: "calc(100% - 51px)",
     flexGrow: 1,
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-  }
+  },
 });
 
-const Main = styled('main', {
+const Main = styled("main", {
   base: {
     height: "85%",
     width: "80%",
@@ -64,8 +63,8 @@ const Main = styled('main', {
       width: "calc(100% - 4px)",
       maxHeight: "100%",
       maxWidth: "100%",
-    }
-  }
+    },
+  },
 });
 
 export default async function RootLayout({
@@ -73,10 +72,10 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const events = await fetchGraphql(GET_EVENTS);
+  const events = await query({ query: GET_EVENTS });
   const filteredEvents = {
     ...events,
-    events: events.events.filter((event) => event.lastEdition),
+    events: events.data?.events.filter((event) => event.lastEdition) ?? [],
   };
 
   return (
@@ -85,14 +84,14 @@ export default async function RootLayout({
       className={`${lato.variable} ${kenneyIcons.variable} ${forkawesomeManiaicons.variable}`}
     >
       <body>
-        <NextTopLoader height={2} showSpinner={false} color="#346ab4" />
-        <Navigation events={filteredEvents} />
+        <ApolloWrapper>
+          <NextTopLoader height={2} showSpinner={false} color="#346ab4" />
+          <Navigation events={filteredEvents} />
 
-        <MainWrapper>
-          <Main>
-            {children}
-          </Main>
-        </MainWrapper>
+          <MainWrapper>
+            <Main>{children}</Main>
+          </MainWrapper>
+        </ApolloWrapper>
       </body>
     </html>
   );

@@ -1,9 +1,15 @@
-import { Article, LastUpdate, MdIframe, MdImg, MdLink } from "@/components/Article";
-import Date from "@/components/Date";
-import { fetchArticles } from "@/lib/article";
 import { redirect } from "next/navigation";
 import Markdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
+import {
+  Article,
+  LastUpdate,
+  MdIframe,
+  MdImg,
+  MdLink,
+} from "@/components/Article";
+import FormattedDate from "@/components/FormattedDate";
+import { fetchArticles } from "@/lib/article";
 
 export default async function LatestNews() {
   const articles = await fetchArticles();
@@ -24,13 +30,17 @@ export default async function LatestNews() {
         <Markdown
           rehypePlugins={[rehypeRaw]}
           components={{
-            "iframe": MdIframe,
-            "img": MdImg,
-            "a": MdLink,
+            iframe: MdIframe,
+            img: MdImg,
+            a: MdLink,
           }}
-        >{content}</Markdown>
+        >
+          {content}
+        </Markdown>
       </div>
-      <LastUpdate>Date: <Date onlyDate>{lastArticle.date}</Date></LastUpdate>
+      <LastUpdate>
+        Date: <FormattedDate onlyDate>{lastArticle.date}</FormattedDate>
+      </LastUpdate>
     </Article>
   );
 }

@@ -1,8 +1,17 @@
-import React from "react";
+import type React from "react";
 import { styled } from "../../styled-system/jsx";
-import { JsxFactoryOptions, JsxRecipeProps, RecipeDefinition, RecipeSelection, RecipeVariantRecord } from "../../styled-system/types";
+import type {
+  JsxFactoryOptions,
+  JsxRecipeProps,
+  RecipeDefinition,
+  RecipeSelection,
+  RecipeVariantRecord,
+} from "../../styled-system/types";
 
-type Options<T extends React.ElementType, P extends RecipeVariantRecord> = JsxFactoryOptions<JsxRecipeProps<T, RecipeSelection<P>>>;
+type Options<
+  T extends React.ElementType,
+  P extends RecipeVariantRecord,
+> = JsxFactoryOptions<JsxRecipeProps<T, RecipeSelection<P>>>;
 
 export function withClass<
   Target extends React.ElementType,
@@ -18,7 +27,9 @@ export function withClass<
     ...options,
     defaultProps: {
       ...options?.defaultProps,
-      className: oldClassName ? oldClassName + ' ' + newClassName : newClassName,
-    }
+      className: oldClassName
+        ? `${oldClassName} ${newClassName}`
+        : newClassName,
+    },
   } as Options<Target, P>);
 }

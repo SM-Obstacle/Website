@@ -1,18 +1,22 @@
+import React, { type CSSProperties } from "react";
 import CampaignPlayerRow from "@/app/event/[eventHandle]/[editionId]/CampaignPlayerRow";
-import { fetchSelectedPlayers } from "@/lib/mappack-fragments";
-import React, { CSSProperties } from "react";
-import { MPFormatLink } from "./MPFormat";
-import NoPropagationLink from "./NoPropagationLink";
-import { ToolBarWrapper, ToolbarTitle, ToolbarTitleWrapper } from "./ToolbarWrapper";
+import type { fetchSelectedPlayers } from "@/lib/mappack-fragments";
 import { css } from "../../styled-system/css";
 import { styled } from "../../styled-system/jsx";
+import { MPFormatLink } from "./MPFormat";
+import NoPropagationLink from "./NoPropagationLink";
+import {
+  ToolBarWrapper,
+  ToolbarTitle,
+  ToolbarTitleWrapper,
+} from "./ToolbarWrapper";
 
 export const CampaignPrefixSpan = styled("span", {
   base: {
     "@media only screen and (max-width: 1300px)": {
       display: "none",
-    }
-  }
+    },
+  },
 });
 
 export function CampaignHeader({
@@ -21,10 +25,10 @@ export function CampaignHeader({
   startDate,
   bannerImgUrl,
 }: {
-  title: string,
-  authors: React.ReactNode,
-  startDate: string,
-  bannerImgUrl: string | null | undefined,
+  title: string;
+  authors: React.ReactNode;
+  startDate: string;
+  bannerImgUrl: string | null | undefined;
 }) {
   const campaignWrapper = css({
     background: "var(--bannerImgUrl)",
@@ -35,9 +39,14 @@ export function CampaignHeader({
   const backgroundUrl = bannerImgUrl ? `url(${bannerImgUrl})` : "inherit";
 
   return (
-    <ToolBarWrapper style={{
-      "--bannerImgUrl": backgroundUrl,
-    } as CSSProperties} className={campaignWrapper}>
+    <ToolBarWrapper
+      style={
+        {
+          "--bannerImgUrl": backgroundUrl,
+        } as CSSProperties
+      }
+      className={campaignWrapper}
+    >
       <ToolbarTitleWrapper>
         <ToolbarTitle withShadow>{title}</ToolbarTitle>
         {authors}
@@ -51,8 +60,8 @@ export function CampaignTable({
   data,
   nbMaps,
 }: {
-  data: Awaited<ReturnType<typeof fetchSelectedPlayers>>,
-  nbMaps: number,
+  data: Awaited<ReturnType<typeof fetchSelectedPlayers>>;
+  nbMaps: number;
 }) {
   return (
     <table>
@@ -79,11 +88,9 @@ export function CampaignTable({
         </tr>
       </thead>
       <tbody>
-        {data.leaderboard?.map((player, i) => (
-          <React.Fragment key={i}>
-            <CampaignPlayerRow
-              login={player.player.login}
-            >
+        {data.leaderboard?.map((player) => (
+          <React.Fragment key={player.player.login}>
+            <CampaignPlayerRow login={player.player.login}>
               <td className="rank">{player.rank}</td>
               <td className="sr_player">
                 <MPFormatLink
@@ -101,7 +108,7 @@ export function CampaignTable({
               </td>
               <td className="worst_rank">{player.worstRank}</td>
             </CampaignPlayerRow>
-            {player.ranks && player.ranks.map((rank) => (
+            {player.ranks?.map((rank) => (
               <tr key={rank.map.gameId} className="additional">
                 <td className="rank">
                   <span

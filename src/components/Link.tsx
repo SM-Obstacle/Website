@@ -1,6 +1,5 @@
-import { cva } from "../../styled-system/css";
-
 import NextLink from "next/link";
+import { cva } from "../../styled-system/css";
 import { styled } from "../../styled-system/jsx";
 
 export type LinkProps = React.ComponentProps<typeof Link>;
@@ -23,8 +22,8 @@ export const navLinkStyles = cva({
         color: "#346ab4",
         ".ListItem:hover &": {
           borderColor: "transparent",
-        }
-      }
+        },
+      },
     },
     dropdown: {
       true: {
@@ -45,13 +44,13 @@ const Link = styled(NextLink, {
         color: "#87b0e9",
         _hover: {
           textDecoration: "underline",
-        }
-      }
-    }
-  }
+        },
+      },
+    },
+  },
 });
 
 export const NavLink = styled(Link, navLinkStyles);
-export const NavSpan = styled('span', navLinkStyles);
+export const NavSpan = styled("span", navLinkStyles);
 
 export default Link;

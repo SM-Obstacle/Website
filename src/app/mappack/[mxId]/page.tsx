@@ -1,11 +1,13 @@
+import moment from "moment";
 import { gql } from "@/app/__generated__";
-import { MappackLbFragment } from "@/app/__generated__/graphql";
+import type {
+  MappackLbFragment,
+  MappackPlayerInfoFragment,
+} from "@/app/__generated__/graphql";
+import { query } from "@/app/ApolloClient";
 import { CampaignHeader, CampaignTable } from "@/components/CampaignMain";
 import { fetchSelectedPlayers } from "@/lib/mappack-fragments";
-import { ServerProps } from "@/lib/server-props";
-import { fetchGraphql } from "@/lib/utils";
-import moment from "moment";
-import React from "react";
+import type { ServerProps } from "@/lib/server-props";
 
 const GET_MAPPACK_LEADERBOARD = gql(/* GraphQL */ `
   query GetMappackLeaderboard($mappackId: String!) {
@@ -32,43 +34,57 @@ async function fetchPlayers(
   selectedPlayer: string | string[],
 ) {
   const fetchPlayerInfo = async (login: string) => {
-    return fetchGraphql(GET_MAPPACK_PLAYER_INFO, {
-      login,
-      mappackId
-    }).then((data) => data.mappack);
+    return query({
+      query: GET_MAPPACK_PLAYER_INFO,
+      variables: {
+        login,
+        mappackId,
+      },
+    }).then((data) => data.data?.mappack);
   };
 
-  return fetchSelectedPlayers(mappackData, selectedPlayer, fetchPlayerInfo as any);
+  return fetchSelectedPlayers(
+    mappackData,
+    selectedPlayer,
+    fetchPlayerInfo as (login: string) => Promise<MappackPlayerInfoFragment>,
+  );
 }
 
-type SP = ServerProps<{
-  mxId: string,
-}, { player?: string | string[] }
+type SP = ServerProps<
+  {
+    mxId: string;
+  },
+  { player?: string | string[] }
 >;
 
 export default async function Mappack(props: SP) {
   const params = await props.params;
   const searchParams = await props.searchParams;
 
-  const mappack = (await fetchGraphql(GET_MAPPACK_LEADERBOARD, {
-    mappackId: params.mxId,
-  })).mappack;
-  const data = await fetchPlayers(params.mxId, mappack, searchParams.player ?? []);
+  const mappack = (
+    await query({
+      query: GET_MAPPACK_LEADERBOARD,
+      variables: { mappackId: params.mxId },
+    })
+  ).data?.mappack;
+  const data = await fetchPlayers(
+    params.mxId,
+    mappack,
+    searchParams.player ?? [],
+  );
 
-  const startDate = moment(mappack.mxCreatedAt).format("DD/MM/YYYY");
+  const startDate = moment(mappack?.mxCreatedAt).format("DD/MM/YYYY");
 
   return (
     <>
       <CampaignHeader
         bannerImgUrl={null}
-        title={mappack.mxName!}
+        title={mappack?.mxName ?? ""}
         startDate={startDate}
-        authors={mappack.mxAuthor && (
-          <span>By {mappack.mxAuthor}</span>
-        )}
+        authors={mappack?.mxAuthor && <span>By {mappack.mxAuthor}</span>}
       />
 
-      <CampaignTable data={data} nbMaps={mappack!.nbMaps} />
+      <CampaignTable data={data} nbMaps={mappack?.nbMaps ?? 0} />
     </>
   );
 }

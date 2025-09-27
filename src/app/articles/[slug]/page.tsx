@@ -1,6 +1,12 @@
-import { Article, LastUpdate, MdIframe, MdImg, MdLink } from "@/components/Article";
+import {
+  Article,
+  LastUpdate,
+  MdIframe,
+  MdImg,
+  MdLink,
+} from "@/components/Article";
 import { ServerProps } from "@/lib/server-props";
-import Date from "@/components/Date";
+import FormattedDate from "@/components/FormattedDate";
 import { redirect } from "next/navigation";
 import Markdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
@@ -8,7 +14,7 @@ import { fetchArticles } from "@/lib/article";
 
 export default async function ArticlePage(sp: ServerProps<{ slug: string }>) {
   const params = await sp.params;
-  if (params.slug === '__resources__') {
+  if (params.slug === "__resources__") {
     return redirect("/");
   }
 
@@ -27,13 +33,17 @@ export default async function ArticlePage(sp: ServerProps<{ slug: string }>) {
         <Markdown
           rehypePlugins={[rehypeRaw]}
           components={{
-            "iframe": MdIframe,
-            "img": MdImg,
-            "a": MdLink,
+            iframe: MdIframe,
+            img: MdImg,
+            a: MdLink,
           }}
-        >{content}</Markdown>
+        >
+          {content}
+        </Markdown>
       </div>
-      <LastUpdate>Date: <Date onlyDate>{article.date}</Date></LastUpdate>
+      <LastUpdate>
+        Date: <FormattedDate onlyDate>{article.date}</FormattedDate>
+      </LastUpdate>
     </Article>
   );
 }

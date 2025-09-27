@@ -1,5 +1,8 @@
 import { gql } from "@/app/__generated__";
-import { MappackLbFragment, MappackPlayerInfoFragment, MappackPlayerInfoFragmentDoc } from "@/app/__generated__/graphql";
+import type {
+  MappackLbFragment,
+  MappackPlayerInfoFragment,
+} from "@/app/__generated__/graphql";
 
 export const MAPPACK_LB_FRAGMENT = gql(/* GraphQL */ `
   fragment MappackLb on Mappack {
@@ -43,14 +46,15 @@ export async function fetchSelectedPlayers(
     selectedPlayer = selectedPlayer[0];
   }
 
-  const data = selectedPlayer && await fetchPlayerInfo(selectedPlayer);
+  const data = selectedPlayer && (await fetchPlayerInfo(selectedPlayer));
 
   return {
     ...mappackData,
     leaderboard: mappackData?.leaderboard.map((row) => {
-      const ranks = selectedPlayer === row.player.login && (
-        data && data.player.ranks
-      );
+      const ranks =
+        selectedPlayer === row.player.login && data
+          ? data.player.ranks
+          : undefined;
       return { ...row, ranks };
     }),
   };

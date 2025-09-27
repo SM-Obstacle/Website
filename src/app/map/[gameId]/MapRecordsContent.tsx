@@ -1,19 +1,23 @@
-import { MPFormatLink } from "@/components/MPFormat";
-import { Table, Thead, Tr, Th, Tbody, Td } from "@/components/Table";
-import Time from "@/components/Time";
-import Date from "@/components/Date";
-import { ToolBarWrapper, ToolbarSpan } from "@/components/ToolbarWrapper";
-import MxButton from "./MxButton";
-import { MapContent, MedalRecord, RankedRecordLine } from "@/lib/map-page-types";
+import FormattedDate from "@/components/FormattedDate";
 import { MedalImg } from "@/components/MedalImg";
+import { MPFormatLink } from "@/components/MPFormat";
+import { Table, Tbody, Td, Th, Thead, Tr } from "@/components/Table";
+import Time from "@/components/Time";
+import { ToolBarWrapper, ToolbarSpan } from "@/components/ToolbarWrapper";
+import {
+  type MapContent,
+  MedalRecord,
+  RankedRecordLine,
+} from "@/lib/map-page-types";
 import { Medal } from "@/lib/ranked-record";
+import MxButton from "./MxButton";
 
 const medalToText = (mdl: Medal) => {
   if (mdl === Medal.Champion) {
     return "Author time";
   }
   return `${mdl[0] + mdl.slice(1).toLowerCase()} time`;
-}
+};
 
 export function MapRecordsContent({
   data,
@@ -61,38 +65,40 @@ export function MapRecordsContent({
           </Tr>
         </Thead>
         <Tbody>
-          {data.map.records.map((record) => record instanceof RankedRecordLine ? (
-            <Tr key={record.id}>
-              <Td rank respvUnpadRank>
-                {record.rank}
-              </Td>
-              <Td player respvMb>
-                <MPFormatLink
-                  path={`/player/${record.player.login}`}
-                  name={record.player.name}
-                />
-              </Td>
-              <Td time respvTime>
-                <Time>{record.time}</Time>
-              </Td>
-              <Td date respvAbsoluteDate>
-                <Date onlyDate>{record.recordDate}</Date>
-              </Td>
-            </Tr>
-          ) : record instanceof MedalRecord ? (
-            <Tr key={`record_medal_${record.medal}`}>
-              <Td rank respvUnpadRank>
-                <MedalImg mdl={record.medal} />
-              </Td>
-              <Td player respvMb>
-                {medalToText(record.medal)}
-              </Td>
-              <Td time respvTime>
-                <Time>{record.time}</Time>
-              </Td>
-              <Td date respvAbsoluteDate></Td>
-            </Tr>
-          ) : null)}
+          {data.map.records.map((record) =>
+            record instanceof RankedRecordLine ? (
+              <Tr key={record.id}>
+                <Td rank respvUnpadRank>
+                  {record.rank}
+                </Td>
+                <Td player respvMb>
+                  <MPFormatLink
+                    path={`/player/${record.player.login}`}
+                    name={record.player.name}
+                  />
+                </Td>
+                <Td time respvTime>
+                  <Time>{record.time}</Time>
+                </Td>
+                <Td date respvAbsoluteDate>
+                  <FormattedDate onlyDate>{record.recordDate}</FormattedDate>
+                </Td>
+              </Tr>
+            ) : record instanceof MedalRecord ? (
+              <Tr key={`record_medal_${record.medal}`}>
+                <Td rank respvUnpadRank>
+                  <MedalImg mdl={record.medal} />
+                </Td>
+                <Td player respvMb>
+                  {medalToText(record.medal)}
+                </Td>
+                <Td time respvTime>
+                  <Time>{record.time}</Time>
+                </Td>
+                <Td date respvAbsoluteDate></Td>
+              </Tr>
+            ) : null,
+          )}
         </Tbody>
       </Table>
     </>

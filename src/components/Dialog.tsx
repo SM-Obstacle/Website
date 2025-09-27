@@ -1,11 +1,10 @@
 "use client";
 
-import useSelectPlayer from "@/hooks/select-player";
-import { ForwardedRef, MouseEvent, MutableRefObject, PropsWithChildren, forwardRef, useEffect, useImperativeHandle, useRef } from "react";
-import { Box, styled } from "../../styled-system/jsx";
-import { isArrowFunction } from "typescript";
+import { forwardRef, useImperativeHandle, useRef } from "react";
+import { styled } from "../../styled-system/jsx";
+import { DialogInner } from "./DialogInner";
 
-const StyledDialog = styled("dialog", {
+export const StyledDialog = styled("dialog", {
   base: {
     _backdrop: {
       bgColor: "#00000077",
@@ -23,11 +22,11 @@ const StyledDialog = styled("dialog", {
     "@media only screen and (max-width: 870px)": {
       height: "calc(100% - 60px)",
       width: "calc(100% - 60px)",
-    }
-  }
+    },
+  },
 });
 
-const CloseButton = styled("button", {
+export const CloseButton = styled("button", {
   base: {
     position: "absolute",
     top: 3,
@@ -50,56 +49,16 @@ const CloseButton = styled("button", {
       borderColor: "#d24f4f",
       cursor: "pointer",
     },
-  }
+  },
 });
 
-function DialogInner({
-  open = true,
-  onClose,
-  forwardedRef,
-  children,
-}: {
-  open?: boolean,
-  onClose?: () => void,
-  forwardedRef: MutableRefObject<HTMLDialogElement | null>,
-} & PropsWithChildren) {
-  useEffect(() => {
-    // Somehow the modal may be already opened on some frame
-    if (!forwardedRef.current?.open && open) {
-      forwardedRef.current?.showModal();
-    }
-  });
-
-  const closeModal = () => {
-    forwardedRef.current?.close();
-    onClose && onClose();
-  }
-
-  const handleClose = (event: MouseEvent<HTMLDialogElement>) => {
-    const rect = forwardedRef.current!.getBoundingClientRect();
-    const isInDialog = (rect.top <= event.clientY && event.clientY <= rect.top + rect.height &&
-      rect.left <= event.clientX && event.clientX <= rect.left + rect.width);
-    if (!isInDialog) {
-      closeModal();
-    }
-  };
-
-  return (
-    <StyledDialog ref={forwardedRef} onClick={handleClose}>
-      <CloseButton type="button" onClick={closeModal}>✕</CloseButton>
-      <Box display="flex" flexDirection="column" height="100%">
-        {children}
-      </Box>
-    </StyledDialog>
-  );
-}
-
-const Dialog = forwardRef<HTMLDialogElement | null, Omit<React.ComponentProps<typeof DialogInner>, "forwardedRef">>((props, ref) => {
+const Dialog = forwardRef<
+  HTMLDialogElement | null,
+  Omit<React.ComponentProps<typeof DialogInner>, "forwardedRef">
+>((props, ref) => {
   const innerRef = useRef<HTMLDialogElement | null>(null);
-  useImperativeHandle(ref, () => innerRef.current!, []);
-  return (
-    <DialogInner {...props} forwardedRef={innerRef} />
-  )
+  useImperativeHandle(ref, () => innerRef.current, []);
+  return <DialogInner {...props} forwardedRef={innerRef} />;
 });
 Dialog.displayName = "DialogInner";
 

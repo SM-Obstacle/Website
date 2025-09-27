@@ -1,4 +1,4 @@
-import { Medal } from "./ranked-record";
+import type { Medal } from "./ranked-record";
 
 export interface Player {
   login: string;
@@ -17,8 +17,14 @@ export class RankedRecordLine implements RecordLine {
   player: Player;
   time: number;
   recordDate: string;
-  
-  constructor(id: number, rank: number, player: Player, time: number, recordDate: string) {
+
+  constructor(
+    id: number,
+    rank: number,
+    player: Player,
+    time: number,
+    recordDate: string,
+  ) {
     this.id = id;
     this.rank = rank;
     this.player = player;
@@ -46,5 +52,5 @@ export interface Map {
 }
 
 export interface MapContent {
-  map: Map,
+  map: Map;
 }

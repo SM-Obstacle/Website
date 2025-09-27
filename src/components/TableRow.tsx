@@ -1,6 +1,11 @@
 "use client";
 
-import { ForwardedRef, PropsWithChildren, forwardRef, useState } from "react";
+import {
+  type ForwardedRef,
+  forwardRef,
+  type PropsWithChildren,
+  useState,
+} from "react";
 
 function TableRowInner({
   children,
@@ -8,26 +13,32 @@ function TableRowInner({
   unfold,
   forwardedRef,
 }: {
-  onClick?: () => void,
-  unfold?: boolean,
-  forwardedRef: ForwardedRef<HTMLTableRowElement | null>,
+  onClick?: () => void;
+  unfold?: boolean;
+  forwardedRef: ForwardedRef<HTMLTableRowElement | null>;
 } & PropsWithChildren) {
   const [unfolded, setUnfolded] = useState(unfold ?? false);
 
   const handleClick = () => {
     setUnfolded(!unfolded);
-    (onClick ?? (() => { }))();
+    (onClick ?? (() => {}))();
   };
 
   return (
-    <tr ref={forwardedRef} tabIndex={0} onClick={handleClick} className={unfolded ? "unfolded" : undefined}>
+    <tr
+      ref={forwardedRef}
+      tabIndex={0}
+      onClick={handleClick}
+      className={unfolded ? "unfolded" : undefined}
+    >
       {children}
     </tr>
   );
 }
 
-const TableRow = forwardRef<HTMLTableRowElement, Omit<Parameters<typeof TableRowInner>[0], "forwardedRef">>((props, ref) => (
-  <TableRowInner {...props} forwardedRef={ref} />
-));
+const TableRow = forwardRef<
+  HTMLTableRowElement,
+  Omit<Parameters<typeof TableRowInner>[0], "forwardedRef">
+>((props, ref) => <TableRowInner {...props} forwardedRef={ref} />);
 TableRow.displayName = "TableRow";
 export default TableRow;
