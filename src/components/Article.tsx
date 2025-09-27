@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { css } from "../../styled-system/css";
 import { styled } from "../../styled-system/jsx";
 import Link from "./Link";
