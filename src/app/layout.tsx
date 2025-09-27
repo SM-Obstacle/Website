@@ -1,9 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import NextTopLoader from "nextjs-toploader";
-import Navigation from "@/components/Navigation";
+import Navigation from "@/components/navigation/Navigation";
 import { styled } from "../../styled-system/jsx";
-import { gql } from "./__generated__";
-import { query } from "./ApolloClient";
 import { ApolloWrapper } from "./ApolloWrapper";
 import { forkawesomeManiaicons, kenneyIcons, lato } from "./fonts";
 import "@/styles/globals.css";
@@ -20,17 +18,6 @@ export const metadata: Metadata = {
   },
   icons: "/img/favicon.ico",
 };
-
-const GET_EVENTS = gql(/* GraphQL */ `
-  query GetEventList {
-    events {
-      handle
-      lastEdition {
-        id
-      }
-    }
-  }
-`);
 
 const MainWrapper = styled("div", {
   base: {
@@ -112,12 +99,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const events = await query({ query: GET_EVENTS });
-  const filteredEvents = {
-    ...events,
-    events: events.data?.events.filter((event) => event.lastEdition) ?? [],
-  };
-
   return (
     <html
       lang="en"
@@ -126,7 +107,7 @@ export default async function RootLayout({
       <body className={bodyStyles}>
         <ApolloWrapper>
           <NextTopLoader height={2} showSpinner={false} color="#346ab4" />
-          <Navigation events={filteredEvents} />
+          <Navigation />
 
           <MainWrapper>
             <Main>{children}</Main>
