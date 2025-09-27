@@ -1,13 +1,13 @@
-import Navigation from "@/components/Navigation";
-import "@/styles/globals.css";
 import type { Metadata, Viewport } from "next";
 import NextTopLoader from "nextjs-toploader";
+import Navigation from "@/components/Navigation";
 import { styled } from "../../styled-system/jsx";
 import { gql } from "./__generated__";
 import { query } from "./ApolloClient";
 import { ApolloWrapper } from "./ApolloWrapper";
 import { forkawesomeManiaicons, kenneyIcons, lato } from "./fonts";
 import "./globals.css";
+import { css } from "../../styled-system/css";
 
 export const viewport: Viewport = {
   themeColor: "#060503",
@@ -67,6 +67,46 @@ const Main = styled("main", {
   },
 });
 
+const bodyHtmlCommonStyles = css.raw({
+  margin: 0,
+  height: "100%",
+  minWidth: "390px",
+  minHeight: "390px",
+
+  fontWeight: 400,
+  fontFamily:
+    'var(--lato), "Trebuchet MS", sans-serif, var(--forkAwesome), var(--kenneyIcons)',
+  color: "white",
+  overflow: "overlay",
+});
+
+const bodyStyles = css(
+  bodyHtmlCommonStyles,
+  css.raw({
+    backgroundImage: 'url("/img/background.jpg")',
+    backgroundAttachment: "fixed",
+    backgroundSize: "cover",
+    backgroundPosition: "center center",
+    backgroundRepeat: "no-repeat",
+
+    display: "flex",
+    flexDir: "column",
+    overflow: "hidden",
+  }),
+);
+
+const htmlStyles = css(
+  bodyHtmlCommonStyles,
+  css.raw({
+    "@media only screen and (max-width: 420px)": {
+      zoom: 0.8,
+    },
+    "@media only screen and (max-width: 320px)": {
+      zoom: 0.6,
+    },
+  }),
+);
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -81,9 +121,9 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${lato.variable} ${kenneyIcons.variable} ${forkawesomeManiaicons.variable}`}
+      className={`${lato.variable} ${kenneyIcons.variable} ${forkawesomeManiaicons.variable} ${htmlStyles}`}
     >
-      <body>
+      <body className={bodyStyles}>
         <ApolloWrapper>
           <NextTopLoader height={2} showSpinner={false} color="#346ab4" />
           <Navigation events={filteredEvents} />
