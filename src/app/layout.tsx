@@ -6,7 +6,7 @@ import { gql } from "./__generated__";
 import { query } from "./ApolloClient";
 import { ApolloWrapper } from "./ApolloWrapper";
 import { forkawesomeManiaicons, kenneyIcons, lato } from "./fonts";
-import "./globals.css";
+import "@/styles/globals.css";
 import { css } from "../../styled-system/css";
 
 export const viewport: Viewport = {
