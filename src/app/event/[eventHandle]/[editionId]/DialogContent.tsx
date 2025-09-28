@@ -9,7 +9,7 @@ import Time from "@/components/Time";
 import { Medal } from "@/lib/ranked-record";
 import { cmpMedals } from "@/lib/utils";
 import { Flex, styled } from "../../../../../styled-system/jsx";
-import GroupedRows from "./GroupedRows";
+import GroupedRows from "../../../../components/grouped-rows/GroupedRows";
 
 const CategoryName = styled(Td, {
   base: {
@@ -255,7 +255,6 @@ export default function DialogContent({
             category.ranks.length > 0 && (
               <GroupedRows
                 key={category.categoryName}
-                medal={<MedalImg mdl={category.medal} />}
                 head={
                   <CategoryName>
                     {category.hexColor && (
@@ -264,6 +263,7 @@ export default function DialogContent({
                     {category.categoryName}
                   </CategoryName>
                 }
+                medal={<MedalImg mdl={category.medal} />}
               >
                 <Flex alignItems="center">
                   <Th rank hideRespv>

@@ -1,38 +1,38 @@
 "use client";
+
 import {
   type MouseEvent,
   type PropsWithChildren,
-  type RefObject,
   useEffect,
+  useRef,
 } from "react";
-import { Box } from "../../styled-system/jsx";
 import { CloseButton, StyledDialog } from "./Dialog";
 
 export function DialogInner({
   open = true,
   onClose,
-  forwardedRef,
   children,
 }: {
   open?: boolean;
   onClose?: () => void;
-  forwardedRef: RefObject<HTMLDialogElement | null>;
 } & PropsWithChildren) {
+  const ref = useRef<HTMLDialogElement>(null);
+
   useEffect(() => {
-    // Somehow the modal may be already opened on some frame
-    if (!forwardedRef.current?.open && open) {
-      forwardedRef.current?.showModal();
+    // Somehow the modal may be already opened on some frame, so we check if the modal isn't already open.
+    if (ref.current?.open === false && open) {
+      ref.current?.showModal();
     }
   });
 
   const closeModal = () => {
-    forwardedRef.current?.close();
+    ref.current?.close();
     onClose?.();
   };
 
   const handleClose = (event: MouseEvent<HTMLDialogElement>) => {
-    if (forwardedRef.current) {
-      const rect = forwardedRef.current.getBoundingClientRect();
+    if (ref.current) {
+      const rect = ref.current.getBoundingClientRect();
       const isInDialog =
         rect.top <= event.clientY &&
         event.clientY <= rect.top + rect.height &&
@@ -45,13 +45,11 @@ export function DialogInner({
   };
 
   return (
-    <StyledDialog ref={forwardedRef} onClick={handleClose}>
+    <StyledDialog ref={ref} onClick={handleClose}>
       <CloseButton type="button" onClick={closeModal}>
         ✕
       </CloseButton>
-      <Box display="flex" flexDirection="column" height="100%">
-        {children}
-      </Box>
+      {children}
     </StyledDialog>
   );
 }

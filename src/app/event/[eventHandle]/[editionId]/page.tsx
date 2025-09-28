@@ -9,8 +9,8 @@ import NoPropagationLink from "@/components/NoPropagationLink";
 import { Table, Tbody, Td, Th, Thead, Tr } from "@/components/Table";
 import type { ServerProps } from "@/lib/server-props";
 import { styled } from "../../../../../styled-system/jsx";
+import Countdown from "../../../../components/Countdown";
 import CampaignPlayerRow from "./CampaignPlayerRow";
-import Countdown from "./Countdown";
 import Dialog from "./Dialog";
 import DialogContent from "./DialogContent";
 
@@ -157,7 +157,7 @@ const BottomRightInfo = styled("div", {
   },
 });
 
-export default async function Campaign(props: SP) {
+export default async function Events(props: SP) {
   const params = await props.params;
   const searchParams = await props.searchParams;
 

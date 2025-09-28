@@ -1,7 +1,4 @@
-"use client";
-
-import { forwardRef, useImperativeHandle, useRef } from "react";
-import { styled } from "../../styled-system/jsx";
+import { Box, styled } from "../../styled-system/jsx";
 import { DialogInner } from "./DialogInner";
 
 export const StyledDialog = styled("dialog", {
@@ -52,14 +49,17 @@ export const CloseButton = styled("button", {
   },
 });
 
-const Dialog = forwardRef<
-  HTMLDialogElement | null,
-  Omit<React.ComponentProps<typeof DialogInner>, "forwardedRef">
->((props, ref) => {
-  const innerRef = useRef<HTMLDialogElement | null>(null);
-  useImperativeHandle(ref, () => innerRef.current, []);
-  return <DialogInner {...props} forwardedRef={innerRef} />;
-});
-Dialog.displayName = "DialogInner";
-
-export default Dialog;
+export default function Dialog({
+  children,
+  ...rest
+}: React.PropsWithChildren<
+  Omit<React.ComponentProps<typeof DialogInner>, "children">
+>) {
+  return (
+    <DialogInner {...rest}>
+      <Box display="flex" flexDirection="column" height="100%">
+        {children}
+      </Box>
+    </DialogInner>
+  );
+}

@@ -1,57 +1,23 @@
 "use client";
 
-import {
-  type PropsWithChildren,
-  useCallback,
-  useEffect,
-  useState,
-} from "react";
+import { useCallback, useEffect, useState } from "react";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
-import { Td, Tr } from "@/components/Table";
-import { styled } from "../../../../../styled-system/jsx";
-
-const HeadRow = styled(Tr, {
-  base: {
-    position: "sticky!",
-    top: 0,
-    justifyContent: "flex-start",
-    borderBottom: "solid black 2px",
-    zIndex: 2000,
-
-    _hover: {
-      cursor: "pointer",
-    },
-  },
-});
-
-const Rows = styled("div", {
-  base: {
-    overflowY: "hidden",
-    transition: "max-height .2s",
-  },
-});
-
-const ArrowTd = styled(Td, {
-  base: {
-    flex: 0.1,
-    display: "flex",
-    justifyContent: "flex-end",
-    alignItems: "center",
-  },
-});
+import { ArrowTd, HeadRow, Rows } from "./components";
 
 export default function GroupedRows({
-  head,
   medal,
+  head,
   children,
 }: {
-  head: React.ReactNode;
   medal?: React.ReactNode;
-} & PropsWithChildren) {
+  head: React.ReactNode;
+  children: React.ReactNode;
+}) {
   const [contentElem, setContentElem] = useState<HTMLDivElement | null>(null);
   const [opened, setOpened] = useState(true);
 
   const contentRef = useCallback((node: HTMLDivElement | null) => {
+    console.log("ok", node);
     if (node !== null) {
       setContentElem(node);
     }
