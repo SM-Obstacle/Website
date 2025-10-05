@@ -20,7 +20,10 @@ const GET_EVENTS = gql(/* GraphQL */ `
 `);
 
 export default async function Navigation() {
-  const events = await query({ query: GET_EVENTS });
+  const events = await query({
+    query: GET_EVENTS,
+    context: { fetchOptions: { cache: "no-store" } },
+  });
   const filteredEvents = {
     ...events,
     events: events.data?.events.filter((event) => event.lastEdition) ?? [],
