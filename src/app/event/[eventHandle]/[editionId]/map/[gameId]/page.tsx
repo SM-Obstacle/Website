@@ -1,6 +1,6 @@
 import { cache } from "react";
 import { gql } from "@/app/__generated__";
-import type { SortState } from "@/app/__generated__/graphql";
+import { MapRecordSortableField } from "@/app/__generated__/graphql";
 import { query } from "@/app/ApolloClient";
 import * as MapRecordsContent from "@/app/map/[gameId]/MapRecordsContent";
 import * as MapPage from "@/app/map/[gameId]/page";
@@ -17,7 +17,9 @@ import {
   type RecordLine,
 } from "@/lib/map-page-types";
 import { Medal } from "@/lib/ranked-record";
-import { getSortState, type ServerProps } from "@/lib/server-props";
+import { type ServerProps } from "@/lib/server-props";
+import { PaginationInput, parsePaginationInput } from "@/lib/cursor-pagination";
+import { parseMapSortField } from "@/lib/sort-field";
 
 export const generateMetadata = MapPage.generateMetadata;
 
@@ -26,8 +28,11 @@ const GET_EVENT_MAP_INFO = gql(/* GraphQL */ `
     $eventHandle: String!
     $editionId: Int!
     $gameId: String!
-    $dateSortBy: SortState
-    $rankSortBy: SortState
+    $sortField: MapRecordSortableField
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
   ) {
     event(handle: $eventHandle) {
       edition(editionId: $editionId) {
@@ -53,12 +58,20 @@ const GET_EVENT_MAP_INFO = gql(/* GraphQL */ `
             goldTime
             championTime
           }
-          records(rankSortBy: $rankSortBy, dateSortBy: $dateSortBy) {
-            player {
-              login
-              name
+          recordsConnection(
+            sortField: $sortField
+            first: $first
+            last: $last
+            after: $after
+            before: $before
+          ) {
+            nodes {
+              player {
+                login
+                name
+              }
+              ...RecordBase
             }
-            ...RecordBase
           }
         }
       }
@@ -71,8 +84,8 @@ const fetchMapInfo = cache(
     eventHandle: string,
     editionId: number,
     gameId: string,
-    dateSortBy?: SortState,
-    rankSortBy?: SortState,
+    paginationInput: PaginationInput,
+    sortField?: MapRecordSortableField,
   ) => {
     return query({
       query: GET_EVENT_MAP_INFO,
@@ -80,8 +93,8 @@ const fetchMapInfo = cache(
         eventHandle,
         editionId,
         gameId,
-        dateSortBy,
-        rankSortBy,
+        sortField,
+        ...paginationInput,
       },
       errorPolicy: "all",
     });
@@ -136,13 +149,17 @@ export default async function EventMapRecords(
   const params = await sp.params;
   const searchParams = await sp.searchParams;
 
+  const parsedSortField = searchParams.sortField
+    ? parseMapSortField(searchParams.sortField)
+    : undefined;
+
   const editionId = parseInt(params.editionId, 10);
   const dataRaw = await fetchMapInfo(
     params.eventHandle,
     editionId,
     params.gameId,
-    searchParams.dateSortBy ? getSortState(searchParams.dateSortBy) : undefined,
-    searchParams.rankSortBy ? getSortState(searchParams.rankSortBy) : undefined,
+    parsePaginationInput(searchParams),
+    parsedSortField,
   );
   // : )
   const data = {
@@ -154,7 +171,7 @@ export default async function EventMapRecords(
         map: {
           ...dataRaw.data?.event.edition?.map.map,
           medalTimes: dataRaw.data?.event.edition?.map.medalTimes,
-          records: dataRaw.data?.event.edition?.map.records,
+          records: dataRaw.data?.event.edition?.map.recordsConnection.nodes,
         },
       },
     },
@@ -164,7 +181,9 @@ export default async function EventMapRecords(
     data.event.edition?.name +
     (data.event.edition?.subtitle ? ` ${data.event.edition?.subtitle}` : "");
 
-  const records = (data.data?.event.edition?.map.records ?? []).map(
+  const records = (
+    data.data?.event.edition?.map.recordsConnection.nodes ?? []
+  ).map(
     (record) =>
       new RankedRecordLine(
         record.id,
@@ -175,7 +194,12 @@ export default async function EventMapRecords(
       ) as RecordLine,
   );
 
-  if (data.event.edition.map.medalTimes) {
+  // Insert the medal times in the LB, if they're available,
+  // and if we're not already ordering the map LB by record date
+  if (
+    data.event.edition.map.medalTimes &&
+    parsedSortField !== MapRecordSortableField.Date
+  ) {
     records.push(
       new MedalRecord(
         data.event.edition.map.medalTimes.bronzeTime,
@@ -192,7 +216,9 @@ export default async function EventMapRecords(
       ),
     );
     records.sort(
-      (a, b) => a.time - b.time || -(a.sortPriority - b.sortPriority),
+      searchParams.last !== undefined
+        ? (a, b) => b.time - a.time || -(b.sortPriority - a.sortPriority)
+        : (a, b) => a.time - b.time || -(a.sortPriority - b.sortPriority),
     );
   }
 

@@ -48,6 +48,24 @@ type EventEditionMap {
 	linkToOriginal: Boolean!
 	originalMap: Map
 	records(rankSortBy: SortState, dateSortBy: SortState): [RankedRecord!]!
+	recordsConnection(
+		"""
+		Cursor to fetch records after (for forward pagination)
+		"""
+		after: String,
+		"""
+		Cursor to fetch records before (for backward pagination)
+		"""
+		before: String,
+		"""
+		Number of records to fetch (default: 50, max: 100)
+		"""
+		first: Int,
+		"""
+		Number of records to fetch from the end (for backward pagination)
+		"""
+		last: Int,		sortField: MapRecordSortableField
+	): RankedRecordConnection!
 	medalTimes: MedalTimes
 }
 
@@ -91,6 +109,29 @@ type Map {
 	relatedEventEditions: [RelatedEdition!]!
 	averageRating: [PlayerRating!]!
 	records(rankSortBy: SortState, dateSortBy: SortState): [RankedRecord!]!
+	recordsConnection(
+		"""
+		Cursor to fetch records after (for forward pagination)
+		"""
+		after: String,
+		"""
+		Cursor to fetch records before (for backward pagination)
+		"""
+		before: String,
+		"""
+		Number of records to fetch (default: 50, max: 100)
+		"""
+		first: Int,
+		"""
+		Number of records to fetch from the end (for backward pagination)
+		"""
+		last: Int,		sortField: MapRecordSortableField
+	): RankedRecordConnection!
+}
+
+enum MapRecordSortableField {
+	DATE
+	RANK
 }
 
 type Mappack {
@@ -134,6 +175,28 @@ ISO 8601 combined date and time without timezone.
 """
 scalar NaiveDateTime
 
+"""
+Information about pagination in a connection
+"""
+type PageInfo {
+	"""
+	When paginating backwards, are there more items?
+	"""
+	hasPreviousPage: Boolean!
+	"""
+	When paginating forwards, are there more items?
+	"""
+	hasNextPage: Boolean!
+	"""
+	When paginating backwards, the cursor to continue.
+	"""
+	startCursor: String
+	"""
+	When paginating forwards, the cursor to continue.
+	"""
+	endCursor: String
+}
+
 type Player {
 	id: ID!
 	login: String!
@@ -141,6 +204,24 @@ type Player {
 	zonePath: String
 	role: PlayerRole!
 	records(dateSortBy: SortState): [RankedRecord!]!
+	recordsConnection(
+		"""
+		Cursor to fetch records after (for forward pagination)
+		"""
+		after: String,
+		"""
+		Cursor to fetch records before (for backward pagination)
+		"""
+		before: String,
+		"""
+		Number of records to fetch (default: 50, max: 100)
+		"""
+		first: Int,
+		"""
+		Number of records to fetch from the end (for backward pagination)
+		"""
+		last: Int
+	): RankedRecordConnection!
 }
 
 type PlayerRating {
@@ -163,6 +244,24 @@ type QueryRoot {
 	map(gameId: String!): Map!
 	player(login: String!): Player!
 	records(dateSortBy: SortState): [RankedRecord!]!
+	recordsConnection(
+		"""
+		Cursor to fetch records after (for forward pagination)
+		"""
+		after: String,
+		"""
+		Cursor to fetch records before (for backward pagination)
+		"""
+		before: String,
+		"""
+		Number of records to fetch (default: 50, max: 100)
+		"""
+		first: Int,
+		"""
+		Number of records to fetch from the end (for backward pagination)
+		"""
+		last: Int
+	): RankedRecordConnection!
 }
 
 type RankedRecord {
@@ -177,6 +276,35 @@ type RankedRecord {
 	tryCount: Int!
 	recordDate: DateTime!
 	flags: Int!
+}
+
+type RankedRecordConnection {
+	"""
+	Information to aid in pagination.
+	"""
+	pageInfo: PageInfo!
+	"""
+	A list of edges.
+	"""
+	edges: [RankedRecordEdge!]!
+	"""
+	A list of nodes.
+	"""
+	nodes: [RankedRecord!]!
+}
+
+"""
+An edge in a connection.
+"""
+type RankedRecordEdge {
+	"""
+	The item at the end of the edge
+	"""
+	node: RankedRecord!
+	"""
+	A cursor for use in pagination
+	"""
+	cursor: String!
 }
 
 """

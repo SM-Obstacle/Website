@@ -2,7 +2,11 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import React, { cache } from "react";
 import { gql } from "@/app/__generated__";
-import type { GetMapInfoQuery, SortState } from "@/app/__generated__/graphql";
+import type {
+  GetMapInfoQuery,
+  MapRecordSortableField,
+  SortState,
+} from "@/app/__generated__/graphql";
 import { query } from "@/app/ApolloClient";
 import Link from "@/components/Link";
 import MPFormat from "@/components/MPFormat";
@@ -14,15 +18,29 @@ import { type MapContent, RankedRecordLine } from "@/lib/map-page-types";
 import { parse, toPlainText } from "@/lib/mpformat/mpformat";
 import { getSortState, type ServerProps } from "@/lib/server-props";
 import { MapRecordsContent } from "./MapRecordsContent";
+import {
+  PaginationInput,
+  parsePaginationInput,
+  RawPaginationInput,
+} from "@/lib/cursor-pagination";
+import { parseMapSortField } from "@/lib/sort-field";
 
 const _MAP_RECORDS_FRAGMENT = gql(/* GraphQL */ `
   fragment MapRecords on Map {
-    records(rankSortBy: $rankSortBy, dateSortBy: $dateSortBy) {
-      player {
-        login
-        name
+    recordsConnection(
+      after: $after
+      before: $before
+      first: $first
+      last: $last
+      sortField: $sortField
+    ) {
+      nodes {
+        player {
+          login
+          name
+        }
+        ...RecordBase
       }
-      ...RecordBase
     }
   }
 `);
@@ -30,8 +48,11 @@ const _MAP_RECORDS_FRAGMENT = gql(/* GraphQL */ `
 const GET_MAP_INFO = gql(/* GraphQL */ `
   query GetMapInfo(
     $gameId: String!
-    $dateSortBy: SortState
-    $rankSortBy: SortState
+    $sortField: MapRecordSortableField
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
   ) {
     map(gameId: $gameId) {
       relatedEventEditions {
@@ -60,22 +81,9 @@ const GET_MAP_INFO = gql(/* GraphQL */ `
   }
 `);
 
-// FIXME: This seems to be unsused
-const _SORT_MAP_RECORDS = gql(/* GraphQL */ `
-  query SortMapRecords(
-    $gameId: String!
-    $dateSortBy: SortState
-    $rankSortBy: SortState
-  ) {
-    map(gameId: $gameId) {
-      ...MapRecords
-    }
-  }
-`);
-
 export type SP = ServerProps<
   { gameId: string },
-  { dateSortBy?: keyof typeof SortState; rankSortBy?: keyof typeof SortState }
+  { sortField?: string } & RawPaginationInput
 >;
 
 type Item<Array> = Array extends (infer T)[] ? T : never;
@@ -85,10 +93,14 @@ export type MapRecordsProperty = {
 };
 
 const fetchMapInfo = cache(
-  async (gameId: string, dateSortBy?: SortState, rankSortBy?: SortState) => {
+  async (
+    gameId: string,
+    paginationInput: PaginationInput,
+    sortField?: MapRecordSortableField,
+  ) => {
     return query({
       query: GET_MAP_INFO,
-      variables: { gameId, dateSortBy, rankSortBy },
+      variables: { gameId, sortField, ...paginationInput },
       errorPolicy: "all",
     });
   },
@@ -100,11 +112,9 @@ export async function generateMetadata(props: SP): Promise<Metadata> {
   const mapInfo = (
     await fetchMapInfo(
       params.gameId,
-      searchParams.dateSortBy
-        ? getSortState(searchParams.dateSortBy)
-        : undefined,
-      searchParams.rankSortBy
-        ? getSortState(searchParams.rankSortBy)
+      parsePaginationInput(searchParams),
+      searchParams.sortField
+        ? parseMapSortField(searchParams.sortField)
         : undefined,
     )
   ).data?.map;
@@ -159,8 +169,10 @@ export default async function MapRecords(sp: SP) {
 
   const data = await fetchMapInfo(
     params.gameId,
-    searchParams.dateSortBy ? getSortState(searchParams.dateSortBy) : undefined,
-    searchParams.rankSortBy ? getSortState(searchParams.rankSortBy) : undefined,
+    parsePaginationInput(searchParams),
+    searchParams.sortField
+      ? parseMapSortField(searchParams.sortField)
+      : undefined,
   );
 
   // If there is only one related event edition and it has a redirect, we redirect to the event map page.
@@ -179,7 +191,7 @@ export default async function MapRecords(sp: SP) {
       gameId: data.data?.map.gameId ?? "",
       player: data.data?.map.player ?? { login: "", name: "" },
       cpsNumber: data.data?.map.cpsNumber ?? undefined,
-      records: (data.data?.map.records ?? []).map(
+      records: (data.data?.map.recordsConnection.nodes ?? []).map(
         (record) =>
           new RankedRecordLine(
             record.id,

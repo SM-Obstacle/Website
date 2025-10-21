@@ -1,30 +1,47 @@
 import type { Metadata } from "next";
 import { cache } from "react";
 import { gql } from "@/app/__generated__";
-import type { SortState } from "@/app/__generated__/graphql";
 import { query } from "@/app/ApolloClient";
 import FormattedDate from "@/components/FormattedDate";
 import MPFormat, { MPFormatLink } from "@/components/MPFormat";
 import { Table, Tbody, Td, Th, Thead, Tr } from "@/components/Table";
 import Time from "@/components/Time";
 import { parse, toPlainText } from "@/lib/mpformat/mpformat";
-import { getSortState, type ServerProps } from "@/lib/server-props";
+import { type ServerProps } from "@/lib/server-props";
 import PlayerToolbar from "./PlayerToolbar";
+import {
+  PaginationInput,
+  parsePaginationInput,
+  RawPaginationInput,
+} from "@/lib/cursor-pagination";
 
 const _PLAYER_RECORDS_FRAGMENT = gql(/* GraphQL */ `
   fragment PlayerRecords on Player {
-    records(dateSortBy: $dateSortBy) {
-      map {
-        gameId
-        name
+    recordsConnection(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+    ) {
+      nodes {
+        map {
+          gameId
+          name
+        }
+        ...RecordBase
       }
-      ...RecordBase
     }
   }
 `);
 
 const GET_PLAYER_INFO = gql(/* GraphQL */ `
-  query GetPlayerInfo($login: String!, $dateSortBy: SortState) {
+  query GetPlayerInfo(
+    $login: String!
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+  ) {
     player(login: $login) {
       login
       name
@@ -35,38 +52,23 @@ const GET_PLAYER_INFO = gql(/* GraphQL */ `
   }
 `);
 
-// FIXME: this seems to be unsused
-const _SORT_PLAYER_RECORDS = gql(/* GraphQL */ `
-  query SortPlayerRecords($login: String!, $dateSortBy: SortState) {
-    player(login: $login) {
-      ...PlayerRecords
-    }
-  }
-`);
+const fetchPlayerInfo = cache(
+  async (login: string, paginationInput: PaginationInput) => {
+    return query({
+      query: GET_PLAYER_INFO,
+      variables: { login, ...paginationInput },
+      errorPolicy: "all",
+    });
+  },
+);
 
-const fetchPlayerInfo = cache(async (login: string, dateSortBy?: SortState) => {
-  return query({
-    query: GET_PLAYER_INFO,
-    variables: { login, dateSortBy },
-    errorPolicy: "all",
-  });
-});
-
-type SP = ServerProps<
-  { login: string },
-  { dateSortBy?: keyof typeof SortState }
->;
+type SP = ServerProps<{ login: string }, RawPaginationInput>;
 
 export async function generateMetadata(props: SP): Promise<Metadata> {
   const params = await props.params;
   const searchParams = await props.searchParams;
   const playerInfo = (
-    await fetchPlayerInfo(
-      params.login,
-      searchParams.dateSortBy
-        ? getSortState(searchParams.dateSortBy)
-        : undefined,
-    )
+    await fetchPlayerInfo(params.login, parsePaginationInput(searchParams))
   ).data?.player;
 
   return {
@@ -80,7 +82,7 @@ export default async function PlayerRecords(props: SP) {
 
   const data = await fetchPlayerInfo(
     params.login,
-    searchParams.dateSortBy ? getSortState(searchParams.dateSortBy) : undefined,
+    parsePaginationInput(searchParams),
   );
 
   return data.error ? (
@@ -112,7 +114,7 @@ export default async function PlayerRecords(props: SP) {
           </Tr>
         </Thead>
         <Tbody>
-          {(data.data?.player.records ?? []).map((record) => (
+          {(data.data?.player.recordsConnection.nodes ?? []).map((record) => (
             <Tr key={record.id}>
               <Td rank respvUnpadRank>
                 {record.rank}

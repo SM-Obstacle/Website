@@ -3,44 +3,48 @@ import { MPFormatLink } from "@/components/MPFormat";
 import { Table, Tbody, Td, Th, Thead, Tr } from "@/components/Table";
 import Time from "@/components/Time";
 import type { GlobalRankedRecord } from "@/lib/ranked-record";
-import { getSortState, type ServerProps } from "@/lib/server-props";
+import { type ServerProps } from "@/lib/server-props";
 import { gql } from "../__generated__/gql";
-import type { SortState } from "../__generated__/graphql";
 import { query } from "../ApolloClient";
+import {
+  parsePaginationInput,
+  RawPaginationInput,
+} from "@/lib/cursor-pagination";
 
 const GET_RECORDS = gql(/* GraphQL */ `
-  query GetRecords($dateSortBy: SortState) {
-    records(dateSortBy: $dateSortBy) {
-      player {
-        login
-        name
+  query GetRecords($first: Int, $last: Int, $after: String, $before: String) {
+    recordsConnection(
+      first: $first
+      last: $last
+      after: $after
+      before: $before
+    ) {
+      nodes {
+        player {
+          login
+          name
+        }
+        map {
+          gameId
+          name
+        }
+        ...RecordBase
       }
-      map {
-        gameId
-        name
-      }
-      ...RecordBase
     }
   }
 `);
 
 export default async function LatestRecords(
-  props: ServerProps<
-    Record<string, never>,
-    { dateSortBy?: keyof typeof SortState }
-  >,
+  props: ServerProps<Record<string, never>, RawPaginationInput>,
 ) {
   const searchParams = await props.searchParams;
-  const dateSortBy = searchParams.dateSortBy
-    ? getSortState(searchParams.dateSortBy)
-    : undefined;
 
   const { data, error } = await query({
     query: GET_RECORDS,
-    variables: { dateSortBy },
+    variables: parsePaginationInput(searchParams),
   });
 
-  const records = data?.records as GlobalRankedRecord[];
+  const records = data?.recordsConnection.nodes as GlobalRankedRecord[];
 
   return error ? (
     error.message
