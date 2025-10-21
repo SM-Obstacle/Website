@@ -5,7 +5,7 @@ import { gql } from "@/app/__generated__";
 import type {
   GetMapInfoQuery,
   MapRecordSortableField,
-  SortState,
+  RecordsFilter,
 } from "@/app/__generated__/graphql";
 import { query } from "@/app/ApolloClient";
 import Link from "@/components/Link";
@@ -14,16 +14,20 @@ import {
   ToolbarTitle as RawToolbarTitle,
   ToolbarTitleWrapper,
 } from "@/components/ToolbarWrapper";
+import {
+  type PaginationInput,
+  parsePaginationInput,
+  type RawPaginationInput,
+} from "@/lib/cursor-pagination";
 import { type MapContent, RankedRecordLine } from "@/lib/map-page-types";
 import { parse, toPlainText } from "@/lib/mpformat/mpformat";
-import { getSortState, type ServerProps } from "@/lib/server-props";
-import { MapRecordsContent } from "./MapRecordsContent";
 import {
-  PaginationInput,
-  parsePaginationInput,
-  RawPaginationInput,
-} from "@/lib/cursor-pagination";
+  parseRecordsFilter,
+  type RawRecordsFilter,
+} from "@/lib/records-filter";
+import type { ServerProps } from "@/lib/server-props";
 import { parseMapSortField } from "@/lib/sort-field";
+import { MapRecordsContent } from "./MapRecordsContent";
 
 const _MAP_RECORDS_FRAGMENT = gql(/* GraphQL */ `
   fragment MapRecords on Map {
@@ -33,6 +37,7 @@ const _MAP_RECORDS_FRAGMENT = gql(/* GraphQL */ `
       first: $first
       last: $last
       sortField: $sortField
+      filter: $filter
     ) {
       nodes {
         player {
@@ -53,6 +58,7 @@ const GET_MAP_INFO = gql(/* GraphQL */ `
     $last: Int
     $after: String
     $before: String
+    $filter: RecordsFilter
   ) {
     map(gameId: $gameId) {
       relatedEventEditions {
@@ -83,7 +89,7 @@ const GET_MAP_INFO = gql(/* GraphQL */ `
 
 export type SP = ServerProps<
   { gameId: string },
-  { sortField?: string } & RawPaginationInput
+  { sortField?: string } & RawPaginationInput & RawRecordsFilter
 >;
 
 type Item<Array> = Array extends (infer T)[] ? T : never;
@@ -96,11 +102,12 @@ const fetchMapInfo = cache(
   async (
     gameId: string,
     paginationInput: PaginationInput,
+    filter: RecordsFilter,
     sortField?: MapRecordSortableField,
   ) => {
     return query({
       query: GET_MAP_INFO,
-      variables: { gameId, sortField, ...paginationInput },
+      variables: { gameId, sortField, filter, ...paginationInput },
       errorPolicy: "all",
     });
   },
@@ -113,6 +120,7 @@ export async function generateMetadata(props: SP): Promise<Metadata> {
     await fetchMapInfo(
       params.gameId,
       parsePaginationInput(searchParams),
+      parseRecordsFilter(searchParams),
       searchParams.sortField
         ? parseMapSortField(searchParams.sortField)
         : undefined,
@@ -170,6 +178,7 @@ export default async function MapRecords(sp: SP) {
   const data = await fetchMapInfo(
     params.gameId,
     parsePaginationInput(searchParams),
+    parseRecordsFilter(searchParams),
     searchParams.sortField
       ? parseMapSortField(searchParams.sortField)
       : undefined,

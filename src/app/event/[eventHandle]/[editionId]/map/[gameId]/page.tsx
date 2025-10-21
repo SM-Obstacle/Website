@@ -1,6 +1,9 @@
 import { cache } from "react";
 import { gql } from "@/app/__generated__";
-import { MapRecordSortableField } from "@/app/__generated__/graphql";
+import {
+  MapRecordSortableField,
+  type RecordsFilter,
+} from "@/app/__generated__/graphql";
 import { query } from "@/app/ApolloClient";
 import * as MapRecordsContent from "@/app/map/[gameId]/MapRecordsContent";
 import * as MapPage from "@/app/map/[gameId]/page";
@@ -11,14 +14,18 @@ import {
   ToolbarTitleWrapper,
 } from "@/components/ToolbarWrapper";
 import {
+  type PaginationInput,
+  parsePaginationInput,
+} from "@/lib/cursor-pagination";
+import {
   type MapContent,
   MedalRecord,
   RankedRecordLine,
   type RecordLine,
 } from "@/lib/map-page-types";
 import { Medal } from "@/lib/ranked-record";
-import { type ServerProps } from "@/lib/server-props";
-import { PaginationInput, parsePaginationInput } from "@/lib/cursor-pagination";
+import { parseRecordsFilter } from "@/lib/records-filter";
+import type { ServerProps } from "@/lib/server-props";
 import { parseMapSortField } from "@/lib/sort-field";
 
 export const generateMetadata = MapPage.generateMetadata;
@@ -33,6 +40,7 @@ const GET_EVENT_MAP_INFO = gql(/* GraphQL */ `
     $last: Int
     $after: String
     $before: String
+    $filter: RecordsFilter
   ) {
     event(handle: $eventHandle) {
       edition(editionId: $editionId) {
@@ -64,6 +72,7 @@ const GET_EVENT_MAP_INFO = gql(/* GraphQL */ `
             last: $last
             after: $after
             before: $before
+            filter: $filter
           ) {
             nodes {
               player {
@@ -85,6 +94,7 @@ const fetchMapInfo = cache(
     editionId: number,
     gameId: string,
     paginationInput: PaginationInput,
+    filter: RecordsFilter,
     sortField?: MapRecordSortableField,
   ) => {
     return query({
@@ -94,6 +104,7 @@ const fetchMapInfo = cache(
         editionId,
         gameId,
         sortField,
+        filter,
         ...paginationInput,
       },
       errorPolicy: "all",
@@ -159,6 +170,7 @@ export default async function EventMapRecords(
     editionId,
     params.gameId,
     parsePaginationInput(searchParams),
+    parseRecordsFilter(searchParams),
     parsedSortField,
   );
   // : )

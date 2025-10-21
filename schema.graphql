@@ -64,7 +64,7 @@ type EventEditionMap {
 		"""
 		Number of records to fetch from the end (for backward pagination)
 		"""
-		last: Int,		sortField: MapRecordSortableField
+		last: Int,		sortField: MapRecordSortableField,		filter: RecordsFilter
 	): RankedRecordConnection!
 	medalTimes: MedalTimes
 }
@@ -125,7 +125,7 @@ type Map {
 		"""
 		Number of records to fetch from the end (for backward pagination)
 		"""
-		last: Int,		sortField: MapRecordSortableField
+		last: Int,		sortField: MapRecordSortableField,		filter: RecordsFilter
 	): RankedRecordConnection!
 }
 
@@ -220,7 +220,7 @@ type Player {
 		"""
 		Number of records to fetch from the end (for backward pagination)
 		"""
-		last: Int
+		last: Int,		filter: RecordsFilter
 	): RankedRecordConnection!
 }
 
@@ -260,7 +260,7 @@ type QueryRoot {
 		"""
 		Number of records to fetch from the end (for backward pagination)
 		"""
-		last: Int
+		last: Int,		filter: RecordsFilter
 	): RankedRecordConnection!
 }
 
@@ -327,6 +327,44 @@ enum RatingKind {
 	The rating of the difficulty.
 	"""
 	DIFFICULTY
+}
+
+"""
+Filter options for querying records
+"""
+input RecordsFilter {
+	"""
+	Filter by player login
+	"""
+	playerLogin: String
+	"""
+	Filter by player name
+	"""
+	playerName: String
+	"""
+	Filter by map UID
+	"""
+	mapUid: String
+	"""
+	Filter by map name
+	"""
+	mapName: String
+	"""
+	Filter records made before this date (ISO 8601 format)
+	"""
+	beforeDate: NaiveDateTime
+	"""
+	Filter records made after this date (ISO 8601 format)
+	"""
+	afterDate: NaiveDateTime
+	"""
+	Filter records with time greater than this value (in milliseconds)
+	"""
+	timeGt: Int
+	"""
+	Filter records with time less than this value (in milliseconds)
+	"""
+	timeLt: Int
 }
 
 type RelatedEdition {
