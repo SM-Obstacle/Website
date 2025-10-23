@@ -134,6 +134,41 @@ enum MapRecordSortableField {
 	RANK
 }
 
+type MapWithScore {
+	rank: Int!
+	map: Map!
+	score: Float!
+}
+
+type MapWithScoreConnection {
+	"""
+	Information to aid in pagination.
+	"""
+	pageInfo: PageInfo!
+	"""
+	A list of edges.
+	"""
+	edges: [MapWithScoreEdge!]!
+	"""
+	A list of nodes.
+	"""
+	nodes: [MapWithScore!]!
+}
+
+"""
+An edge in a connection.
+"""
+type MapWithScoreEdge {
+	"""
+	The item at the end of the edge
+	"""
+	node: MapWithScore!
+	"""
+	A cursor for use in pagination
+	"""
+	cursor: String!
+}
+
 type Mappack {
 	nbMaps: Int!
 	mxAuthor: String
@@ -157,6 +192,24 @@ type MappackPlayer {
 	rankAvg: Float!
 	mapFinished: Int!
 	worstRank: Int!
+}
+
+"""
+Filter options for querying maps
+"""
+input MapsFilter {
+	"""
+	Filter by map UID
+	"""
+	mapUid: String
+	"""
+	Filter by map name
+	"""
+	mapName: String
+	"""
+	Filter on the map author
+	"""
+	author: PlayersFilter
 }
 
 type MedalTimes {
@@ -235,6 +288,55 @@ enum PlayerRole {
 	ADMIN
 }
 
+type PlayerWithScore {
+	rank: Int!
+	player: Player!
+	score: Float!
+}
+
+type PlayerWithScoreConnection {
+	"""
+	Information to aid in pagination.
+	"""
+	pageInfo: PageInfo!
+	"""
+	A list of edges.
+	"""
+	edges: [PlayerWithScoreEdge!]!
+	"""
+	A list of nodes.
+	"""
+	nodes: [PlayerWithScore!]!
+}
+
+"""
+An edge in a connection.
+"""
+type PlayerWithScoreEdge {
+	"""
+	The item at the end of the edge
+	"""
+	node: PlayerWithScore!
+	"""
+	A cursor for use in pagination
+	"""
+	cursor: String!
+}
+
+"""
+Filter options for querying players
+"""
+input PlayersFilter {
+	"""
+	Filter by player login
+	"""
+	playerLogin: String
+	"""
+	Filter by player name
+	"""
+	playerName: String
+}
+
 type QueryRoot {
 	eventEditionFromMxId(mxId: Int!): EventEdition
 	mappack(mappackId: String!): Mappack!
@@ -244,6 +346,8 @@ type QueryRoot {
 	map(gameId: String!): Map!
 	player(login: String!): Player!
 	records(dateSortBy: SortState): [RankedRecord!]!
+	players(after: String, before: String, first: Int, last: Int, filter: PlayersFilter): PlayerWithScoreConnection!
+	maps(after: String, before: String, first: Int, last: Int, filter: MapsFilter): MapWithScoreConnection!
 	recordsConnection(
 		"""
 		Cursor to fetch records after (for forward pagination)
@@ -334,21 +438,13 @@ Filter options for querying records
 """
 input RecordsFilter {
 	"""
-	Filter by player login
+	Filter by player who made the record
 	"""
-	playerLogin: String
+	player: PlayersFilter
 	"""
-	Filter by player name
+	Filter by map on which the record is made
 	"""
-	playerName: String
-	"""
-	Filter by map UID
-	"""
-	mapUid: String
-	"""
-	Filter by map name
-	"""
-	mapName: String
+	map: MapsFilter
 	"""
 	Filter records made before this date (ISO 8601 format)
 	"""
