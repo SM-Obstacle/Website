@@ -1,6 +1,7 @@
 import { css } from "../../styled-system/css";
 import { styled } from "../../styled-system/jsx";
 import Link from "./Link";
+import { H1, H2 } from "./ui/typography";
 
 export const LastUpdate = styled("span", {
   base: {
@@ -11,20 +12,21 @@ export const LastUpdate = styled("span", {
 
 export const Article = styled("div", {
   base: {
-    p: 5,
     gap: 2,
     position: "relative",
     display: "flex",
     flexDir: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
-    overflowY: "auto",
 
     "@media only screen and (max-width: 870px)": {
       flexDir: "column",
     },
   },
 });
+
+export const MdH1 = (props: React.ComponentProps<"h1">) => <H1 {...props} />;
+export const MdH2 = (props: React.ComponentProps<"h1">) => <H2 {...props} />;
 
 export const MdLink = (props: React.ComponentProps<"a">) => (
   <Link {...(props as React.ComponentProps<typeof Link>)} explicit />

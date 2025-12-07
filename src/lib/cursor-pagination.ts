@@ -1,3 +1,6 @@
+import { parseString } from "./records-filter";
+import { SearchParams } from "./server-props";
+
 export interface CursorInput {
   after?: string;
   before?: string;
@@ -15,7 +18,7 @@ export interface PaginationInput extends CursorInput {
 
 function parseNumber(n: string | undefined): number | undefined {
   if (n) {
-    const parsed = parseInt(n);
+    const parsed = parseInt(n, 10);
     if (!Number.isNaN(parsed)) {
       return parsed;
     }
@@ -23,7 +26,17 @@ function parseNumber(n: string | undefined): number | undefined {
   return undefined;
 }
 
-export function parsePaginationInput(raw: RawPaginationInput): PaginationInput {
+function parseRawPaginationInput(input: SearchParams): RawPaginationInput {
+  return {
+    after: parseString(input.after),
+    before: parseString(input.before),
+    first: parseString(input.first),
+    last: parseString(input.last),
+  } satisfies RawPaginationInput;
+}
+
+export function parsePaginationInput(input: SearchParams): PaginationInput {
+  const raw = parseRawPaginationInput(input);
   return {
     after: raw.after,
     before: raw.before,

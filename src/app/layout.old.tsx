@@ -1,9 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import NextTopLoader from "nextjs-toploader";
+import Navigation from "@/components/navigation/Navigation";
+import { styled } from "../../styled-system/jsx";
 import { ApolloWrapper } from "./ApolloWrapper";
 import { forkawesomeManiaicons, kenneyIcons, lato } from "./fonts";
 import "@/styles/globals.css";
-import { css } from "../../@shadow-panda/styled-system/css";
+import { css } from "../../styled-system/css";
 
 export const viewport: Viewport = {
   themeColor: "#060503",
@@ -16,6 +18,41 @@ export const metadata: Metadata = {
   },
   icons: "/img/favicon.ico",
 };
+
+const MainWrapper = styled("div", {
+  base: {
+    maxHeight: "calc(100% - 51px)",
+    flexGrow: 1,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
+
+const Main = styled("main", {
+  base: {
+    height: "85%",
+    width: "80%",
+    maxHeight: "85%",
+    maxWidth: "70em",
+    position: "relative",
+
+    display: "flex",
+    flexDirection: "column",
+
+    borderRadius: "10px",
+    backgroundColor: "#000000dd",
+
+    overflowY: "auto",
+
+    "@media only screen and (max-width: 870px)": {
+      height: "calc(100% - 14px)",
+      width: "calc(100% - 4px)",
+      maxHeight: "100%",
+      maxWidth: "100%",
+    },
+  },
+});
 
 const bodyHtmlCommonStyles = css.raw({
   margin: 0,
@@ -41,8 +78,7 @@ const bodyStyles = css(
 
     display: "flex",
     flexDir: "column",
-    // TODO: keep
-    // overflow: "hidden",
+    overflow: "hidden",
   }),
 );
 
@@ -71,7 +107,11 @@ export default async function RootLayout({
       <body className={bodyStyles}>
         <ApolloWrapper>
           <NextTopLoader height={2} showSpinner={false} color="#346ab4" />
-          {children}
+          <Navigation />
+
+          <MainWrapper>
+            <Main>{children}</Main>
+          </MainWrapper>
         </ApolloWrapper>
       </body>
     </html>

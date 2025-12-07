@@ -6,9 +6,7 @@ export function getSortState(
   return SortState[searchParam];
 }
 
-export type SearchParams = {
-  [key: string]: string | string[] | undefined;
-};
+export type SearchParams = Record<string, string | string[] | undefined>;
 
 export type Params = {
   [key: string]: string;

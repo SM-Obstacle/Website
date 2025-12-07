@@ -1520,6 +1520,13 @@
   dependencies:
     "@pandacss/types" "1.4.0"
 
+"@pandacss/preset-panda@0.15.5":
+  version "0.15.5"
+  resolved "https://registry.yarnpkg.com/@pandacss/preset-panda/-/preset-panda-0.15.5.tgz#73116dd4f1de140f5241be79b4b86c133ade199c"
+  integrity sha512-ZYv/6H/hqA2AP+gx58KPJBDJU+/oCDoUDpZ/mmWbqpS/D+7mMxJOonhvW/b2BQMxFdy4TehBFL3N8wW3ftXRqA==
+  dependencies:
+    "@pandacss/types" "0.15.5"
+
 "@pandacss/preset-panda@1.4.0":
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/@pandacss/preset-panda/-/preset-panda-1.4.0.tgz#19ca402658267032730794f9d8e3d7c06f2a85bb"
@@ -1554,6 +1561,11 @@
     "@pandacss/shared" "1.4.0"
     "@pandacss/types" "1.4.0"
     ts-pattern "5.8.0"
+
+"@pandacss/types@0.15.5":
+  version "0.15.5"
+  resolved "https://registry.yarnpkg.com/@pandacss/types/-/types-0.15.5.tgz#0c728f6a403d36bda2e0cc351b95db4f104797d9"
+  integrity sha512-3XNmWN/UhOgTiPUCBOBJEtwgxPOcSCZIP5fY9F/xc0BrwMUcZzcT0AKb7fWq0xY2U4w6SreS3HeoMyINWq7c6A==
 
 "@pandacss/types@1.4.0":
   version "1.4.0"
@@ -1649,6 +1661,18 @@
     "@parcel/watcher-win32-ia32" "2.5.1"
     "@parcel/watcher-win32-x64" "2.5.1"
 
+"@radix-ui/react-compose-refs@1.1.2":
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/@radix-ui/react-compose-refs/-/react-compose-refs-1.1.2.tgz#a2c4c47af6337048ee78ff6dc0d090b390d2bb30"
+  integrity sha512-z4eqJvfiNnFMHIIvXP3CY57y2WJs5g2v3X0zm9mEJkrkNv4rDxu+sg9Jh8EkXyeqBkB7SOcboo9dMVqhyrACIg==
+
+"@radix-ui/react-slot@^1.2.3":
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/@radix-ui/react-slot/-/react-slot-1.2.3.tgz#502d6e354fc847d4169c3bc5f189de777f68cfe1"
+  integrity sha512-aeNmHnBxbi2St0au6VBVC7JXFlhLlOnvIIlePNniyUNAClzmtAUEY8/pBiK3iHjufOlwA+c20/8jngo7xcrg8A==
+  dependencies:
+    "@radix-ui/react-compose-refs" "1.1.2"
+
 "@repeaterjs/repeater@^3.0.4", "@repeaterjs/repeater@^3.0.6":
   version "3.0.6"
   resolved "https://registry.yarnpkg.com/@repeaterjs/repeater/-/repeater-3.0.6.tgz#be23df0143ceec3c69f8b6c2517971a5578fdaa2"
@@ -1663,6 +1687,18 @@
   version "1.12.0"
   resolved "https://registry.yarnpkg.com/@rushstack/eslint-patch/-/eslint-patch-1.12.0.tgz#326a7b46f6d4cfa54ae25bb888551697873069b4"
   integrity sha512-5EwMtOqvJMMa3HbmxLlF74e+3/HhwBTMcvt3nqVJgGCozO6hzIPOBlwm8mGVNR9SN2IJpxSnlxczyDjcn7qIyw==
+
+"@shadow-panda/preset@^0.7.1":
+  version "0.7.1"
+  resolved "https://registry.yarnpkg.com/@shadow-panda/preset/-/preset-0.7.1.tgz#1c3039acab55133530946bbf7ab62953ccf7ac62"
+  integrity sha512-WPb0jAkAJHNBtn8zPWQUGTuQseo4sCdUCQNjCfe3Cb8BHub6wDZb6DLrpKNwIep9Szb98oAr5TV5Y93ikIgvSQ==
+  dependencies:
+    "@pandacss/preset-panda" "0.15.5"
+
+"@shadow-panda/style-context@^0.7.1":
+  version "0.7.1"
+  resolved "https://registry.yarnpkg.com/@shadow-panda/style-context/-/style-context-0.7.1.tgz#79c8449c4701a370a8990546c1513b4bce7a8984"
+  integrity sha512-1vNZewZvqUWyiSX0+BxIYrqPP/7QUgjqKITMw6RALdz6AqnlPIB+EBIvbnScsa++7NrnUbxe/XKem2wzeZy3RA==
 
 "@swc/helpers@0.5.15":
   version "0.5.15"
