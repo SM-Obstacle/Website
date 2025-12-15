@@ -16,7 +16,7 @@
     "graphql": "^16.8.1",
     "lodash": "^4.17.21",
     "moment": "^2.30.1",
-    "next": "15.5.4",
+    "next": "15.5.9",
     "nextjs-toploader": "^3.7.15",
     "react": "^19",
     "react-dom": "^19",
@@ -35,7 +35,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9.7.0",
-    "eslint-config-next": "15.5.4",
+    "eslint-config-next": "15.5.9",
     "sass": "^1.70.0",
     "typescript": "^5.3.3"
   }
