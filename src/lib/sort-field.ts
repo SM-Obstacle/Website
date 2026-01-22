@@ -1,14 +1,38 @@
-import { MapRecordSortableField } from "@/app/__generated__/graphql";
+import {
+  MapRecordSort,
+  MapRecordSortableField,
+  SortOrder,
+} from "@/app/__generated__/graphql";
 
-export function parseMapSortField(
-  input: string,
-): MapRecordSortableField | undefined {
-  switch (input.toLowerCase().trim()) {
-    case "date":
-      return MapRecordSortableField.Date;
-    case "rank":
-      return MapRecordSortableField.Rank;
+export function parseMapSort(
+  rawField?: string,
+  rawOrder?: string,
+): MapRecordSort | undefined {
+  let order: SortOrder | undefined;
+  switch (rawOrder?.toLowerCase().trim()) {
+    case "desc":
+      order = SortOrder.Descending;
+      break;
+    case "asc":
+      order = SortOrder.Ascending;
+      break;
     default:
-      return undefined;
+      order = undefined;
+      break;
   }
+
+  const trimmedField = rawField?.toLowerCase().trim();
+  if (trimmedField === "date") {
+    return {
+      field: MapRecordSortableField.Date,
+      order,
+    };
+  } else if (trimmedField === "rank" || order) {
+    return {
+      field: MapRecordSortableField.Rank,
+      order,
+    };
+  }
+
+  return undefined;
 }

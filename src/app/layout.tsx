@@ -66,7 +66,7 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${lato.variable} ${kenneyIcons.variable} ${forkawesomeManiaicons.variable} ${htmlStyles}`}
+      className={`${lato.variable} ${kenneyIcons.variable} ${forkawesomeManiaicons.variable} ${htmlStyles} dark`}
     >
       <body className={bodyStyles}>
         <ApolloWrapper>

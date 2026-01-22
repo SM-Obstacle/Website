@@ -1,5 +1,5 @@
-import { css } from "../../../@shadow-panda/styled-system/css";
-import { styled } from "../../../@shadow-panda/styled-system/jsx";
+import { css } from "../../../../@shadow-panda/styled-system/css";
+import { styled } from "../../../../@shadow-panda/styled-system/jsx";
 
 const BlockBase = styled("div", {
   base: {
@@ -43,7 +43,7 @@ export default function Block({
       {titleBar && (
         <div
           className={css({
-            width: "calc(100% - token(spacing.3) * 2)",
+            width: "100%",
             ps: "token(spacing.3)",
             pe: "token(spacing.3)",
           })}

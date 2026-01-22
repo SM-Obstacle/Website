@@ -1,6 +1,6 @@
-import PageBase from "@/components/PageBase";
-import Block from "@/components/ui/Block";
-import { H1 } from "@/components/ui/typography";
+import PageBase from "@/components/ui/organisms/PageBase";
+import Block from "@/components/ui/organisms/Block";
+import { H1 } from "@/components/ui/atoms/typography";
 import { css } from "../../../@shadow-panda/styled-system/css";
 import RecordsFilter from "./RecordsFilter";
 
@@ -15,7 +15,7 @@ export default function RecordsLayout({ children }: LayoutProps<"/records">) {
           "--filter-width": "15rem",
           display: "grid",
           gridTemplateColumns: "var(--filter-width) auto",
-          gridGap: 3,
+          gridGap: "token(spacing.2)",
           maxW: "calc(token(sizes.maxContentWidth) + var(--filter-width))",
           margin: "auto",
           height: "100%",
@@ -25,7 +25,7 @@ export default function RecordsLayout({ children }: LayoutProps<"/records">) {
         <div className={css({ flexGrow: 1, height: "100%" })}>
           <Block
             className={css({
-              height: "calc(100% - var(--pad) * 2)",
+              height: "100%",
             })}
           >
             <div

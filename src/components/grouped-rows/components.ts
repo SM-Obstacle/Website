@@ -1,4 +1,4 @@
-import { styled } from "../../../styled-system/jsx";
+import { styled } from "../../../@shadow-panda/styled-system/jsx";
 import { Td, Tr } from "../Table";
 
 export const HeadRow = styled(Tr, {

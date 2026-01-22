@@ -8,7 +8,10 @@ import { Tbody, Td, Th, Tr } from "@/components/Table";
 import Time from "@/components/Time";
 import { Medal } from "@/lib/ranked-record";
 import { cmpMedals } from "@/lib/utils";
-import { Flex, styled } from "../../../../../styled-system/jsx";
+import {
+  Flex,
+  styled,
+} from "../../../../../@shadow-panda/@shadow-panda/styled-system/jsx";
 import GroupedRows from "../../../../components/grouped-rows/GroupedRows";
 
 const CategoryName = styled(Td, {

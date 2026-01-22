@@ -4,7 +4,7 @@ import {
   type HTMLStyledProps,
   styled,
 } from "@/../@shadow-panda/styled-system/jsx";
-import { button } from "../../../@shadow-panda/styled-system/recipes";
+import { button } from "../../../../@shadow-panda/styled-system/recipes";
 
 function BaseButton({
   asChild = false,

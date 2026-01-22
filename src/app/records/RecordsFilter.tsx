@@ -1,20 +1,21 @@
 import Form from "next/form";
-import Block, { SubBlock } from "@/components/ui/Block";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-import { Label } from "@/components/ui/Label";
-import { H2, H3 } from "@/components/ui/typography";
+import Block, { SubBlock } from "@/components/ui/organisms/Block";
+import { Button } from "@/components/ui/molecules/Button";
+import { H2, H3 } from "@/components/ui/atoms/typography";
 import { css } from "../../../@shadow-panda/styled-system/css";
+import NonOverwritingForm from "./NonOverwritingForm";
+import { Input } from "@/components/ui/molecules/Input";
+import { Label } from "@/components/ui/molecules/Label";
+import RecordDatePicker from "./RecordDatePicker";
 
 function FilterInput({
   label,
-  inputType,
   id,
-}: {
+  children,
+}: React.PropsWithChildren<{
   label: string;
-  inputType: React.ComponentProps<typeof Input>["type"];
   id: string;
-}) {
+}>) {
   return (
     <div
       className={css({
@@ -24,79 +25,106 @@ function FilterInput({
       })}
     >
       <Label htmlFor={id}>{label}</Label>
-      <Input type={inputType} id={id} name={id} />
+      {children}
     </div>
+  );
+}
+
+function FilterBlock({
+  title,
+  children,
+}: React.PropsWithChildren<{ title: string }>) {
+  return (
+    <SubBlock>
+      <div
+        className={css({
+          display: "flex",
+          flexDir: "column",
+          gap: "token(spacing.1)",
+          padding: "token(spacing.1)",
+        })}
+      >
+        <H3
+          className={css({
+            ms: "token(spacing.2)",
+            me: "token(spacing.2)",
+          })}
+        >
+          {title}
+        </H3>
+        <div
+          className={css({
+            margin: "token(spacing.1)",
+          })}
+        >
+          {children}
+        </div>
+      </div>
+    </SubBlock>
   );
 }
 
 export default function RecordsFilter() {
   return (
-    <Block
-      className={css({
-        height: "fit-content",
-      })}
-      titleBar={<H2>Filters</H2>}
-    >
-      <Form action="/records">
+    <NonOverwritingForm action="/records">
+      <Block
+        className={css({
+          display: "flex",
+          flexDir: "column",
+          gap: 3,
+        })}
+        titleBar={
+          <H2
+            className={css({
+              fontWeight: "extrabold",
+            })}
+          >
+            Filters
+          </H2>
+        }
+      >
         <div
           className={css({
             display: "flex",
             flexDir: "column",
             gap: 3,
+            overflowY: "scroll",
           })}
         >
           {/* Player filter */}
-          <SubBlock>
-            <div
-              className={css({
-                display: "flex",
-                flexDir: "column",
-                gap: 1,
-              })}
-            >
-              <H3>Player</H3>
-              <FilterInput id="playerLogin" inputType="text" label="Login" />
-              <FilterInput id="playerName" inputType="text" label="Name" />
-            </div>
-          </SubBlock>
+          <FilterBlock title="Player">
+            <FilterInput id="playerLogin" label="Login">
+              <Input type="text" id="playerLogin" name="playerLogin" />
+            </FilterInput>
+            <FilterInput id="playerName" label="Name">
+              <Input type="text" id="playerName" name="playerName" />
+            </FilterInput>
+          </FilterBlock>
 
           {/* Map filter */}
-          <SubBlock>
-            <div
-              className={css({
-                display: "flex",
-                flexDir: "column",
-                gap: 1,
-              })}
-            >
-              <H3>Map</H3>
-              <FilterInput id="mapUid" inputType="text" label="Map UID" />
-              <FilterInput id="mapName" inputType="text" label="Name" />
-            </div>
-          </SubBlock>
+          <FilterBlock title="Map">
+            <FilterInput id="mapUid" label="Map UID">
+              <Input type="text" id="mapUid" name="mapUid" />
+            </FilterInput>
+            <FilterInput id="mapName" label="Name">
+              <Input type="text" id="mapName" name="mapName" />
+            </FilterInput>
+          </FilterBlock>
 
           {/* Record filter */}
-          <SubBlock>
-            <div
-              className={css({
-                display: "flex",
-                flexDir: "column",
-                gap: 1,
-              })}
-            >
-              <H3>Record</H3>
-              <p>Before date</p>
-              <p>After date</p>
-              <p>Time greater than</p>
-              <p>Time lower than</p>
-            </div>
-          </SubBlock>
-
-          <Button type="submit" rounded="full">
-            Filter
-          </Button>
+          <FilterBlock title="Record">
+            <FilterInput id="beforeDate" label="Before date">
+              <RecordDatePicker name="beforeDate" />
+            </FilterInput>
+            <p>After date</p>
+            <p>Time greater than</p>
+            <p>Time lower than</p>
+          </FilterBlock>
         </div>
-      </Form>
-    </Block>
+        <Button type="submit" rounded="full">
+          Filter
+        </Button>
+      </Block>
+    </NonOverwritingForm>
   );
 }

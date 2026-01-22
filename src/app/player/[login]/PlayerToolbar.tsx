@@ -4,7 +4,7 @@ import {
   ToolbarSpan,
   ToolbarTitle,
 } from "@/components/ToolbarWrapper";
-import { css } from "../../../../styled-system/css";
+import { css } from "../../../../@shadow-panda/styled-system/css";
 
 function PlayerZone({ children }: { children: string | null | undefined }) {
   if (!children) return null;

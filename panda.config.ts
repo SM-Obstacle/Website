@@ -1,10 +1,10 @@
-import { defineConfig } from "@pandacss/dev";
+import { defineAnimationStyles, defineConfig } from "@pandacss/dev";
 
 export default defineConfig({
   presets: ["@shadow-panda/preset"],
 
   // Whether to use css reset
-  preflight: false,
+  preflight: true,
 
   // Where to look for your css declarations
   include: ["./src/**/*.{js,jsx,ts,tsx}", "./pages/**/*.{js,jsx,ts,tsx}"],
@@ -16,9 +16,17 @@ export default defineConfig({
   theme: {
     extend: {
       keyframes: {
-        dropdownContentWrapperTransition: {
+        opacityAnimation: {
           from: { opacity: 0 },
           to: { opacity: 1 },
+        },
+        navMenuHorizontalSlide: {
+          from: {
+            maxHeight: "calc(token(sizes.logoSize) + token(spacing.2) * 2)",
+          },
+          to: {
+            maxHeight: "100%",
+          },
         },
       },
 

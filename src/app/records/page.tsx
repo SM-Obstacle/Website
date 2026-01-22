@@ -1,11 +1,15 @@
 import FormattedDate from "@/components/FormattedDate";
 import { MPFormatLink } from "@/components/MPFormat";
 import Time from "@/components/Time";
-import { SubBlock } from "@/components/ui/Block";
+import { SubBlock } from "@/components/ui/organisms/Block";
 import { parseRecordsFilter } from "@/lib/records-filter";
 import { css } from "../../../@shadow-panda/styled-system/css";
 import { gql } from "../__generated__";
-import type { GetRecordsConnectionQuery } from "../__generated__/graphql";
+import {
+  SortOrder,
+  UnorderedRecordSortableField,
+  type GetRecordsConnectionQuery,
+} from "../__generated__/graphql";
 import { query } from "../ApolloClient";
 import PaginationButtons from "./PaginationButtons";
 import { parsePaginationInput } from "@/lib/cursor-pagination";
@@ -17,6 +21,7 @@ const GET_RECORDS = gql(/* GraphQL */ `
     $before: String
     $after: String
     $filter: RecordsFilter
+    $sort: UnorderedRecordSort
   ) {
     recordsConnection(
       first: $first
@@ -24,6 +29,7 @@ const GET_RECORDS = gql(/* GraphQL */ `
       before: $before
       after: $after
       filter: $filter
+      sort: $sort
     ) {
       pageInfo {
         hasPreviousPage
@@ -177,6 +183,12 @@ export default async function Records(props: PageProps<"/records">) {
     variables: {
       filter,
       ...pagination,
+      ...(searchParams.order === "desc" && {
+        sort: {
+          field: UnorderedRecordSortableField.Date,
+          order: SortOrder.Descending,
+        },
+      }),
     },
   });
 

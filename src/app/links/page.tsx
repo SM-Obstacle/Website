@@ -32,7 +32,7 @@ export default async function Links() {
       >
         <Block
           className={css({
-            height: "calc(100% - token(spacing.2) * 2)",
+            height: "100%",
             overflowY: "auto",
           })}
         >

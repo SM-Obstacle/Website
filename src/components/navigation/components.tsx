@@ -1,5 +1,5 @@
-import { css } from "../../../styled-system/css";
-import { styled } from "../../../styled-system/jsx";
+import { css } from "../../../@shadow-panda/styled-system/css";
+import { styled } from "../../../@shadow-panda/styled-system/jsx";
 import { NavLink, NavSpan } from "../Link";
 
 export const Nav = styled("nav", {

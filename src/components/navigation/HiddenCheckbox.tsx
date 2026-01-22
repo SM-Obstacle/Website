@@ -1,11 +1,16 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useEffect, useRef } from "react";
-import { css } from "../../../styled-system/css";
+import { RefObject, useEffect, useRef } from "react";
+import { css } from "../../../@shadow-panda/styled-system/css";
 
-export default function HiddenCheckbox({ name }: { name: string }) {
-  const ref = useRef<HTMLInputElement>(null);
+export default function HiddenCheckbox({
+  name,
+  ref,
+}: {
+  name: string;
+  ref: RefObject<HTMLInputElement | null>;
+}) {
   const pathname = usePathname();
 
   // biome-ignore lint/correctness/useExhaustiveDependencies: false positive
@@ -21,10 +26,8 @@ export default function HiddenCheckbox({ name }: { name: string }) {
       className={css({
         display: "none",
         "@media only screen and (max-width: 870px)": {
-          "&:not(:checked) ~ ul": {
-            overflow: "hidden",
-            maxHeight: 0,
-            padding: 0,
+          "&:not(:checked) ~ .__mainNav": {
+            display: "block",
           },
         },
       })}

@@ -1,6 +1,7 @@
 import { gql } from "@/app/__generated__";
 import { query } from "@/app/ApolloClient";
 import OfTheWeek from "../ui/organisms/OfTheWeek";
+import { FaUser } from "react-icons/fa6";
 
 const GET_PLAYER_OF_THE_WEEK = gql(/* GraphQL */ `
   query GetPlayerOfTheWeek {
@@ -24,6 +25,7 @@ export default async function PlayerOfTheWeek() {
     <OfTheWeek
       path={`/player/${data?.players.nodes[0].player.login}`}
       name={data?.players.nodes[0].player.name ?? ""}
+      icon={<FaUser />}
     />
   );
 }

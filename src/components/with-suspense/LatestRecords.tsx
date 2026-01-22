@@ -1,11 +1,13 @@
 import { gql } from "@/app/__generated__";
 import { query } from "@/app/ApolloClient";
 import type { GlobalRankedRecord } from "@/lib/ranked-record";
-import { css } from "../../../@shadow-panda/styled-system/css";
+import { css, Styles } from "../../../@shadow-panda/styled-system/css";
 import { MPFormatLink } from "../MPFormat";
 import Time from "../Time";
 import { SiSharp } from "react-icons/si";
 import { FormattedTimeAgo } from "../FormattedDate";
+import { styled } from "../../../@shadow-panda/styled-system/jsx";
+import { CiMedal } from "react-icons/ci";
 
 const GET_RECORDS = gql(/* GraphQL */ `
   query GetRecords(
@@ -37,6 +39,16 @@ const GET_RECORDS = gql(/* GraphQL */ `
   }
 `);
 
+const playerWidth = {
+  width: "40%",
+} satisfies Styles;
+const mapWidth = {
+  width: "40%",
+} satisfies Styles;
+const timeWidth = { width: "10%" } satisfies Styles;
+const dateWidth = { width: "5%" } satisfies Styles;
+const headerStyle = { textAlign: "left" } satisfies Styles;
+
 export default async function LatestRecords() {
   const { data } = await query({
     query: GET_RECORDS,
@@ -48,82 +60,160 @@ export default async function LatestRecords() {
   const records = data?.recordsConnection.nodes as GlobalRankedRecord[];
 
   return (
-    <ul
+    <div
       className={css({
-        display: "flex",
-        flexDir: "column",
-        gap: "token(spacing.2)",
-        margin: 0,
-        padding:
-          "token(spacing.2) token(spacing.5) token(spacing.2) token(spacing.5)",
-        fontSize: "lg",
+        overflowX: "auto",
+        flex: 1,
+        minW: 0,
       })}
     >
-      {records.map((record) => (
-        <li
+      <table
+        className={css({
+          margin: "token(spacing.2) token(spacing.5)",
+          width: "calc(100% - token(spacing.5) * 2)",
+          "& tr": {
+            whiteSpace: "nowrap",
+            minW: "token(spacing.5)",
+            "& td, & th": {
+              padding: "token(spacing.1) token(spacing.1)",
+              _first: {
+                roundedStart: "token(radii.md)",
+              },
+              _last: {
+                roundedEnd: "token(radii.md)",
+              },
+            },
+            _even: {
+              "& td": {
+                bgColor: "#0002",
+              },
+            },
+          },
+        })}
+      >
+        <thead
           className={css({
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
+            fontSize: "larger",
+            opacity: 0.5,
           })}
-          key={record.id}
         >
-          <span
+          <tr
             className={css({
-              flexBasis: "100%",
-              flexGrow: 2,
-              overflowX: "hidden",
-              textOverflow: "ellipsis",
-              textWrap: "nowrap",
-              me: "token(spacing.2)",
+              "& th": {
+                bgColor: "#000A",
+              },
             })}
           >
-            <MPFormatLink path={`/player/${record.player.login}`}>
-              {record.player.name}
-            </MPFormatLink>{" "}
-            finished{" "}
-            <MPFormatLink path={`/map/${record.map.gameId}`}>
-              {record.map.name}
-            </MPFormatLink>{" "}
-            in{" "}
-            <span
-              className={css({
-                fontWeight: "bold",
-                fontStyle: "italic",
-                color: "#346AB4",
+            <th className={css(playerWidth, headerStyle)}>Player</th>
+            <th className={css(mapWidth, headerStyle)}>Map</th>
+            <th className={css(timeWidth, headerStyle)}>Time</th>
+            <th
+              className={css(dateWidth, headerStyle, {
+                display: "none",
+                sm: {
+                  display: "revert",
+                },
               })}
             >
-              <Time>{record.time}</Time>
-            </span>
-          </span>
-          <span
-            className={css({
-              flexBasis: "50%",
-              flexGrow: 2,
-            })}
-          >
-            <FormattedTimeAgo>{record.recordDate}</FormattedTimeAgo>
-          </span>
-          <span
-            className={css({
-              flexBasis: "20%",
-              flexGrow: 1,
-              display: "flex",
-              flexDir: "row",
-              justifyContent: "end",
-              alignItems: "center",
-              gap: 1,
-            })}
-          >
-            {record.rank}
-            <SiSharp
+              Date
+            </th>
+            <th
               className={css({
-                fontSize: "sm",
+                textAlign: "right",
+                pe: "token(spacing.1)",
               })}
-            />
-          </span>
-        </li>
-      ))}
-    </ul>
+            >
+              #
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {records.map((record) => (
+            <tr key={record.id}>
+              <td
+                className={css({
+                  width: "40%",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  maxW: 0,
+                })}
+              >
+                <MPFormatLink
+                  path={`/player/${record.player.login}`}
+                  fontWeight="bold"
+                >
+                  {record.player.name}
+                </MPFormatLink>
+              </td>
+              <td
+                className={css({
+                  width: "40%",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  maxW: 0,
+                })}
+              >
+                <MPFormatLink
+                  path={`/map/${record.map.gameId}`}
+                  fontWeight="bold"
+                >
+                  {record.map.name}
+                </MPFormatLink>
+              </td>
+              <td className={css({ width: "10%" })}>
+                <span
+                  className={css({
+                    fontStyle: "italic",
+                    color: "#346AB4",
+                    fontWeight: "bold",
+                  })}
+                >
+                  <Time>{record.time}</Time>
+                </span>
+              </td>
+              <td
+                className={css({
+                  display: "none",
+                  sm: {
+                    width: "5%",
+                    display: "revert",
+                  },
+                })}
+              >
+                <FormattedTimeAgo>{record.recordDate}</FormattedTimeAgo>
+              </td>
+              <td
+                data-rank={`r${record.rank}`}
+                className={css({
+                  // TODO: save these colors
+                  "--gold-color": "#e6c043",
+                  "--silver-color": "#C4C4C4",
+                  "--bronze-color": "#CE8946",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "end",
+                  "&[data-rank=r1], &[data-rank=r2], &[data-rank=r3]": {
+                    fontWeight: "bold",
+                    textShadow: "md",
+                  },
+                  "&[data-rank=r3]": {
+                    color: "var(--bronze-color)",
+                  },
+                  "&[data-rank=r2]": {
+                    color: "var(--silver-color)",
+                  },
+                  "&[data-rank=r1]": {
+                    color: "var(--gold-color)",
+                  },
+                })}
+              >
+                <CiMedal />
+                {record.rank}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }

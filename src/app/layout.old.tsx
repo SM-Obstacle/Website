@@ -1,11 +1,11 @@
 import type { Metadata, Viewport } from "next";
 import NextTopLoader from "nextjs-toploader";
 import Navigation from "@/components/navigation/Navigation";
-import { styled } from "../../styled-system/jsx";
+import { styled } from "../../@shadow-panda/styled-system/jsx";
 import { ApolloWrapper } from "./ApolloWrapper";
 import { forkawesomeManiaicons, kenneyIcons, lato } from "./fonts";
 import "@/styles/globals.css";
-import { css } from "../../styled-system/css";
+import { css } from "../../@shadow-panda/styled-system/css";
 
 export const viewport: Viewport = {
   themeColor: "#060503",

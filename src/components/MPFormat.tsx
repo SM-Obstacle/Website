@@ -105,17 +105,19 @@ export function MPFormatLink({
   path,
   component = Link,
   children,
+  ...rest
 }: {
   path: string;
   component?: React.ElementType<LinkProps>;
   children: string;
-}) {
+} & Omit<LinkProps, "href">) {
   const Component = component;
   return (
     <Component
       title={toPlainText(parse(children))}
       href={path}
       className={css({ textDecoration: "none" })}
+      {...rest}
     >
       <MPFormat disableLinks>{children}</MPFormat>
     </Component>

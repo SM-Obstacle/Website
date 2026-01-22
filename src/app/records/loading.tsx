@@ -1,4 +1,4 @@
-import { SubBlock } from "@/components/ui/Block";
+import { SubBlock } from "@/components/ui/organisms/Block";
 import { css } from "../../../@shadow-panda/styled-system/css";
 import PaginationButtons from "./PaginationButtons";
 

@@ -1,6 +1,6 @@
 import NextLink from "next/link";
-import { cva } from "../../styled-system/css";
-import { styled } from "../../styled-system/jsx";
+import { cva } from "../../@shadow-panda/styled-system/css";
+import { styled } from "../../@shadow-panda/styled-system/jsx";
 
 export type LinkProps = React.ComponentProps<typeof Link>;
 

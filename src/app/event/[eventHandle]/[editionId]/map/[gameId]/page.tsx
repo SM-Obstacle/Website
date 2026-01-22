@@ -35,7 +35,7 @@ const GET_EVENT_MAP_INFO = gql(/* GraphQL */ `
     $eventHandle: String!
     $editionId: Int!
     $gameId: String!
-    $sortField: MapRecordSortableField
+    $sort: MapRecordSort
     $first: Int
     $last: Int
     $after: String
@@ -67,7 +67,7 @@ const GET_EVENT_MAP_INFO = gql(/* GraphQL */ `
             championTime
           }
           recordsConnection(
-            sortField: $sortField
+            sort: $sort
             first: $first
             last: $last
             after: $after

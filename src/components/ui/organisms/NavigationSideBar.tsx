@@ -2,16 +2,22 @@ import Image from "next/image";
 import Link from "next/link";
 import { FaHome, FaRunning } from "react-icons/fa";
 import { FaBook, FaCalendar, FaMap, FaUsers } from "react-icons/fa6";
-import { css } from "../../@shadow-panda/styled-system/css";
-import Bar from "./ui/Bar";
+import { css } from "../../../../@shadow-panda/styled-system/css";
+import Bar from "../molecules/Bar";
 
-function Logo() {
+export function Logo(
+  props: Omit<
+    React.ComponentProps<typeof Image>,
+    "alt" | "src" | "width" | "height"
+  >,
+) {
   return (
     <Image
       alt="ShootMania Obstacle logo"
       src="/img/obs_logo.svg"
       width={50}
       height={50}
+      {...props}
     />
   );
 }
@@ -112,11 +118,14 @@ const pages = {
 
 export default function NavigationSideBar({
   selected,
+  checkboxName,
+  ...rest
 }: {
   selected: keyof typeof pages;
-}) {
+  checkboxName: string;
+} & React.ComponentProps<typeof Bar>) {
   return (
-    <Bar orientation="vertical">
+    <Bar orientation="vertical" {...rest}>
       <div
         className={css({
           display: "flex",
@@ -125,7 +134,16 @@ export default function NavigationSideBar({
           alignItems: "center",
         })}
       >
-        <Logo />
+        <label htmlFor={checkboxName}>
+          <Logo
+            className={css({
+              cursor: "pointer",
+              md: {
+                cursor: "revert",
+              },
+            })}
+          />
+        </label>
         <Separator />
         <Menu pages={pages} selectedKey={selected} />
       </div>

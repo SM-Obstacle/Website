@@ -1,5 +1,5 @@
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa6";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/ui/molecules/Button";
 import { css } from "../../../@shadow-panda/styled-system/css";
 import NonOverwritingForm from "./NonOverwritingForm";
 
@@ -8,6 +8,19 @@ export interface PageButtonsInfo {
   hasNextPage: boolean;
   startCursor?: string | null;
   endCursor?: string | null;
+}
+
+function PaginationButton({
+  isDisabled = false,
+  children,
+}: React.PropsWithChildren<{
+  isDisabled?: boolean;
+}>) {
+  return (
+    <Button rounded="full" size="icon" type="submit" disabled={isDisabled}>
+      {children}
+    </Button>
+  );
 }
 
 export default function PaginationButtons({
@@ -43,14 +56,14 @@ export default function PaginationButtons({
           <>
             {/** biome-ignore lint/style/noNonNullAssertion: startCursor can't be null at this point */}
             <input type="hidden" name="before" value={pageInfo.startCursor!} />
-            <Button rounded="full" type="submit">
+            <PaginationButton>
               <FaArrowLeft />
-            </Button>
+            </PaginationButton>
           </>
         ) : (
-          <Button rounded="full" type="submit" disabled>
+          <PaginationButton isDisabled>
             <FaArrowLeft />
-          </Button>
+          </PaginationButton>
         )}
       </NonOverwritingForm>
       <NonOverwritingForm action="/records" keysToRemove={["before", "last"]}>
@@ -59,14 +72,14 @@ export default function PaginationButtons({
           <>
             {/** biome-ignore lint/style/noNonNullAssertion: endCursor can't be null at this point */}
             <input type="hidden" name="after" value={pageInfo.endCursor!} />
-            <Button rounded="full" type="submit">
+            <PaginationButton>
               <FaArrowRight />
-            </Button>
+            </PaginationButton>
           </>
         ) : (
-          <Button rounded="full" type="submit" disabled>
+          <PaginationButton isDisabled>
             <FaArrowRight />
-          </Button>
+          </PaginationButton>
         )}
       </NonOverwritingForm>
     </div>

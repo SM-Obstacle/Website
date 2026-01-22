@@ -1,4 +1,4 @@
-import { styled } from "../../../styled-system/jsx";
+import { styled } from "../../../../@shadow-panda/styled-system/jsx";
 
 export const H1 = styled("h1", {
   base: {

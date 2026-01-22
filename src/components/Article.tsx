@@ -1,5 +1,5 @@
-import { css } from "../../styled-system/css";
-import { styled } from "../../styled-system/jsx";
+import { css } from "../../@shadow-panda/styled-system/css";
+import { styled } from "../../@shadow-panda/styled-system/jsx";
 import Link from "./Link";
 import { H1, H2 } from "./ui/typography";
 

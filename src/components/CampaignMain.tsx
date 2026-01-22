@@ -1,8 +1,8 @@
 import React, { type CSSProperties } from "react";
 import CampaignPlayerRow from "@/app/event/[eventHandle]/[editionId]/CampaignPlayerRow";
 import type { fetchSelectedPlayers } from "@/lib/mappack-fragments";
-import { css } from "../../styled-system/css";
-import { styled } from "../../styled-system/jsx";
+import { css } from "../../@shadow-panda/styled-system/css";
+import { styled } from "../../@shadow-panda/styled-system/jsx";
 import { MPFormatLink } from "./MPFormat";
 import NoPropagationLink from "./NoPropagationLink";
 import {

@@ -1,4 +1,4 @@
-import { Box, styled } from "../../styled-system/jsx";
+import { Box, styled } from "../../@shadow-panda/styled-system/jsx";
 import { DialogInner } from "./DialogInner";
 
 export const StyledDialog = styled("dialog", {

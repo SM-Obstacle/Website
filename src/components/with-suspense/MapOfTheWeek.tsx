@@ -3,6 +3,7 @@ import { css } from "../../../@shadow-panda/styled-system/css";
 import { MPFormatLink } from "../MPFormat";
 import { gql } from "@/app/__generated__";
 import OfTheWeek from "../ui/organisms/OfTheWeek";
+import { FaMap } from "react-icons/fa6";
 
 const GET_MAP_OF_THE_WEEK = gql(/* GraphQL */ `
   query GetMapOfTheWeek {
@@ -26,6 +27,7 @@ export default async function MapOfTheWeek() {
     <OfTheWeek
       path={`/player/${data?.maps.nodes[0].map.gameId}`}
       name={data?.maps.nodes[0].map.name ?? ""}
+      icon={<FaMap />}
     />
   );
 }
