@@ -14,7 +14,9 @@ export default function RecordsLayout({ children }: LayoutProps<"/records">) {
         className={css({
           "--filter-width": "19rem",
           display: "grid",
-          gridTemplateRows: "auto auto",
+          // gridTemplateRows:
+          //   "calc(token(sizes.logoSize) + token(spacing.2) * 2) auto",
+          gridTemplateRows: "auto 1fr",
           gridGap: "token(spacing.2)",
           maxW: "calc(token(sizes.maxContentWidth) + var(--filter-width))",
           margin: "auto",

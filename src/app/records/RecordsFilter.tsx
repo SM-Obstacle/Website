@@ -16,6 +16,10 @@ import { icon } from "../../../@shadow-panda/styled-system/recipes";
 import { Calendar } from "@/components/ui/organisms/Calendar";
 import RecordDatePicker from "./date-picker/RecordDatePicker";
 import RecordTimePicker from "./time-picker/RecordTimePicker";
+import { FaChevronRight, FaChevronUp } from "react-icons/fa6";
+import ExpanderButton from "./records-filter/ExpanderButton";
+import { ExpanderWrapper } from "./records-filter/ExpanderContext";
+import FiltersWrapper from "./records-filter/FiltersWrapper";
 
 const inputStyle = {
   rounded: "full",
@@ -106,112 +110,96 @@ function SubmitButton() {
 
 export default function RecordsFilter() {
   return (
-    <NonOverwritingForm action="/records" height={0}>
-      <Block
-        className={css({
-          display: "flex",
-          flexDir: "column",
-          gap: "token(spacing.2)",
-          height: "calc(token(sizes.logoSize) + token(spacing.2) * 2)",
-          overflow: "hidden",
-          lg: {
-            height: "revert",
-            overflow: "revert",
-          },
-        })}
-        titleBar={
-          <H2
-            className={css({
-              fontWeight: "extrabold",
-              height: "calc(token(sizes.logoSize) / 1.5)",
-            })}
-          >
-            Filters
-          </H2>
-        }
-      >
-        <div
-          className={css({
-            display: "flex",
-            flexDir: "column",
-            justifyContent: "space-between",
-            gap: "token(spacing.2)",
-          })}
-        >
+    <ExpanderWrapper>
+      <NonOverwritingForm action="/records" height={0}>
+        <FiltersWrapper>
           <div
             className={css({
-              overflowY: "scroll",
-              maxHeight:
-                "calc(100vh - token(sizes.logoSize) * 2.5 - token(spacing.2) * 10)",
+              display: "flex",
+              flexDir: "column",
+              justifyContent: "space-between",
+              gap: "token(spacing.2)",
             })}
           >
             <div
               className={css({
-                display: "flex",
-                flexDir: "column",
-                gap: "token(spacing.2)",
+                overflowY: "scroll",
+                maxHeight:
+                  "calc(100vh - token(sizes.logoSize) * 2.5 - token(spacing.2) * 10)",
+                "[data-expanded] &": {
+                  maxHeight:
+                    "calc(100vh - token(sizes.logoSize) * 2.5 - token(spacing.2) * 12)",
+                },
               })}
             >
-              {/* Player filter */}
-              <FilterBlock title="Player">
-                <FilterInput id="playerLogin" label="Login">
-                  <Input
-                    type="text"
-                    id="playerLogin"
-                    name="playerLogin"
-                    className={css(inputStyle)}
-                  />
-                </FilterInput>
-                <FilterInput id="playerName" label="Name">
-                  <Input
-                    type="text"
-                    id="playerName"
-                    name="playerName"
-                    className={css(inputStyle)}
-                  />
-                </FilterInput>
-              </FilterBlock>
+              <div
+                className={css({
+                  display: "flex",
+                  flexDir: "column",
+                  gap: "token(spacing.2)",
+                })}
+              >
+                {/* Player filter */}
+                <FilterBlock title="Player">
+                  <FilterInput id="playerLogin" label="Login">
+                    <Input
+                      type="text"
+                      id="playerLogin"
+                      name="playerLogin"
+                      className={css(inputStyle)}
+                    />
+                  </FilterInput>
+                  <FilterInput id="playerName" label="Name">
+                    <Input
+                      type="text"
+                      id="playerName"
+                      name="playerName"
+                      className={css(inputStyle)}
+                    />
+                  </FilterInput>
+                </FilterBlock>
 
-              {/* Map filter */}
-              <FilterBlock title="Map">
-                <FilterInput id="mapUid" label="Map UID">
-                  <Input
-                    type="text"
-                    id="mapUid"
-                    name="mapUid"
-                    className={css(inputStyle)}
-                  />
-                </FilterInput>
-                <FilterInput id="mapName" label="Name">
-                  <Input
-                    type="text"
-                    id="mapName"
-                    name="mapName"
-                    className={css(inputStyle)}
-                  />
-                </FilterInput>
-              </FilterBlock>
+                {/* Map filter */}
+                <FilterBlock title="Map">
+                  <FilterInput id="mapUid" label="Map UID">
+                    <Input
+                      type="text"
+                      id="mapUid"
+                      name="mapUid"
+                      className={css(inputStyle)}
+                    />
+                  </FilterInput>
+                  <FilterInput id="mapName" label="Name">
+                    <Input
+                      type="text"
+                      id="mapName"
+                      name="mapName"
+                      className={css(inputStyle)}
+                    />
+                  </FilterInput>
+                </FilterBlock>
 
-              {/* Record filter */}
-              <FilterBlock title="Record">
-                <FilterInput id="beforeDate" label="Before date">
-                  <RecordDatePicker name="beforeDate" />
-                </FilterInput>
-                <FilterInput id="afterDate" label="After date">
-                  <RecordDatePicker name="afterDate" />
-                </FilterInput>
-                <FilterInput id="timeGt" label="Time greater than">
-                  <RecordTimePicker name="timeGt" />
-                </FilterInput>
-                <FilterInput id="timeLt" label="Time lower than">
-                  <RecordTimePicker name="timeLt" />
-                </FilterInput>
-              </FilterBlock>
+                {/* Record filter */}
+                <FilterBlock title="Record">
+                  <FilterInput id="beforeDate" label="Before date">
+                    <RecordDatePicker name="beforeDate" />
+                  </FilterInput>
+                  <FilterInput id="afterDate" label="After date">
+                    <RecordDatePicker name="afterDate" />
+                  </FilterInput>
+                  <FilterInput id="timeGt" label="Time greater than">
+                    <RecordTimePicker name="timeGt" />
+                  </FilterInput>
+                  <FilterInput id="timeLt" label="Time lower than">
+                    <RecordTimePicker name="timeLt" />
+                  </FilterInput>
+                </FilterBlock>
+              </div>
             </div>
+            <SubmitButton />
           </div>
-          <SubmitButton />
-        </div>
-      </Block>
-    </NonOverwritingForm>
+        </FiltersWrapper>
+      </NonOverwritingForm>
+    </ExpanderWrapper>
   );
 }
