@@ -1,7 +1,7 @@
 import { css } from "../../@shadow-panda/styled-system/css";
 import { styled } from "../../@shadow-panda/styled-system/jsx";
 import Link from "./Link";
-import { H1, H2 } from "./ui/typography";
+import { H1, H2 } from "./ui/atoms/typography";
 
 export const LastUpdate = styled("span", {
   base: {

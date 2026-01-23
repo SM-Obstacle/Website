@@ -11,11 +11,12 @@ import {
   type GetRecordsConnectionQuery,
 } from "../__generated__/graphql";
 import { query } from "../ApolloClient";
-import PaginationButtons from "./PaginationButtons";
+import PaginationButtons from "../../components/ui/organisms/PaginationButtons";
 import { parsePaginationInput } from "@/lib/cursor-pagination";
 import { Button } from "@/components/ui/molecules/Button";
-import NonOverwritingForm from "./NonOverwritingForm";
+import NonOverwritingForm from "../../components/NonOverwritingForm";
 import { FaArrowDownLong, FaArrowUpLong } from "react-icons/fa6";
+import { Table as StyledTable, Thead } from "@/components/ui/organisms/Table";
 
 const GET_RECORDS = gql(/* GraphQL */ `
   query GetRecordsConnection(
@@ -75,36 +76,8 @@ function Table({
   isDesc: boolean;
 }) {
   return (
-    <table
-      className={css({
-        margin: "token(spacing.2) token(spacing.5)",
-        "& tr": {
-          whiteSpace: "nowrap",
-          minW: "token(spacing.5)",
-          "& td, & th": {
-            padding: "token(spacing.1) token(spacing.1)",
-            _first: {
-              roundedStart: "token(radii.md)",
-            },
-            _last: {
-              roundedEnd: "token(radii.md)",
-            },
-          },
-          _even: {
-            "& td": {
-              bgColor: "#AAA1",
-            },
-          },
-        },
-      })}
-    >
-      <thead
-        className={css({
-          fontSize: "larger",
-          position: "sticky",
-          top: 0,
-        })}
-      >
+    <StyledTable>
+      <Thead>
         <tr
           className={css({
             "& th": {
@@ -165,7 +138,7 @@ function Table({
             Date
           </th>
         </tr>
-      </thead>
+      </Thead>
       <tbody>
         {records.map((record) => (
           <tr
@@ -228,7 +201,7 @@ function Table({
           </tr>
         ))}
       </tbody>
-    </table>
+    </StyledTable>
   );
 }
 
@@ -276,7 +249,10 @@ export default async function Records(props: PageProps<"/records">) {
         />
       </SubBlock>
       <SubBlock>
-        <PaginationButtons pageInfo={data.recordsConnection.pageInfo} />
+        <PaginationButtons
+          action="/records"
+          pageInfo={data.recordsConnection.pageInfo}
+        />
       </SubBlock>
     </>
   );

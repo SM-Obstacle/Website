@@ -1,10 +1,10 @@
 "use client";
 
 import Block from "@/components/ui/organisms/Block";
-import { css } from "../../../../@shadow-panda/styled-system/css";
+import { css } from "../../../../../@shadow-panda/styled-system/css";
 import { H2 } from "@/components/ui/atoms/typography";
 import ExpanderButton from "./ExpanderButton";
-import { Ref, RefObject } from "react";
+import { Ref } from "react";
 import { useExpander } from "./ExpanderContext";
 
 export default function FiltersWrapper({ children }: React.PropsWithChildren) {

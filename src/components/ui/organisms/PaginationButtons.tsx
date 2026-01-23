@@ -1,7 +1,7 @@
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa6";
 import { Button } from "@/components/ui/molecules/Button";
-import { css } from "../../../@shadow-panda/styled-system/css";
-import NonOverwritingForm from "./NonOverwritingForm";
+import { css } from "../../../../@shadow-panda/styled-system/css";
+import NonOverwritingForm from "../../NonOverwritingForm";
 
 export interface PageButtonsInfo {
   hasPreviousPage: boolean;
@@ -43,8 +43,10 @@ function PaginationButton({
 }
 
 export default function PaginationButtons({
+  action,
   pageInfo,
 }: {
+  action: string;
   pageInfo: PageButtonsInfo;
 }) {
   const isPreviousPageEnabled =
@@ -69,7 +71,7 @@ export default function PaginationButtons({
         margin: "auto",
       })}
     >
-      <NonOverwritingForm action="/records" keysToRemove={["after", "first"]}>
+      <NonOverwritingForm action={action} keysToRemove={["after", "first"]}>
         <input type="hidden" name="last" value="50" />
         {isPreviousPageEnabled ? (
           <>
@@ -85,7 +87,7 @@ export default function PaginationButtons({
           </PaginationButton>
         )}
       </NonOverwritingForm>
-      <NonOverwritingForm action="/records" keysToRemove={["before", "last"]}>
+      <NonOverwritingForm action={action} keysToRemove={["before", "last"]}>
         <input type="hidden" name="first" value="50" />
         {isNextPageEnabled ? (
           <>

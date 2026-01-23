@@ -1,6 +1,6 @@
 import { SubBlock } from "@/components/ui/organisms/Block";
 import { css } from "../../../@shadow-panda/styled-system/css";
-import PaginationButtons from "./PaginationButtons";
+import PaginationButtons from "../../components/ui/organisms/PaginationButtons";
 
 export default function Loading() {
   return (
@@ -12,6 +12,7 @@ export default function Loading() {
       ></SubBlock>
       <SubBlock>
         <PaginationButtons
+          action="/records"
           pageInfo={{
             hasNextPage: false,
             hasPreviousPage: false,

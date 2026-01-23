@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/molecules/Button";
-import { css } from "../../../../@shadow-panda/styled-system/css";
+import { css } from "../../../../../@shadow-panda/styled-system/css";
 import { FaChevronRight } from "react-icons/fa";
 import { useExpander } from "./ExpanderContext";
 import { FaChevronDown } from "react-icons/fa6";

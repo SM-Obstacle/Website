@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import Markdown from "react-markdown";
 import { Article, LastUpdate, MdH1, MdH2, MdLink } from "@/components/Article";
 import FormattedDate from "@/components/FormattedDate";
-import PageBase from "@/components/PageBase";
-import Block from "@/components/ui/Block";
-import { H1, H2 } from "@/components/ui/typography";
+import PageBase from "@/components/ui/organisms/PageBase";
+import Block from "@/components/ui/organisms/Block";
+import { H1, H2 } from "@/components/ui/atoms/typography";
 import { fetchArticles } from "@/lib/article";
 import { css } from "../../../@shadow-panda/styled-system/css";
 

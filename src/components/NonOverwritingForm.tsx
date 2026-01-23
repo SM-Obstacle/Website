@@ -24,6 +24,8 @@ export default function NonOverwritingForm({
     for (const [key, value] of form.entries()) {
       if (value) {
         params.set(key, value.toString());
+      } else {
+        params.delete(key);
       }
     }
 

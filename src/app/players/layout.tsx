@@ -2,14 +2,11 @@ import PageBase from "@/components/ui/organisms/PageBase";
 import Block from "@/components/ui/organisms/Block";
 import { H1 } from "@/components/ui/atoms/typography";
 import { css } from "../../../@shadow-panda/styled-system/css";
-import RecordsFilter from "./RecordsFilter";
+import PlayersFilter from "./PlayersFilter";
 
-export default function RecordsLayout({ children }: LayoutProps<"/records">) {
+export default function PlayersLayout({ children }: LayoutProps<"/players">) {
   return (
-    <PageBase
-      titleSegments={[<H1 key="title">Records</H1>]}
-      selectedMenu="records"
-    >
+    <PageBase titleSegments={[<H1>Players</H1>]} selectedMenu="players">
       <div
         className={css({
           "--filter-width": "19rem",
@@ -25,7 +22,7 @@ export default function RecordsLayout({ children }: LayoutProps<"/records">) {
           },
         })}
       >
-        <RecordsFilter />
+        <PlayersFilter />
         <div className={css({ flexGrow: 1, height: "100%" })}>
           <Block
             className={css({
