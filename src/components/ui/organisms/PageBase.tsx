@@ -71,10 +71,9 @@ export default function PageBase({
             zIndex: 1000,
             width: "calc(100% - token(spacing.2) * 2)",
             md: {
-              width: "revert",
-              position: "revert",
-              gridRow: 1,
-              gridColumn: "2 / -1",
+              left: "calc(token(sizes.logoSize) + token(spacing.2) * 4)",
+              width:
+                "calc(100% - token(spacing.2) * 5 - token(sizes.logoSize))",
             },
           })}
         >
@@ -101,9 +100,6 @@ export default function PageBase({
           className={css({
             height: "100%",
             mt: "calc(token(sizes.logoSize) + token(spacing.2) * 3)",
-            md: {
-              mt: "revert",
-            },
           })}
         >
           {children}

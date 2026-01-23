@@ -101,7 +101,8 @@ function Table({
       <thead
         className={css({
           fontSize: "larger",
-          opacity: 0.5,
+          position: "sticky",
+          top: 0,
         })}
       >
         <tr
@@ -119,13 +120,16 @@ function Table({
           <th className={css(timeWidth, headerStyle)}>Time</th>
           <th
             className={css(headerStyle, {
-              textAlign: "right",
-              pe: "token(spacing.1)",
+              display: "none",
+              md: {
+                textAlign: "right",
+                pe: "token(spacing.1)",
 
-              display: "flex",
-              justifyContent: "end",
-              alignItems: "center",
-              gap: "token(spacing.1)",
+                display: "flex",
+                justifyContent: "end",
+                alignItems: "center",
+                gap: "token(spacing.1)",
+              },
             })}
           >
             <NonOverwritingForm
@@ -162,7 +166,7 @@ function Table({
           </th>
         </tr>
       </thead>
-      <tbody className={css({})}>
+      <tbody>
         {records.map((record) => (
           <tr
             className={css({
@@ -211,7 +215,14 @@ function Table({
                 </code>
               </span>
             </td>
-            <td>
+            <td
+              className={css({
+                display: "none",
+                md: {
+                  display: "revert",
+                },
+              })}
+            >
               <FormattedDate onlyDate>{record.recordDate}</FormattedDate>
             </td>
           </tr>
@@ -252,8 +263,11 @@ export default async function Records(props: PageProps<"/records">) {
       <SubBlock
         className={css({
           height: "100%",
-          maxH: "calc(100vh - token(spacing.2) * 11 - token(sizes.logoSize) * 2)",
+          maxH: "calc(100vh - token(spacing.2) * 14 - token(sizes.logoSize) * 3)",
           overflowY: "scroll",
+          lg: {
+            maxH: "calc(100vh - token(spacing.2) * 11 - token(sizes.logoSize) * 2)",
+          },
         })}
       >
         <Table

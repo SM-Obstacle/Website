@@ -14,11 +14,15 @@ export default function RecordsLayout({ children }: LayoutProps<"/records">) {
         className={css({
           "--filter-width": "19rem",
           display: "grid",
-          gridTemplateColumns: "var(--filter-width) auto",
+          gridTemplateRows: "auto auto",
           gridGap: "token(spacing.2)",
           maxW: "calc(token(sizes.maxContentWidth) + var(--filter-width))",
           margin: "auto",
           height: "100%",
+          lg: {
+            gridTemplateRows: "none",
+            gridTemplateColumns: "var(--filter-width) auto",
+          },
         })}
       >
         <RecordsFilter />

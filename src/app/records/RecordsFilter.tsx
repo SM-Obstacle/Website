@@ -106,12 +106,18 @@ function SubmitButton() {
 
 export default function RecordsFilter() {
   return (
-    <NonOverwritingForm action="/records">
+    <NonOverwritingForm action="/records" height={0}>
       <Block
         className={css({
           display: "flex",
           flexDir: "column",
           gap: "token(spacing.2)",
+          height: "calc(token(sizes.logoSize) + token(spacing.2) * 2)",
+          overflow: "hidden",
+          lg: {
+            height: "revert",
+            overflow: "revert",
+          },
         })}
         titleBar={
           <H2
