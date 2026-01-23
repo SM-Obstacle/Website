@@ -1,4 +1,3 @@
-import HiddenCheckbox from "@/components/navigation/HiddenCheckbox";
 import { css } from "../../../../@shadow-panda/styled-system/css";
 import NavigationSideBar from "./NavigationSideBar";
 import TitleBar from "./TitleBar";
@@ -64,15 +63,47 @@ export default function PageBase({
           flexDir: "column",
         })}
       >
-        <TitleBar
-          checkboxName={CHECKBOX_NAME}
-          segments={titleSegments}
-          gridRow={1}
-          gridColumn="2 / -1"
-        />
+        <div
+          className={css({
+            position: "fixed",
+            top: "token(spacing.2)",
+            left: "token(spacing.2)",
+            zIndex: 1000,
+            width: "calc(100% - token(spacing.2) * 2)",
+            md: {
+              width: "revert",
+              position: "revert",
+              gridRow: 1,
+              gridColumn: "2 / -1",
+            },
+          })}
+        >
+          <TitleBar checkboxName={CHECKBOX_NAME} segments={titleSegments} />
+          <div
+            className={css({
+              position: "fixed",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "calc(token(sizes.logoSize) + token(spacing.2) * 4)",
+              mask: "linear-gradient(black, transparent)",
+              backdropFilter: "blur(8px)",
+              // @ts-expect-error: backdropFilter doesn't expand to the backdrop-filter property
+              "backdrop-filter": "blur(8px)",
+              zIndex: -1000,
+              md: {
+                display: "none",
+              },
+            })}
+          ></div>
+        </div>
         <div
           className={css({
             height: "100%",
+            mt: "calc(token(sizes.logoSize) + token(spacing.2) * 3)",
+            md: {
+              mt: "revert",
+            },
           })}
         >
           {children}

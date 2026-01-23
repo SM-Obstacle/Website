@@ -3,7 +3,7 @@ import { MPFormatLink } from "@/components/MPFormat";
 import Time from "@/components/Time";
 import { SubBlock } from "@/components/ui/organisms/Block";
 import { parseRecordsFilter } from "@/lib/records-filter";
-import { css } from "../../../@shadow-panda/styled-system/css";
+import { css, Styles } from "../../../@shadow-panda/styled-system/css";
 import { gql } from "../__generated__";
 import {
   SortOrder,
@@ -13,6 +13,9 @@ import {
 import { query } from "../ApolloClient";
 import PaginationButtons from "./PaginationButtons";
 import { parsePaginationInput } from "@/lib/cursor-pagination";
+import { Button } from "@/components/ui/molecules/Button";
+import NonOverwritingForm from "./NonOverwritingForm";
+import { FaArrowDownLong, FaArrowUpLong } from "react-icons/fa6";
 
 const GET_RECORDS = gql(/* GraphQL */ `
   query GetRecordsConnection(
@@ -52,116 +55,161 @@ const GET_RECORDS = gql(/* GraphQL */ `
   }
 `);
 
+const rankWidth = {
+  width: "5%",
+} satisfies Styles;
+const playerWidth = {
+  width: "40%",
+} satisfies Styles;
+const mapWidth = {
+  width: "40%",
+} satisfies Styles;
+const timeWidth = { width: "15%" } satisfies Styles;
+const headerStyle = { textAlign: "left" } satisfies Styles;
+
 function Table({
   records,
+  isDesc,
 }: {
   records: GetRecordsConnectionQuery["recordsConnection"]["nodes"];
+  isDesc: boolean;
 }) {
   return (
     <table
       className={css({
-        display: "flex",
-        flexDir: "column",
-        width: "100%",
-        borderSpacing: 0,
-        textOverflow: "ellipsis",
-        height: "100%",
+        margin: "token(spacing.2) token(spacing.5)",
         "& tr": {
-          display: "flex",
-          width: "100%",
-        },
-        "& td": {
-          flexBasis: "100%",
-          flexGrow: 2,
-          display: "block",
-        },
-        "& th": {
-          flexBasis: "100%",
-          flexGrow: 2,
-          display: "block",
+          whiteSpace: "nowrap",
+          minW: "token(spacing.5)",
+          "& td, & th": {
+            padding: "token(spacing.1) token(spacing.1)",
+            _first: {
+              roundedStart: "token(radii.md)",
+            },
+            _last: {
+              roundedEnd: "token(radii.md)",
+            },
+          },
+          _even: {
+            "& td": {
+              bgColor: "#AAA1",
+            },
+          },
         },
       })}
     >
       <thead
         className={css({
-          display: "block",
-          bgColor: "token(colors.mainBg)",
-          width: "100%",
+          fontSize: "larger",
+          opacity: 0.5,
         })}
       >
         <tr
           className={css({
-            display: "flex",
-            textAlign: "left",
-            "& > *:last-child": {
-              textAlign: "right",
-              display: "flex",
-              justifyContent: "end",
+            "& th": {
+              bgColor: "#000A",
             },
           })}
         >
-          <th
-            className={css({
-              flexBasis: "20%",
-              flexGrow: 1,
-            })}
-          >
+          <th className={css(rankWidth, headerStyle, { textAlign: "center" })}>
             #
           </th>
-          <th>Player</th>
-          <th>Map</th>
-          <th>Time</th>
-          <th>Date</th>
+          <th className={css(playerWidth, headerStyle)}>Player</th>
+          <th className={css(mapWidth, headerStyle)}>Map</th>
+          <th className={css(timeWidth, headerStyle)}>Time</th>
+          <th
+            className={css(headerStyle, {
+              textAlign: "right",
+              pe: "token(spacing.1)",
+
+              display: "flex",
+              justifyContent: "end",
+              alignItems: "center",
+              gap: "token(spacing.1)",
+            })}
+          >
+            <NonOverwritingForm
+              action="/records"
+              keysToRemove={["first", "after", "before", "last"]}
+            >
+              <input
+                type="hidden"
+                name="order"
+                id="order"
+                value={isDesc ? "asc" : "desc"}
+              />
+              <Button
+                className={css({
+                  maxW: "calc(token(sizes.logoSize) - token(spacing.2) * 2)",
+                  maxH: "calc(token(sizes.logoSize) - token(spacing.2) * 2)",
+                  p: 0,
+                  ps: "token(spacing.2)",
+                  pe: "token(spacing.2)",
+                  bg: "black",
+                  color: "white",
+                  border: "solid transparent 1px",
+                  transition: "border-color .1s",
+                  _hover: {
+                    borderColor: "white",
+                  },
+                })}
+                type="submit"
+              >
+                {isDesc ? <FaArrowUpLong /> : <FaArrowDownLong />}
+              </Button>
+            </NonOverwritingForm>
+            Date
+          </th>
         </tr>
       </thead>
-      <tbody
-        className={css({
-          width: "100%",
-          display: "flex",
-          flexDir: "column",
-          flexGrow: 1,
-          overflowY: "auto",
-          height: 0,
-        })}
-      >
+      <tbody className={css({})}>
         {records.map((record) => (
           <tr
             className={css({
               textAlign: "left",
-              "& > *:last-child": {
-                display: "flex",
-                justifyContent: "end",
+              "& > td:last-child": {
                 textAlign: "right",
-              },
-              borderTop: "solid transparent",
-              borderBottom: "solid transparent",
-              transition: "border 0.1s, borderBottom 0.1s",
-              _hover: {
-                borderTop: "solid token(colors.blue.500)",
-                borderBottom: "solid token(colors.blue.500)",
               },
             })}
             key={record.id}
           >
+            <td className={css({ textAlign: "right" })}>
+              <code>{record.rank}</code>
+            </td>
             <td
               className={css({
-                flexGrow: 0.5,
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                maxW: 0,
               })}
             >
-              {record.rank}
-            </td>
-            <td>
               <MPFormatLink path={`/player/${record.player.login}`}>
                 {record.player.name}
               </MPFormatLink>
             </td>
-            <td>
+            <td
+              className={css({
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                maxW: 0,
+              })}
+            >
               <MPFormatLink path={`/map/${record.map.gameId}`}>
                 {record.map.name}
               </MPFormatLink>
             </td>
             <td>
-              <Time>{record.time}</Time>
+              <span
+                className={css({
+                  fontStyle: "italic",
+                  color: "#346AB4",
+                  fontWeight: "bold",
+                })}
+              >
+                <code>
+                  <Time>{record.time}</Time>
+                </code>
+              </span>
             </td>
             <td>
               <FormattedDate onlyDate>{record.recordDate}</FormattedDate>
@@ -178,16 +226,21 @@ export default async function Records(props: PageProps<"/records">) {
   const filter = parseRecordsFilter(searchParams);
   const pagination = parsePaginationInput(searchParams);
 
+  let sort = undefined;
+  if (searchParams.order === "desc") {
+    sort = {
+      field: UnorderedRecordSortableField.Date,
+      order: SortOrder.Descending,
+    };
+  }
+
   const { data } = await query({
     query: GET_RECORDS,
     variables: {
       filter,
       ...pagination,
-      ...(searchParams.order === "desc" && {
-        sort: {
-          field: UnorderedRecordSortableField.Date,
-          order: SortOrder.Descending,
-        },
+      ...(sort && {
+        sort,
       }),
     },
   });
@@ -199,9 +252,14 @@ export default async function Records(props: PageProps<"/records">) {
       <SubBlock
         className={css({
           height: "100%",
+          maxH: "calc(100vh - token(spacing.2) * 11 - token(sizes.logoSize) * 2)",
+          overflowY: "scroll",
         })}
       >
-        <Table records={data.recordsConnection.nodes} />
+        <Table
+          records={data.recordsConnection.nodes}
+          isDesc={sort !== undefined}
+        />
       </SubBlock>
       <SubBlock>
         <PaginationButtons pageInfo={data.recordsConnection.pageInfo} />

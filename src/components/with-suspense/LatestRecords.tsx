@@ -85,7 +85,7 @@ export default async function LatestRecords() {
             },
             _even: {
               "& td": {
-                bgColor: "#0002",
+                bgColor: "#AAA1",
               },
             },
           },

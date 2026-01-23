@@ -22,7 +22,9 @@ export default function NonOverwritingForm({
 
     // Add/overwrite only the parameters from the current form
     for (const [key, value] of form.entries()) {
-      params.set(key, value.toString());
+      if (value) {
+        params.set(key, value.toString());
+      }
     }
 
     for (const key of keysToRemove) {

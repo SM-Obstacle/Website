@@ -6,10 +6,10 @@ const BlockBase = styled("div", {
     bgColor: "token(colors.mainBg)",
     backdropBlur: "sm",
     borderRadius: "calc(token(sizes.logoSize) / 2 + token(spacing.2))",
-    padding: 2,
+    padding: "token(spacing.2)",
     display: "flex",
     flexDir: "column",
-    gap: 3,
+    gap: "token(spacing.2)",
   },
 });
 

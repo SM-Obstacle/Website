@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 
 const bodyHtmlCommonStyles = css.raw({
   margin: 0,
-  height: "100%",
+  height: "100vh",
   minWidth: "390px",
   minHeight: "390px",
 

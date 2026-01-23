@@ -32,7 +32,7 @@ export default defineConfig({
 
       tokens: {
         colors: {
-          mainBg: { value: "rgba(31, 31, 31, 0.77)" },
+          mainBg: { value: "rgba(11, 11, 11, 0.77)" },
           buttonPrimaryLightBlue: { value: "#275087" },
           buttonPrimaryDarkBlue: { value: "#152A48" },
           buttonPrimaryLightBlueHover: { value: "#0b1626" },

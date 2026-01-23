@@ -12,7 +12,7 @@ export default function RecordsLayout({ children }: LayoutProps<"/records">) {
     >
       <div
         className={css({
-          "--filter-width": "15rem",
+          "--filter-width": "19rem",
           display: "grid",
           gridTemplateColumns: "var(--filter-width) auto",
           gridGap: "token(spacing.2)",

@@ -17,7 +17,26 @@ function PaginationButton({
   isDisabled?: boolean;
 }>) {
   return (
-    <Button rounded="full" size="icon" type="submit" disabled={isDisabled}>
+    <Button
+      className={css({
+        rounded: "full",
+        minH: "token(sizes.logoSize)",
+        minW: "token(sizes.logoSize)",
+        bgColor: "black",
+        color: "white",
+        transition: "background-color .1s, border-color .1s",
+        border: "solid transparent 1px",
+        _enabled: {
+          bgColor: "#FFF1",
+        },
+        _active: {
+          bgColor: "black",
+          borderColor: "white",
+        },
+      })}
+      type="submit"
+      disabled={isDisabled}
+    >
       {children}
     </Button>
   );
