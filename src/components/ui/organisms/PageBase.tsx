@@ -29,6 +29,10 @@ export default function PageBase({
           },
           md: {
             display: "revert",
+            position: "fixed",
+            left: "token(spacing.2)",
+            top: "token(spacing.2)",
+            height: "calc(100% - token(spacing.2) * 2)",
             me: "token(spacing.2)",
           },
         })}
@@ -61,6 +65,9 @@ export default function PageBase({
           height: "100%",
           gap: "token(spacing.2)",
           flexDir: "column",
+          md: {
+            ms: "calc(token(sizes.logoSize) + token(spacing.2) * 3)",
+          },
         })}
       >
         <div
