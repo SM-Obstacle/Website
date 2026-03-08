@@ -1,47 +1,18 @@
-import type { Metadata } from "next";
-import { cache } from "react";
 import { gql } from "@/app/__generated__";
-import type { RecordsFilter } from "@/app/__generated__/graphql";
+import { GetPlayerRecordsQuery } from "@/app/__generated__/graphql";
 import { query } from "@/app/ApolloClient";
 import FormattedDate from "@/components/FormattedDate";
-import MPFormat, { MPFormatLink } from "@/components/MPFormat";
-import { Table, Tbody, Td, Th, Thead, Tr } from "@/components/Table";
+import { MPFormatLink } from "@/components/MPFormat";
+import NonOverwritingForm from "@/components/NonOverwritingForm";
 import Time from "@/components/Time";
-import {
-  type PaginationInput,
-  parsePaginationInput,
-  type RawPaginationInput,
-} from "@/lib/cursor-pagination";
-import { parse, toPlainText } from "@/lib/mpformat/mpformat";
-import {
-  parseRecordsFilter,
-  type RawRecordsFilter,
-} from "@/lib/records-filter";
-import type { ServerProps } from "@/lib/server-props";
-import PlayerToolbar from "./PlayerToolbar";
+import { Button } from "@/components/ui/molecules/Button";
+import { SubBlock } from "@/components/ui/organisms/Block";
+import { Table as StyledTable, Thead } from "@/components/ui/organisms/Table";
+import { css, Styles } from "@shadow-panda/styled-system/css";
+import { FaArrowDownLong, FaArrowUpLong } from "react-icons/fa6";
 
-const _PLAYER_RECORDS_FRAGMENT = gql(/* GraphQL */ `
-  fragment PlayerRecords on Player {
-    recordsConnection(
-      first: $first
-      last: $last
-      after: $after
-      before: $before
-      filter: $filter
-    ) {
-      nodes {
-        map {
-          gameId
-          name
-        }
-        ...RecordBase
-      }
-    }
-  }
-`);
-
-const GET_PLAYER_INFO = gql(/* GraphQL */ `
-  query GetPlayerInfo(
+const GET_PLAYER_RECORDS = gql(/* GraphQL */ `
+  query GetPlayerRecords(
     $login: String!
     $first: Int
     $last: Int
@@ -50,107 +21,179 @@ const GET_PLAYER_INFO = gql(/* GraphQL */ `
     $filter: RecordsFilter
   ) {
     player(login: $login) {
-      login
-      name
-      zonePath
-      role
-      ...PlayerRecords
+      recordsConnection(
+        first: $first
+        last: $last
+        after: $after
+        before: $before
+        filter: $filter
+      ) {
+        nodes {
+          map {
+            gameId
+            name
+          }
+          ...RecordBase
+        }
+      }
     }
   }
 `);
 
-const fetchPlayerInfo = cache(
-  async (
-    login: string,
-    paginationInput: PaginationInput,
-    filter: RecordsFilter,
-  ) => {
-    return query({
-      query: GET_PLAYER_INFO,
-      variables: { login, filter, ...paginationInput },
-      errorPolicy: "all",
-    });
-  },
-);
+const rankWidth = {
+  width: "5%",
+} satisfies Styles;
+const mapWidth = {
+  width: "80%",
+} satisfies Styles;
+const timeWidth = { width: "15%" } satisfies Styles;
+const headerStyle = { textAlign: "left" } satisfies Styles;
 
-type SP = ServerProps<{ login: string }, RawPaginationInput & RawRecordsFilter>;
+function Table({
+  records,
+  isDesc,
+}: {
+  records: GetPlayerRecordsQuery["player"]["recordsConnection"]["nodes"];
+  isDesc: boolean;
+}) {
+  return (
+    <StyledTable>
+      <Thead>
+        <tr
+          className={css({
+            "& th": {
+              bgColor: "#000A",
+            },
+          })}
+        >
+          <th className={css(rankWidth, headerStyle, { textAlign: "center" })}>
+            #
+          </th>
+          <th className={css(mapWidth, headerStyle)}>Map</th>
+          <th className={css(timeWidth, headerStyle)}>Time</th>
+          <th
+            className={css(headerStyle, {
+              display: "none",
+              md: {
+                textAlign: "right",
+                pe: "token(spacing.1)",
 
-export async function generateMetadata(props: SP): Promise<Metadata> {
-  const params = await props.params;
-  const searchParams = await props.searchParams;
-  const playerInfo = (
-    await fetchPlayerInfo(
-      params.login,
-      parsePaginationInput(searchParams),
-      parseRecordsFilter(searchParams),
-    )
-  ).data?.player;
-
-  return {
-    title: toPlainText(parse(playerInfo?.name ?? "")),
-  };
+                display: "flex",
+                justifyContent: "end",
+                alignItems: "center",
+                gap: "token(spacing.1)",
+              },
+            })}
+          >
+            <NonOverwritingForm
+              action="/records"
+              keysToRemove={["first", "after", "before", "last"]}
+            >
+              <input
+                type="hidden"
+                name="order"
+                id="order"
+                value={isDesc ? "asc" : "desc"}
+              />
+              <Button
+                className={css({
+                  maxW: "calc(token(sizes.logoSize) - token(spacing.2) * 2)",
+                  maxH: "calc(token(sizes.logoSize) - token(spacing.2) * 2)",
+                  p: 0,
+                  ps: "token(spacing.2)",
+                  pe: "token(spacing.2)",
+                  bg: "black",
+                  color: "white",
+                  border: "solid transparent 1px",
+                  transition: "border-color .1s",
+                  _hover: {
+                    borderColor: "white",
+                  },
+                })}
+                type="submit"
+              >
+                {isDesc ? <FaArrowUpLong /> : <FaArrowDownLong />}
+              </Button>
+            </NonOverwritingForm>
+            Date
+          </th>
+        </tr>
+      </Thead>
+      <tbody>
+        {records.map((record) => (
+          <tr
+            className={css({
+              textAlign: "left",
+              "& > td:last-child": {
+                textAlign: "right",
+              },
+            })}
+            key={record.id}
+          >
+            <td className={css({ textAlign: "right" })}>
+              <code>{record.rank}</code>
+            </td>
+            <td
+              className={css({
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                maxW: 0,
+              })}
+            >
+              <MPFormatLink path={`/map/${record.map.gameId}`}>
+                {record.map.name}
+              </MPFormatLink>
+            </td>
+            <td>
+              <span
+                className={css({
+                  fontStyle: "italic",
+                  color: "#346AB4",
+                  fontWeight: "bold",
+                })}
+              >
+                <code>
+                  <Time>{record.time}</Time>
+                </code>
+              </span>
+            </td>
+            <td
+              className={css({
+                display: "none",
+                md: {
+                  display: "revert",
+                },
+              })}
+            >
+              <FormattedDate onlyDate>{record.recordDate}</FormattedDate>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </StyledTable>
+  );
 }
 
-export default async function PlayerRecords(props: SP) {
+export default async function PlayerRecords(
+  props: PageProps<"/player/[login]">,
+) {
   const params = await props.params;
-  const searchParams = await props.searchParams;
+  const login = params.login;
 
-  const data = await fetchPlayerInfo(
-    params.login,
-    parsePaginationInput(searchParams),
-    parseRecordsFilter(searchParams),
-  );
+  const { data } = await query({
+    query: GET_PLAYER_RECORDS,
+    variables: { login, first: 10 },
+  });
 
-  return data.error ? (
-    data.error.message
+  return data === undefined ? (
+    "Something went wrong"
   ) : (
-    <>
-      <PlayerToolbar
-        role={data.data?.player.role ?? ""}
-        zonePath={data.data?.player.zonePath ?? ""}
-      >
-        <MPFormat>{data.data?.player.name ?? ""}</MPFormat>
-      </PlayerToolbar>
-
-      <Table>
-        <Thead>
-          <Tr>
-            <Th rank hideRespv>
-              <span>Rank</span>
-            </Th>
-            <Th map padRespvFirst>
-              <span>Map</span>
-            </Th>
-            <Th time padRespvLast>
-              <span>Time</span>
-            </Th>
-            <Th date hideRespv>
-              <span>Date</span>
-            </Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          {(data.data?.player.recordsConnection.nodes ?? []).map((record) => (
-            <Tr key={record.id}>
-              <Td rank respvUnpadRank>
-                {record.rank}
-              </Td>
-              <Td map respvMb>
-                <MPFormatLink
-                  path={`/map/${record.map.gameId}`}
-                  name={record.map.name}
-                />
-              </Td>
-              <Td time respvTime>
-                <Time>{record.time}</Time>
-              </Td>
-              <Td date respvAbsoluteDate>
-                <FormattedDate onlyDate>{record.recordDate}</FormattedDate>
-              </Td>
-            </Tr>
-          ))}
-        </Tbody>
-      </Table>
-    </>
+    <SubBlock
+      className={css({
+        overflowY: "scroll",
+      })}
+    >
+      <Table records={data.player.recordsConnection.nodes} isDesc={false} />
+    </SubBlock>
   );
 }

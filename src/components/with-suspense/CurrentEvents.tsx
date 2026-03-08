@@ -28,7 +28,7 @@ const GET_TRENDING_EVENT_EDITIONS = gql(/* GraphQL */ `
 export default async function CurrentEvents() {
   const { data } = await query({
     query: GET_TRENDING_EVENT_EDITIONS,
-    variables: { limit: 2, lastDays: 30, lbLimit: 3 },
+    variables: { limit: 2, lbLimit: 3 },
   });
 
   return (

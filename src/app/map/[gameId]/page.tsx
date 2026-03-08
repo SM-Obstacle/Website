@@ -1,60 +1,19 @@
-import type { Metadata } from "next";
-import { redirect } from "next/navigation";
-import React, { cache } from "react";
 import { gql } from "@/app/__generated__";
-import type {
-  GetMapInfoQuery,
-  MapRecordSort,
-  MapRecordSortableField,
-  RecordsFilter,
-} from "@/app/__generated__/graphql";
+import { GetMapRecordsQuery } from "@/app/__generated__/graphql";
 import { query } from "@/app/ApolloClient";
-import Link from "@/components/Link";
-import MPFormat from "@/components/MPFormat";
-import {
-  ToolbarTitle as RawToolbarTitle,
-  ToolbarTitleWrapper,
-} from "@/components/ToolbarWrapper";
-import {
-  type PaginationInput,
-  parsePaginationInput,
-  type RawPaginationInput,
-} from "@/lib/cursor-pagination";
-import { type MapContent, RankedRecordLine } from "@/lib/map-page-types";
-import { parse, toPlainText } from "@/lib/mpformat/mpformat";
-import {
-  parseRecordsFilter,
-  type RawRecordsFilter,
-} from "@/lib/records-filter";
-import type { ServerProps } from "@/lib/server-props";
-import { parseMapSort, parseMapSortField } from "@/lib/sort-field";
-import { MapRecordsContent } from "./MapRecordsContent";
+import FormattedDate from "@/components/FormattedDate";
+import { MPFormatLink } from "@/components/MPFormat";
+import NonOverwritingForm from "@/components/NonOverwritingForm";
+import Time from "@/components/Time";
+import { Button } from "@/components/ui/molecules/Button";
+import { SubBlock } from "@/components/ui/organisms/Block";
+import { Table as StyledTable, Thead } from "@/components/ui/organisms/Table";
+import { css, Styles } from "@shadow-panda/styled-system/css";
+import { FaArrowDownLong, FaArrowUpLong } from "react-icons/fa6";
 
-const _MAP_RECORDS_FRAGMENT = gql(/* GraphQL */ `
-  fragment MapRecords on Map {
-    recordsConnection(
-      after: $after
-      before: $before
-      first: $first
-      last: $last
-      sort: $sort
-      filter: $filter
-    ) {
-      nodes {
-        player {
-          login
-          name
-        }
-        ...RecordBase
-      }
-    }
-  }
-`);
-
-const GET_MAP_INFO = gql(/* GraphQL */ `
-  query GetMapInfo(
+const GET_MAP_RECORDS = gql(/* GraphQL */ `
+  query GetMapRecords(
     $gameId: String!
-    $sort: MapRecordSort
     $first: Int
     $last: Int
     $after: String
@@ -62,167 +21,177 @@ const GET_MAP_INFO = gql(/* GraphQL */ `
     $filter: RecordsFilter
   ) {
     map(gameId: $gameId) {
-      relatedEventEditions {
-        map {
-          gameId
-        }
-        redirectToEvent
-        edition {
-          name
-          subtitle
-          event {
-            handle
+      recordsConnection(
+        first: $first
+        last: $last
+        after: $after
+        before: $before
+        filter: $filter
+      ) {
+        nodes {
+          player {
+            login
+            name
           }
-          id
+          ...RecordBase
         }
       }
-      gameId
-      name
-      cpsNumber
-      player {
-        login
-        name
-      }
-      ...MapRecords
     }
   }
 `);
 
-export type SP = ServerProps<
-  { gameId: string },
-  { sortBy?: string; order?: string } & RawPaginationInput & RawRecordsFilter
->;
+const rankWidth = {
+  width: "5%",
+} satisfies Styles;
+const playerWidth = {
+  width: "80%",
+} satisfies Styles;
+const timeWidth = { width: "15%" } satisfies Styles;
+const headerStyle = { textAlign: "left" } satisfies Styles;
 
-type Item<Array> = Array extends (infer T)[] ? T : never;
-type RelatedEventEdition = Item<GetMapInfoQuery["map"]["relatedEventEditions"]>;
-export type MapRecordsProperty = {
-  map: Omit<GetMapInfoQuery["map"], "relatedEventEditions" | "__typename">;
-};
-
-const fetchMapInfo = cache(
-  async (
-    gameId: string,
-    paginationInput: PaginationInput,
-    filter?: RecordsFilter,
-    sort?: MapRecordSort,
-  ) => {
-    return query({
-      query: GET_MAP_INFO,
-      variables: { gameId, sort, filter, ...paginationInput },
-      errorPolicy: "all",
-    });
-  },
-);
-
-export async function generateMetadata(props: SP): Promise<Metadata> {
-  const params = await props.params;
-  const searchParams = await props.searchParams;
-  const mapInfo = (
-    await fetchMapInfo(
-      params.gameId,
-      parsePaginationInput(searchParams),
-      parseRecordsFilter(searchParams),
-      parseMapSort(searchParams.sortBy, searchParams.order),
-    )
-  ).data?.map;
-
-  return {
-    title: toPlainText(parse(mapInfo?.name ?? "")),
-  };
-}
-
-function ToolbarTitle({
-  data,
-  relatedEvents,
+function Table({
+  records,
+  isDesc,
 }: {
-  data: GetMapInfoQuery;
-  relatedEvents: RelatedEventEdition[];
+  records: GetMapRecordsQuery["map"]["recordsConnection"]["nodes"];
+  isDesc: boolean;
 }) {
-  return relatedEvents.length > 0 ? (
-    <ToolbarTitleWrapper>
-      <RawToolbarTitle>
-        <MPFormat>{data.map.name}</MPFormat>
-      </RawToolbarTitle>
-      <span>
-        Related to{" "}
-        {relatedEvents.map((relatedEvent, i) => (
-          <React.Fragment
-            key={`${relatedEvent.edition.event.handle}_${relatedEvent.edition.id}`}
+  return (
+    <StyledTable>
+      <Thead>
+        <tr
+          className={css({
+            "& th": {
+              bgColor: "#000A",
+            },
+          })}
+        >
+          <th className={css(rankWidth, headerStyle, { textAlign: "center" })}>
+            #
+          </th>
+          <th className={css(playerWidth, headerStyle)}>Map</th>
+          <th className={css(timeWidth, headerStyle)}>Time</th>
+          <th
+            className={css(headerStyle, {
+              display: "none",
+              md: {
+                textAlign: "right",
+                pe: "token(spacing.1)",
+
+                display: "flex",
+                justifyContent: "end",
+                alignItems: "center",
+                gap: "token(spacing.1)",
+              },
+            })}
           >
-            <Link
-              explicit
-              href={`/event/${relatedEvent.edition.event.handle}/${relatedEvent.edition.id}/map/${relatedEvent.map.gameId}`}
+            <NonOverwritingForm
+              action="/records"
+              keysToRemove={["first", "after", "before", "last"]}
             >
-              {relatedEvent.edition.name +
-                (relatedEvent.edition.subtitle
-                  ? ` ${relatedEvent.edition.subtitle}`
-                  : "")}
-            </Link>
-            {i < relatedEvents.length - 1 ? ", " : null}
-          </React.Fragment>
+              <input
+                type="hidden"
+                name="order"
+                id="order"
+                value={isDesc ? "asc" : "desc"}
+              />
+              <Button
+                className={css({
+                  maxW: "calc(token(sizes.logoSize) - token(spacing.2) * 2)",
+                  maxH: "calc(token(sizes.logoSize) - token(spacing.2) * 2)",
+                  p: 0,
+                  ps: "token(spacing.2)",
+                  pe: "token(spacing.2)",
+                  bg: "black",
+                  color: "white",
+                  border: "solid transparent 1px",
+                  transition: "border-color .1s",
+                  _hover: {
+                    borderColor: "white",
+                  },
+                })}
+                type="submit"
+              >
+                {isDesc ? <FaArrowUpLong /> : <FaArrowDownLong />}
+              </Button>
+            </NonOverwritingForm>
+            Date
+          </th>
+        </tr>
+      </Thead>
+      <tbody>
+        {records.map((record) => (
+          <tr
+            className={css({
+              textAlign: "left",
+              "& > td:last-child": {
+                textAlign: "right",
+              },
+            })}
+            key={record.id}
+          >
+            <td className={css({ textAlign: "right" })}>
+              <code>{record.rank}</code>
+            </td>
+            <td
+              className={css({
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                maxW: 0,
+              })}
+            >
+              <MPFormatLink path={`/player/${record.player.login}`}>
+                {record.player.name}
+              </MPFormatLink>
+            </td>
+            <td>
+              <span
+                className={css({
+                  fontStyle: "italic",
+                  color: "#346AB4",
+                  fontWeight: "bold",
+                })}
+              >
+                <code>
+                  <Time>{record.time}</Time>
+                </code>
+              </span>
+            </td>
+            <td
+              className={css({
+                display: "none",
+                md: {
+                  display: "revert",
+                },
+              })}
+            >
+              <FormattedDate onlyDate>{record.recordDate}</FormattedDate>
+            </td>
+          </tr>
         ))}
-      </span>
-    </ToolbarTitleWrapper>
-  ) : (
-    <RawToolbarTitle>
-      <MPFormat>{data.map.name}</MPFormat>
-    </RawToolbarTitle>
+      </tbody>
+    </StyledTable>
   );
 }
 
-export default async function MapRecords(sp: SP) {
-  const params = await sp.params;
-  const searchParams = await sp.searchParams;
+export default async function PlayerRecords(props: PageProps<"/map/[gameId]">) {
+  const params = await props.params;
+  const gameId = params.gameId;
 
-  const data = await fetchMapInfo(
-    params.gameId,
-    parsePaginationInput(searchParams),
-    parseRecordsFilter(searchParams),
-    parseMapSort(searchParams.sortBy, searchParams.order),
-  );
+  const { data } = await query({
+    query: GET_MAP_RECORDS,
+    variables: { gameId, first: 9 },
+  });
 
-  // If there is only one related event edition and it has a redirect, we redirect to the event map page.
-  if (
-    data.data?.map.relatedEventEditions?.length === 1 &&
-    data.data?.map.relatedEventEditions[0].redirectToEvent
-  ) {
-    const relatedEvent = data.data?.map.relatedEventEditions[0];
-    return redirect(
-      `/event/${relatedEvent.edition.event.handle}/${relatedEvent.edition.id}/map/${params.gameId}`,
-    );
-  }
-
-  const content = {
-    map: {
-      gameId: data.data?.map.gameId ?? "",
-      player: data.data?.map.player ?? { login: "", name: "" },
-      cpsNumber: data.data?.map.cpsNumber ?? undefined,
-      records: (data.data?.map.recordsConnection.nodes ?? []).map(
-        (record) =>
-          new RankedRecordLine(
-            record.id,
-            record.rank,
-            record.player,
-            record.time,
-            record.recordDate,
-          ),
-      ),
-    },
-  } satisfies MapContent;
-
-  return data.error ? (
-    data.error.message
-  ) : data.data ? (
-    <MapRecordsContent
-      data={content}
-      toolbarTitle={
-        <ToolbarTitle
-          data={data.data}
-          relatedEvents={data.data?.map.relatedEventEditions ?? []}
-        />
-      }
-    />
+  return data === undefined ? (
+    "Something went wrong"
   ) : (
-    "Something went wrong."
+    <SubBlock
+      className={css({
+        overflowY: "scroll",
+      })}
+    >
+      <Table records={data.map.recordsConnection.nodes} isDesc={false} />
+    </SubBlock>
   );
 }

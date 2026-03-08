@@ -23,9 +23,21 @@ export const Table = styled("table", {
           roundedEnd: "token(radii.md)",
         },
       },
+      "&:hover td": {
+        bgColor: "#FFF2",
+      },
       _even: {
         "& td": {
           bgColor: "#AAA1",
+        },
+        "&:hover td": {
+          bgColor: "#FFF2",
+        },
+      },
+      "&[data-selected-row]": {
+        filter: "invert(1)",
+        "& td": {
+          bgColor: "black",
         },
       },
     },
