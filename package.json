@@ -16,7 +16,7 @@
     "graphql": "^16.8.1",
     "lodash": "^4.17.23",
     "moment": "^2.30.1",
-    "next": "15.5.9",
+    "next": "15.5.10",
     "nextjs-toploader": "^3.7.15",
     "react": "^19",
     "react-dom": "^19",
