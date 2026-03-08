@@ -64,7 +64,7 @@ type EventEditionMap {
 		"""
 		Number of records to fetch from the end (for backward pagination)
 		"""
-		last: Int,		sortField: MapRecordSortableField,		filter: RecordsFilter
+		last: Int,		sort: MapRecordSort,		filter: RecordsFilter
 	): RankedRecordConnection!
 	medalTimes: MedalTimes
 }
@@ -106,6 +106,7 @@ type Map {
 	cpsNumber: Int
 	player: Player!
 	name: String!
+	score: Float!
 	relatedEventEditions: [RelatedEdition!]!
 	averageRating: [PlayerRating!]!
 	records(rankSortBy: SortState, dateSortBy: SortState): [RankedRecord!]!
@@ -125,8 +126,13 @@ type Map {
 		"""
 		Number of records to fetch from the end (for backward pagination)
 		"""
-		last: Int,		sortField: MapRecordSortableField,		filter: RecordsFilter
+		last: Int,		sort: MapRecordSort,		filter: RecordsFilter
 	): RankedRecordConnection!
+}
+
+input MapRecordSort {
+	field: MapRecordSortableField!
+	order: SortOrder
 }
 
 enum MapRecordSortableField {
@@ -137,7 +143,6 @@ enum MapRecordSortableField {
 type MapWithScore {
 	rank: Int!
 	map: Map!
-	score: Float!
 }
 
 type MapWithScoreConnection {
@@ -174,7 +179,7 @@ type Mappack {
 	mxAuthor: String
 	mxCreatedAt: NaiveDateTime
 	mxName: String
-	leaderboard: [MappackPlayer!]!
+	leaderboard(limit: Int): [MappackPlayer!]!
 	player(login: String!): MappackPlayer!
 	nextUpdateIn: Int
 }
@@ -255,6 +260,7 @@ type Player {
 	login: String!
 	name: String!
 	zonePath: String
+	score: Float!
 	role: PlayerRole!
 	records(dateSortBy: SortState): [RankedRecord!]!
 	recordsConnection(
@@ -273,8 +279,18 @@ type Player {
 		"""
 		Number of records to fetch from the end (for backward pagination)
 		"""
-		last: Int,		filter: RecordsFilter
+		last: Int,		sort: UnorderedRecordSort,		filter: RecordsFilter
 	): RankedRecordConnection!
+}
+
+input PlayerMapRankingSort {
+	field: PlayerMapRankingSortableField!
+	order: SortOrder
+}
+
+enum PlayerMapRankingSortableField {
+	NAME
+	RANK
 }
 
 type PlayerRating {
@@ -291,7 +307,6 @@ enum PlayerRole {
 type PlayerWithScore {
 	rank: Int!
 	player: Player!
-	score: Float!
 }
 
 type PlayerWithScoreConnection {
@@ -342,12 +357,13 @@ type QueryRoot {
 	mappack(mappackId: String!): Mappack!
 	event(handle: String!): Event!
 	events: [Event!]!
+	trendingEventEditions(lastDays: Int, limit: Int): [EventEdition!]!
 	record(recordId: Int!): RankedRecord!
 	map(gameId: String!): Map!
 	player(login: String!): Player!
 	records(dateSortBy: SortState): [RankedRecord!]!
-	players(after: String, before: String, first: Int, last: Int, filter: PlayersFilter): PlayerWithScoreConnection!
-	maps(after: String, before: String, first: Int, last: Int, filter: MapsFilter): MapWithScoreConnection!
+	players(after: String, before: String, first: Int, last: Int, filter: PlayersFilter, sort: PlayerMapRankingSort): PlayerWithScoreConnection!
+	maps(after: String, before: String, first: Int, last: Int, filter: MapsFilter, sort: PlayerMapRankingSort): MapWithScoreConnection!
 	recordsConnection(
 		"""
 		Cursor to fetch records after (for forward pagination)
@@ -364,7 +380,7 @@ type QueryRoot {
 		"""
 		Number of records to fetch from the end (for backward pagination)
 		"""
-		last: Int,		filter: RecordsFilter
+		last: Int,		sort: UnorderedRecordSort,		filter: RecordsFilter
 	): RankedRecordConnection!
 }
 
@@ -476,9 +492,23 @@ type RelatedEdition {
 	edition: EventEdition!
 }
 
+enum SortOrder {
+	ASCENDING
+	DESCENDING
+}
+
 enum SortState {
 	SORT
 	REVERSE
+}
+
+input UnorderedRecordSort {
+	field: UnorderedRecordSortableField!
+	order: SortOrder
+}
+
+enum UnorderedRecordSortableField {
+	DATE
 }
 
 """
@@ -496,3 +526,4 @@ directive @specifiedBy(url: String!) on SCALAR
 schema {
 	query: QueryRoot
 }
+

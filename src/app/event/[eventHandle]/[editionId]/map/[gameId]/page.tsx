@@ -1,6 +1,7 @@
 import { cache } from "react";
 import { gql } from "@/app/__generated__";
 import {
+  MapRecordSort,
   MapRecordSortableField,
   type RecordsFilter,
 } from "@/app/__generated__/graphql";
@@ -26,7 +27,7 @@ import {
 import { Medal } from "@/lib/ranked-record";
 import { parseRecordsFilter } from "@/lib/records-filter";
 import type { ServerProps } from "@/lib/server-props";
-import { parseMapSortField } from "@/lib/sort-field";
+import { parseMapSort } from "@/lib/sort-field";
 
 export const generateMetadata = MapPage.generateMetadata;
 
@@ -35,7 +36,7 @@ const GET_EVENT_MAP_INFO = gql(/* GraphQL */ `
     $eventHandle: String!
     $editionId: Int!
     $gameId: String!
-    $sortField: MapRecordSortableField
+    $sort: MapRecordSort
     $first: Int
     $last: Int
     $after: String
@@ -67,7 +68,7 @@ const GET_EVENT_MAP_INFO = gql(/* GraphQL */ `
             championTime
           }
           recordsConnection(
-            sortField: $sortField
+            sort: $sort
             first: $first
             last: $last
             after: $after
@@ -95,7 +96,7 @@ const fetchMapInfo = cache(
     gameId: string,
     paginationInput: PaginationInput,
     filter: RecordsFilter,
-    sortField?: MapRecordSortableField,
+    sort?: MapRecordSort,
   ) => {
     return query({
       query: GET_EVENT_MAP_INFO,
@@ -103,7 +104,7 @@ const fetchMapInfo = cache(
         eventHandle,
         editionId,
         gameId,
-        sortField,
+        sort,
         filter,
         ...paginationInput,
       },
@@ -160,9 +161,7 @@ export default async function EventMapRecords(
   const params = await sp.params;
   const searchParams = await sp.searchParams;
 
-  const parsedSortField = searchParams.sortField
-    ? parseMapSortField(searchParams.sortField)
-    : undefined;
+  const parsedSort = parseMapSort(searchParams.sortBy, searchParams.order);
 
   const editionId = parseInt(params.editionId, 10);
   const dataRaw = await fetchMapInfo(
@@ -171,7 +170,7 @@ export default async function EventMapRecords(
     params.gameId,
     parsePaginationInput(searchParams),
     parseRecordsFilter(searchParams),
-    parsedSortField,
+    parsedSort,
   );
   // : )
   const data = {
@@ -210,7 +209,7 @@ export default async function EventMapRecords(
   // and if we're not already ordering the map LB by record date
   if (
     data.event.edition.map.medalTimes &&
-    parsedSortField !== MapRecordSortableField.Date
+    parsedSort?.field !== MapRecordSortableField.Date
   ) {
     records.push(
       new MedalRecord(

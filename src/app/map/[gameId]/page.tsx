@@ -4,6 +4,7 @@ import React, { cache } from "react";
 import { gql } from "@/app/__generated__";
 import type {
   GetMapInfoQuery,
+  MapRecordSort,
   MapRecordSortableField,
   RecordsFilter,
 } from "@/app/__generated__/graphql";
@@ -26,7 +27,7 @@ import {
   type RawRecordsFilter,
 } from "@/lib/records-filter";
 import type { ServerProps } from "@/lib/server-props";
-import { parseMapSortField } from "@/lib/sort-field";
+import { parseMapSort } from "@/lib/sort-field";
 import { MapRecordsContent } from "./MapRecordsContent";
 
 const _MAP_RECORDS_FRAGMENT = gql(/* GraphQL */ `
@@ -36,7 +37,7 @@ const _MAP_RECORDS_FRAGMENT = gql(/* GraphQL */ `
       before: $before
       first: $first
       last: $last
-      sortField: $sortField
+      sort: $sort
       filter: $filter
     ) {
       nodes {
@@ -53,7 +54,7 @@ const _MAP_RECORDS_FRAGMENT = gql(/* GraphQL */ `
 const GET_MAP_INFO = gql(/* GraphQL */ `
   query GetMapInfo(
     $gameId: String!
-    $sortField: MapRecordSortableField
+    $sort: MapRecordSort
     $first: Int
     $last: Int
     $after: String
@@ -89,7 +90,7 @@ const GET_MAP_INFO = gql(/* GraphQL */ `
 
 export type SP = ServerProps<
   { gameId: string },
-  { sortField?: string } & RawPaginationInput & RawRecordsFilter
+  { sortBy?: string; order?: string } & RawPaginationInput & RawRecordsFilter
 >;
 
 type Item<Array> = Array extends (infer T)[] ? T : never;
@@ -103,11 +104,11 @@ const fetchMapInfo = cache(
     gameId: string,
     paginationInput: PaginationInput,
     filter: RecordsFilter,
-    sortField?: MapRecordSortableField,
+    sort?: MapRecordSort,
   ) => {
     return query({
       query: GET_MAP_INFO,
-      variables: { gameId, sortField, filter, ...paginationInput },
+      variables: { gameId, sort, filter, ...paginationInput },
       errorPolicy: "all",
     });
   },
@@ -121,9 +122,7 @@ export async function generateMetadata(props: SP): Promise<Metadata> {
       params.gameId,
       parsePaginationInput(searchParams),
       parseRecordsFilter(searchParams),
-      searchParams.sortField
-        ? parseMapSortField(searchParams.sortField)
-        : undefined,
+      parseMapSort(searchParams.sortBy, searchParams.order),
     )
   ).data?.map;
 
@@ -179,9 +178,7 @@ export default async function MapRecords(sp: SP) {
     params.gameId,
     parsePaginationInput(searchParams),
     parseRecordsFilter(searchParams),
-    searchParams.sortField
-      ? parseMapSortField(searchParams.sortField)
-      : undefined,
+    parseMapSort(searchParams.sortBy, searchParams.order),
   );
 
   // If there is only one related event edition and it has a redirect, we redirect to the event map page.
