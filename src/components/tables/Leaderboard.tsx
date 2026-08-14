@@ -1,0 +1,138 @@
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { cn } from "@/lib/utils";
+
+/**
+ * The leaderboard look shared by every ranking on the site: zebra striping,
+ * a sticky header, and rows that never wrap.
+ */
+export function Leaderboard({
+  className,
+  ...props
+}: React.ComponentProps<typeof Table>) {
+  return (
+    <Table
+      className={cn(
+        "mx-5 my-2 w-[calc(100%-2.5rem)] table-fixed",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+export function LeaderboardHeader({
+  className,
+  ...props
+}: React.ComponentProps<typeof TableHeader>) {
+  return (
+    <TableHeader
+      className={cn(
+        "sticky top-0 z-10 text-base [&_tr]:border-0 [&_th]:bg-black/70",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+export const LeaderboardBody = TableBody;
+
+export function LeaderboardRow({
+  className,
+  ...props
+}: React.ComponentProps<typeof TableRow>) {
+  return (
+    <TableRow
+      className={cn(
+        "border-0 hover:bg-transparent",
+        "[&>td]:transition-colors [&>td]:first:rounded-s-md [&>td]:last:rounded-e-md",
+        "even:[&>td]:bg-white/6 hover:[&>td]:bg-white/12",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+export function LeaderboardHead({
+  className,
+  ...props
+}: React.ComponentProps<typeof TableHead>) {
+  return (
+    <TableHead
+      className={cn(
+        "h-auto px-1 py-1 text-left font-bold text-foreground first:rounded-s-md last:rounded-e-md",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
+export function LeaderboardCell({
+  className,
+  ...props
+}: React.ComponentProps<typeof TableCell>) {
+  return <TableCell className={cn("px-1 py-1", className)} {...props} />;
+}
+
+/** Cell whose content is elided rather than pushing the table wider. */
+export function NameCell({
+  className,
+  ...props
+}: React.ComponentProps<typeof TableCell>) {
+  return <LeaderboardCell className={cn("truncate", className)} {...props} />;
+}
+
+export function RankCell({
+  className,
+  children,
+  ...props
+}: React.ComponentProps<typeof TableCell>) {
+  return (
+    <LeaderboardCell className={cn("text-right", className)} {...props}>
+      <code>{children}</code>
+    </LeaderboardCell>
+  );
+}
+
+export function TimeCell({
+  className,
+  children,
+  ...props
+}: React.ComponentProps<typeof TableCell>) {
+  return (
+    <LeaderboardCell
+      className={cn("font-bold text-time italic", className)}
+      {...props}
+    >
+      <code>{children}</code>
+    </LeaderboardCell>
+  );
+}
+
+/** Secondary column, dropped on the narrow layout. */
+export function WideOnlyCell({
+  className,
+  ...props
+}: React.ComponentProps<typeof TableCell>) {
+  return (
+    <LeaderboardCell className={cn("hidden md:table-cell", className)} {...props} />
+  );
+}
+
+export function WideOnlyHead({
+  className,
+  ...props
+}: React.ComponentProps<typeof TableHead>) {
+  return (
+    <LeaderboardHead className={cn("hidden md:table-cell", className)} {...props} />
+  );
+}

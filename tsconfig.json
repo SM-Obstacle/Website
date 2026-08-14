@@ -18,7 +18,6 @@
       }
     ],
     "paths": {
-      "@shadow-panda/*": ["./@shadow-panda/*"],
       "@/*": ["./src/*"]
     },
     "target": "ES2017"
@@ -28,8 +27,6 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "styled-system",
-    "@shadow-panda/styled-system",
     ".next/dev/types/**/*.ts"
   ],
   "exclude": ["node_modules"]

@@ -1,73 +1,89 @@
+import type { Metadata } from "next";
+
 import { gql } from "@/app/__generated__";
 import { query } from "@/app/ApolloClient";
-import PageBase from "@/components/ui/organisms/PageBase";
-import { css } from "../../../../@shadow-panda/styled-system/css";
-import { H1, H2 } from "@/components/ui/atoms/typography";
+import PageShell from "@/components/layout/PageShell";
+import { Panel } from "@/components/layout/Panel";
+import PageTitle from "@/components/layout/PageTitle";
+import SectionHeader from "@/components/layout/SectionHeader";
 import MPFormat from "@/components/MPFormat";
+import { parse, toPlainText } from "@/lib/mpformat/mpformat";
 import PlayerInfo from "./PlayerInfo";
-import Block from "@/components/ui/organisms/Block";
-import SeeMoreTitle from "@/components/ui/organisms/SeeMoreTitle";
 
 const GET_PLAYER_INFO = gql(/* GraphQL */ `
   query GetPlayer($login: String!) {
     player(login: $login) {
       login
       name
+      score
       zonePath
       role
     }
   }
 `);
 
-export default async function PlayerLayout(
+export async function generateMetadata(
   props: LayoutProps<"/player/[login]">,
-) {
-  const params = await props.params;
-  const login = params.login;
-
+): Promise<Metadata> {
+  const { login } = await props.params;
   const { data } = await query({
     query: GET_PLAYER_INFO,
     variables: { login },
+    errorPolicy: "all",
   });
 
-  return data === undefined ? (
-    "Something went wrong"
-  ) : (
-    <PageBase titleSegments={[<H1>Players</H1>]} selectedMenu="players">
-      <div
-        className={css({
-          "--profile-picture-size": "100px",
-          display: "flex",
-          flexDirection: "column",
-          gap: "token(spacing.2)",
-          height: "100%",
-          maxW: "token(sizes.maxContentWidth)",
-          margin: "auto",
-        })}
+  return { title: data ? toPlainText(parse(data.player.name)) : login };
+}
+
+export default async function PlayerLayout(
+  props: LayoutProps<"/player/[login]">,
+) {
+  const { login } = await props.params;
+
+  const { data, error } = await query({
+    query: GET_PLAYER_INFO,
+    variables: { login },
+    errorPolicy: "all",
+  });
+
+  if (error || !data) {
+    return (
+      <PageShell
+        titleSegments={[<PageTitle key="title">Players</PageTitle>]}
+        selectedMenu="players"
       >
+        <Panel className="m-auto p-8">
+          Could not load this player: {error?.message ?? "unknown error"}
+        </Panel>
+      </PageShell>
+    );
+  }
+
+  return (
+    <PageShell
+      titleSegments={[
+        <PageTitle key="title">Players</PageTitle>,
+        <PageTitle key="player">
+          <MPFormat>{data.player.name}</MPFormat>
+        </PageTitle>,
+      ]}
+      selectedMenu="players"
+    >
+      <div className="mx-auto flex h-full min-h-0 w-full max-w-content flex-col gap-2 [--profile-picture-size:75px] lg:[--profile-picture-size:100px]">
         <PlayerInfo player={data.player} />
-        <div className={css({ flexGrow: 1, height: "100%" })}>
-          <Block
-            titleBar={
-              <SeeMoreTitle
-                title="Latest records"
-                buttonHref={`/records?playerLogin=${data.player.login}`}
-              />
-            }
-          >
-            <div
-              className={css({
-                display: "flex",
-                flexDir: "column",
-                gap: "token(spacing.2)",
-                height: "100%",
-              })}
-            >
-              {props.children}
-            </div>
-          </Block>
-        </div>
+
+        <Panel
+          className="flex min-h-0 flex-1 flex-col"
+          header={
+            <SectionHeader
+              title="Latest records"
+              href={`/records?playerLogin=${data.player.login}`}
+            />
+          }
+        >
+          {props.children}
+        </Panel>
       </div>
-    </PageBase>
+    </PageShell>
   );
 }

@@ -1,46 +1,24 @@
-import { cache } from "react";
-import { gql } from "@/app/__generated__";
-import {
-  MapRecordSortableField,
-  type RecordsFilter,
-} from "@/app/__generated__/graphql";
-import { query } from "@/app/ApolloClient";
-import * as MapRecordsContent from "@/app/map/[gameId]/MapRecordsContent";
-import * as MapPage from "@/app/map/[gameId]/page";
-import Link from "@/components/Link";
-import MPFormat from "@/components/MPFormat";
-import {
-  ToolbarTitle as RawToolbarTitle,
-  ToolbarTitleWrapper,
-} from "@/components/ToolbarWrapper";
-import {
-  type PaginationInput,
-  parsePaginationInput,
-} from "@/lib/cursor-pagination";
-import {
-  type MapContent,
-  MedalRecord,
-  RankedRecordLine,
-  type RecordLine,
-} from "@/lib/map-page-types";
-import { Medal } from "@/lib/ranked-record";
-import { parseRecordsFilter } from "@/lib/records-filter";
-import type { ServerProps } from "@/lib/server-props";
-import { parseMapSortField } from "@/lib/sort-field";
+import { Flag } from "lucide-react";
+import type { Metadata } from "next";
+import { cache, Suspense } from "react";
 
-export const generateMetadata = MapPage.generateMetadata;
+import { gql } from "@/app/__generated__";
+import { query } from "@/app/ApolloClient";
+import Link from "@/components/Link";
+import PageShell from "@/components/layout/PageShell";
+import { Panel, SubPanel } from "@/components/layout/Panel";
+import PageTitle from "@/components/layout/PageTitle";
+import SectionHeader from "@/components/layout/SectionHeader";
+import MPFormat, { MPFormatLink } from "@/components/MPFormat";
+import { Badge } from "@/components/ui/badge";
+import { parse, toPlainText } from "@/lib/mpformat/mpformat";
+import EventMapRecordsTable from "./EventMapRecordsTable";
 
 const GET_EVENT_MAP_INFO = gql(/* GraphQL */ `
   query GetEventMapInfo(
     $eventHandle: String!
     $editionId: Int!
     $gameId: String!
-    $sort: MapRecordSort
-    $first: Int
-    $last: Int
-    $after: String
-    $before: String
-    $filter: RecordsFilter
   ) {
     event(handle: $eventHandle) {
       edition(editionId: $editionId) {
@@ -60,211 +38,126 @@ const GET_EVENT_MAP_INFO = gql(/* GraphQL */ `
           originalMap {
             gameId
           }
-          medalTimes {
-            bronzeTime
-            silverTime
-            goldTime
-            championTime
-          }
-          recordsConnection(
-            sort: $sort
-            first: $first
-            last: $last
-            after: $after
-            before: $before
-            filter: $filter
-          ) {
-            nodes {
-              player {
-                login
-                name
-              }
-              ...RecordBase
-            }
-          }
         }
       }
     }
   }
 `);
 
-const fetchMapInfo = cache(
-  async (
-    eventHandle: string,
-    editionId: number,
-    gameId: string,
-    paginationInput: PaginationInput,
-    filter: RecordsFilter,
-    sortField?: MapRecordSortableField,
-  ) => {
-    return query({
+const fetchMap = cache(
+  async (eventHandle: string, editionId: number, gameId: string) =>
+    query({
       query: GET_EVENT_MAP_INFO,
-      variables: {
-        eventHandle,
-        editionId,
-        gameId,
-        sortField,
-        filter,
-        ...paginationInput,
-      },
+      variables: { eventHandle, editionId, gameId },
       errorPolicy: "all",
-    });
-  },
+    }),
 );
 
-function ToolbarTitle({
-  mapName,
-  mapUid,
-  eventHandle,
-  editionId,
-  eventName,
-}: {
-  mapName: string;
-  mapUid?: string;
-  eventHandle: string;
-  editionId: number;
-  eventName: string;
-}) {
-  return (
-    <ToolbarTitleWrapper>
-      <RawToolbarTitle>
-        <MPFormat>{mapName}</MPFormat>
-      </RawToolbarTitle>
-      {
-        <span>
-          on{" "}
-          <Link explicit href={`/event/${eventHandle}/${editionId}`}>
-            {eventName}
-          </Link>{" "}
-          {mapUid && (
-            <>
-              (see{" "}
-              <Link explicit href={`/map/${mapUid}`}>
-                original
-              </Link>
-              )
-            </>
-          )}{" "}
-        </span>
-      }
-    </ToolbarTitleWrapper>
+export async function generateMetadata(
+  props: PageProps<"/event/[eventHandle]/[editionId]/map/[gameId]">,
+): Promise<Metadata> {
+  const { eventHandle, editionId, gameId } = await props.params;
+  const { data } = await fetchMap(
+    eventHandle,
+    Number.parseInt(editionId, 10),
+    gameId,
   );
+
+  const name = data?.event.edition?.map.map.name;
+  return { title: name ? toPlainText(parse(name)) : gameId };
 }
 
-export default async function EventMapRecords(
-  sp: ServerProps<
-    Awaited<MapPage.SP["params"]> & { eventHandle: string; editionId: string },
-    Awaited<MapPage.SP["searchParams"]>
-  >,
+export default async function EventMapPage(
+  props: PageProps<"/event/[eventHandle]/[editionId]/map/[gameId]">,
 ) {
-  const params = await sp.params;
-  const searchParams = await sp.searchParams;
+  const params = await props.params;
+  const eventHandle = params.eventHandle;
+  const editionId = Number.parseInt(params.editionId, 10);
+  const gameId = params.gameId;
 
-  const parsedSortField = searchParams.sortField
-    ? parseMapSortField(searchParams.sortField)
-    : undefined;
+  const { data, error } = await fetchMap(eventHandle, editionId, gameId);
+  const edition = data?.event.edition;
+  const eventMap = edition?.map;
 
-  const editionId = parseInt(params.editionId, 10);
-  const dataRaw = await fetchMapInfo(
-    params.eventHandle,
-    editionId,
-    params.gameId,
-    parsePaginationInput(searchParams),
-    parseRecordsFilter(searchParams),
-    parsedSortField,
-  );
-  // : )
-  const data = {
-    ...dataRaw,
-    event: {
-      ...dataRaw.data?.event,
-      edition: {
-        ...dataRaw.data?.event.edition,
-        map: {
-          ...dataRaw.data?.event.edition?.map.map,
-          medalTimes: dataRaw.data?.event.edition?.map.medalTimes,
-          records: dataRaw.data?.event.edition?.map.recordsConnection.nodes,
-        },
-      },
-    },
-  };
-
-  const eventName =
-    data.event.edition?.name +
-    (data.event.edition?.subtitle ? ` ${data.event.edition?.subtitle}` : "");
-
-  const records = (
-    data.data?.event.edition?.map.recordsConnection.nodes ?? []
-  ).map(
-    (record) =>
-      new RankedRecordLine(
-        record.id,
-        record.rank,
-        record.player,
-        record.time,
-        record.recordDate,
-      ) as RecordLine,
-  );
-
-  // Insert the medal times in the LB, if they're available,
-  // and if we're not already ordering the map LB by record date
-  if (
-    data.event.edition.map.medalTimes &&
-    parsedSortField !== MapRecordSortableField.Date
-  ) {
-    records.push(
-      new MedalRecord(
-        data.event.edition.map.medalTimes.bronzeTime,
-        Medal.Bronze,
-      ),
-      new MedalRecord(
-        data.event.edition.map.medalTimes.silverTime,
-        Medal.Silver,
-      ),
-      new MedalRecord(data.event.edition.map.medalTimes.goldTime, Medal.Gold),
-      new MedalRecord(
-        data.event.edition.map.medalTimes.championTime,
-        Medal.Champion,
-      ),
-    );
-    records.sort(
-      searchParams.last !== undefined
-        ? (a, b) => b.time - a.time || -(b.sortPriority - a.sortPriority)
-        : (a, b) => a.time - b.time || -(a.sortPriority - b.sortPriority),
+  if (error || !eventMap) {
+    return (
+      <PageShell
+        titleSegments={[<PageTitle key="title">Events</PageTitle>]}
+        selectedMenu="events"
+      >
+        <Panel className="m-auto p-8">
+          Could not load this map: {error?.message ?? "unknown map"}
+        </Panel>
+      </PageShell>
     );
   }
 
-  const content = {
-    map: {
-      gameId: data.data?.event.edition?.map.map.gameId ?? "",
-      player: data.data?.event.edition?.map.map.player ?? {
-        login: "",
-        name: "",
-      },
-      cpsNumber: data.event.edition.map.cpsNumber ?? undefined,
-      records: records,
-    },
-  } satisfies MapContent;
+  const eventName = edition.name + (edition.subtitle ? ` ${edition.subtitle}` : "");
+  const originalGameId =
+    eventMap.originalMap?.gameId ||
+    (eventMap.linkToOriginal ? eventMap.map.gameId : undefined);
 
-  return data.error ? (
-    data.error.message
-  ) : (
-    <MapRecordsContent.MapRecordsContent
-      data={content}
-      toolbarTitle={
-        <ToolbarTitle
-          mapName={data.data?.event.edition?.map.map.name ?? ""}
-          mapUid={
-            dataRaw.data?.event.edition?.map.originalMap?.gameId ||
-            (dataRaw.data?.event.edition?.map.linkToOriginal &&
-              data.event.edition.map.gameId) ||
-            undefined
-          }
-          eventHandle={params.eventHandle}
-          editionId={editionId}
-          eventName={eventName}
-        />
-      }
-    />
+  return (
+    <PageShell
+      titleSegments={[
+        <PageTitle key="title">Events</PageTitle>,
+        <PageTitle key="map">
+          <MPFormat>{eventMap.map.name}</MPFormat>
+        </PageTitle>,
+      ]}
+      selectedMenu="events"
+    >
+      <div className="mx-auto flex h-full min-h-0 w-full max-w-content flex-col gap-2">
+        <Panel>
+          <SubPanel className="gap-2 px-5 py-3">
+            <h2 className="m-0 truncate text-2xl font-bold">
+              <MPFormat>{eventMap.map.name}</MPFormat>
+            </h2>
+
+            <p className="m-0 text-sm">
+              by{" "}
+              <MPFormatLink path={`/player/${eventMap.map.player.login}`}>
+                {eventMap.map.player.name}
+              </MPFormatLink>{" "}
+              on{" "}
+              <Link explicit href={`/event/${eventHandle}/${editionId}`}>
+                {eventName}
+              </Link>
+              {originalGameId && (
+                <>
+                  {" — see the "}
+                  <Link explicit href={`/map/${originalGameId}`}>
+                    original map
+                  </Link>
+                </>
+              )}
+            </p>
+
+            {!!eventMap.map.cpsNumber && (
+              <div>
+                <Badge variant="secondary">
+                  <Flag />
+                  {eventMap.map.cpsNumber} cp
+                  {eventMap.map.cpsNumber > 1 ? "s" : ""}
+                </Badge>
+              </div>
+            )}
+          </SubPanel>
+        </Panel>
+
+        <Panel
+          className="flex min-h-0 flex-1 flex-col"
+          header={<SectionHeader title="Leaderboard" />}
+        >
+          <Suspense>
+            <EventMapRecordsTable
+              eventHandle={eventHandle}
+              editionId={editionId}
+              gameId={gameId}
+            />
+          </Suspense>
+        </Panel>
+      </div>
+    </PageShell>
   );
 }

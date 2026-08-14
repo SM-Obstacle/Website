@@ -1,15 +1,8 @@
 "use client";
 
-import type { PropsWithChildren } from "react";
 import Link, { type LinkProps } from "@/components/Link";
 
-export default function NoPropagationLink({
-  children,
-  ...rest
-}: PropsWithChildren & LinkProps) {
-  return (
-    <Link {...rest} onClick={(e) => e.stopPropagation()}>
-      {children}
-    </Link>
-  );
+/** A link inside a clickable row: keeps the row's own click handler from firing. */
+export default function NoPropagationLink(props: LinkProps) {
+  return <Link {...props} onClick={(e) => e.stopPropagation()} />;
 }

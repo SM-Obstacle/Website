@@ -7,6 +7,7 @@ import {
   ApolloNextAppProvider,
   InMemoryCache,
 } from "@apollo/client-integration-nextjs";
+import { typePolicies } from "@/lib/apollo-cache";
 import { getGraphqlApiUrl, getGraphqlApiWsUrl } from "@/lib/utils";
 import { createClient } from "graphql-ws";
 import { OperationTypeNode } from "graphql";
@@ -44,7 +45,7 @@ function makeClient() {
   // use the `ApolloClient` from "@apollo/client-integration-nextjs"
   return new ApolloClient({
     // use the `InMemoryCache` from "@apollo/client-integration-nextjs"
-    cache: new InMemoryCache(),
+    cache: new InMemoryCache({ typePolicies }),
     link: splitLink,
   });
 }

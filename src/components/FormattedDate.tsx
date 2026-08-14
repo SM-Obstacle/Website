@@ -1,26 +1,14 @@
 "use client";
 
-import moment from "moment";
-
-function formatDateImpl(date: string, f: string) {
-  return moment.utc(date).local().format(f);
-}
-
-export function formatDate(date: string) {
-  return formatDateImpl(date, "DD/MM/YYYY");
-}
-
-export function formatDateTime(date: string) {
-  return formatDateImpl(date, "HH:mm:ss");
-}
-
-export const formatFull = (date: string) =>
-  `${formatDate(date)} ${formatDateTime(date)}`;
+import {
+  formatDate,
+  formatFull,
+  formatTimeOfDay,
+  parseApiDate,
+} from "@/lib/date";
 
 function timeAgo(date: Date): string {
-  const now = new Date();
-  // difference in milliseconds
-  const diffMs = now.valueOf() - date.valueOf();
+  const diffMs = Date.now() - date.valueOf();
 
   if (diffMs < 0) return "in the future";
 
@@ -41,19 +29,11 @@ function timeAgo(date: Date): string {
   return `${years}y ago`;
 }
 
-function formatDateWithOptions(
-  d: moment.Moment,
-  format: "full" | "onlyDate" | "onlyTime" | undefined = "full",
-): string {
-  return format === "full"
-    ? d.format("DD/MM/YYYY HH:mm:ss")
-    : d.format(format === "onlyDate" ? "DD/MM/YYYY" : "HH:mm:ss");
-}
-
 export function FormattedTimeAgo({ children }: { children: string }) {
-  const d = moment.utc(children).local();
   return (
-    <span title={formatDateWithOptions(d, "full")}>{timeAgo(d.toDate())}</span>
+    <span suppressHydrationWarning title={formatFull(children)}>
+      {timeAgo(parseApiDate(children))}
+    </span>
   );
 }
 
@@ -64,9 +44,9 @@ export default function FormattedDate({
   children: string;
   onlyDate?: boolean;
 }) {
-  const d = moment.utc(children).local();
-  const full = formatDateWithOptions(d, "full");
-  const small = formatDateWithOptions(d, onlyDate ? "onlyDate" : "onlyTime");
-
-  return <span title={full}>{small}</span>;
+  return (
+    <span suppressHydrationWarning title={formatFull(children)}>
+      {onlyDate ? formatDate(children) : formatTimeOfDay(children)}
+    </span>
+  );
 }

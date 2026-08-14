@@ -1,15 +1,17 @@
 import type { Metadata } from "next";
 import Markdown from "react-markdown";
-import { Article, LastUpdate, MdH1, MdH2, MdLink } from "@/components/Article";
+
+import { ArticleBody, markdownComponents } from "@/components/Article";
 import FormattedDate from "@/components/FormattedDate";
-import PageBase from "@/components/ui/organisms/PageBase";
-import Block from "@/components/ui/organisms/Block";
-import { H1, H2 } from "@/components/ui/atoms/typography";
+import PageShell from "@/components/layout/PageShell";
+import { Panel } from "@/components/layout/Panel";
+import PageTitle from "@/components/layout/PageTitle";
 import { fetchArticles } from "@/lib/article";
-import { css } from "../../../@shadow-panda/styled-system/css";
+
+export const revalidate = 300;
 
 export const metadata: Metadata = {
-  title: "RESOURCES",
+  title: "Resources",
 };
 
 export default async function Links() {
@@ -18,47 +20,24 @@ export default async function Links() {
   const content = await resourcesArticle.fetchContent();
 
   return (
-    <PageBase
-      titleSegments={[<H1 key="title">Resources</H1>]}
+    <PageShell
+      titleSegments={[<PageTitle key="title">Resources</PageTitle>]}
       selectedMenu="resources"
     >
-      <div
-        className={css({
-          height: "100%",
-          flexGrow: 1,
-          maxWidth: "token(sizes.maxContentWidth)",
-          margin: "auto",
-        })}
-      >
-        <Block
-          className={css({
-            height: "100%",
-            overflowY: "auto",
-          })}
-        >
-          <Article>
-            <div
-              className={css({
-                height: 0,
-              })}
-            >
-              <Markdown
-                components={{
-                  h1: MdH1,
-                  h2: MdH2,
-                  a: MdLink,
-                }}
-              >
-                {content}
-              </Markdown>
-            </div>
-            <LastUpdate>
-              Last update:{" "}
-              <FormattedDate onlyDate>{resourcesArticle.date}</FormattedDate>
-            </LastUpdate>
-          </Article>
-        </Block>
+      <div className="scrollbar-slim mx-auto h-full w-full max-w-content overflow-y-auto">
+        <Panel className="p-5">
+          <ArticleBody
+            lastUpdate={
+              <>
+                Last update:{" "}
+                <FormattedDate onlyDate>{resourcesArticle.date}</FormattedDate>
+              </>
+            }
+          >
+            <Markdown components={markdownComponents}>{content}</Markdown>
+          </ArticleBody>
+        </Panel>
       </div>
-    </PageBase>
+    </PageShell>
   );
 }

@@ -1,13 +1,17 @@
-import moment from "moment";
+import { format } from "date-fns";
+import { CalendarDays, Map as MapIcon } from "lucide-react";
+import type { Metadata } from "next";
+import { cache, Suspense } from "react";
+
 import { gql } from "@/app/__generated__";
-import type {
-  MappackLbFragment,
-  MappackPlayerInfoFragment,
-} from "@/app/__generated__/graphql";
 import { query } from "@/app/ApolloClient";
-import { CampaignHeader, CampaignTable } from "@/components/CampaignMain";
-import { fetchSelectedPlayers } from "@/lib/mappack-fragments";
-import type { ServerProps } from "@/lib/server-props";
+import { parseApiDate } from "@/lib/date";
+import PageShell from "@/components/layout/PageShell";
+import { Panel, SubPanel } from "@/components/layout/Panel";
+import PageTitle from "@/components/layout/PageTitle";
+import SectionHeader from "@/components/layout/SectionHeader";
+import { Badge } from "@/components/ui/badge";
+import MappackStandings from "./MappackStandings";
 
 const GET_MAPPACK_LEADERBOARD = gql(/* GraphQL */ `
   query GetMappackLeaderboard($mappackId: String!) {
@@ -20,75 +24,90 @@ const GET_MAPPACK_LEADERBOARD = gql(/* GraphQL */ `
   }
 `);
 
-const GET_MAPPACK_PLAYER_INFO = gql(/* GraphQL */ `
-  query GetMappackPlayerInfo($mappackId: String!, $login: String!) {
-    mappack(mappackId: $mappackId) {
-      ...MappackPlayerInfo
-    }
-  }
-`);
+const fetchMappack = cache(async (mappackId: string) =>
+  query({
+    query: GET_MAPPACK_LEADERBOARD,
+    variables: { mappackId },
+    errorPolicy: "all",
+  }),
+);
 
-async function fetchPlayers(
-  mappackId: string,
-  mappackData: MappackLbFragment | undefined | null,
-  selectedPlayer: string | string[],
-) {
-  const fetchPlayerInfo = async (login: string) => {
-    return query({
-      query: GET_MAPPACK_PLAYER_INFO,
-      variables: {
-        login,
-        mappackId,
-      },
-      errorPolicy: "all",
-    }).then((data) => data.data?.mappack);
-  };
+export async function generateMetadata(
+  props: PageProps<"/mappack/[mxId]">,
+): Promise<Metadata> {
+  const { mxId } = await props.params;
+  const { data } = await fetchMappack(mxId);
 
-  return fetchSelectedPlayers(
-    mappackData,
-    selectedPlayer,
-    fetchPlayerInfo as (login: string) => Promise<MappackPlayerInfoFragment>,
-  );
+  return { title: data?.mappack.mxName ?? `Mappack ${mxId}` };
 }
 
-type SP = ServerProps<
-  {
-    mxId: string;
-  },
-  { player?: string | string[] }
->;
+export default async function MappackPage(props: PageProps<"/mappack/[mxId]">) {
+  const { mxId } = await props.params;
 
-export default async function Mappack(props: SP) {
-  const params = await props.params;
-  const searchParams = await props.searchParams;
+  const { data, error } = await fetchMappack(mxId);
+  const mappack = data?.mappack;
 
-  const { data: mappackLbData, error } = await query({
-    query: GET_MAPPACK_LEADERBOARD,
-    variables: { mappackId: params.mxId },
-    errorPolicy: "all",
-  });
+  if (error || !mappack) {
+    return (
+      <PageShell
+        titleSegments={[<PageTitle key="title">Events</PageTitle>]}
+        selectedMenu="events"
+      >
+        <Panel className="m-auto p-8">
+          Could not load this mappack: {error?.message ?? "unknown mappack"}
+        </Panel>
+      </PageShell>
+    );
+  }
 
-  const mappack = mappackLbData?.mappack;
-  const data = await fetchPlayers(
-    params.mxId,
-    mappack,
-    searchParams.player ?? [],
-  );
+  const name = mappack.mxName ?? `Mappack ${mxId}`;
 
-  const startDate = moment(mappack?.mxCreatedAt).format("DD/MM/YYYY");
+  return (
+    <PageShell
+      titleSegments={[
+        <PageTitle key="title">Events</PageTitle>,
+        <PageTitle key="mappack">{name}</PageTitle>,
+      ]}
+      selectedMenu="events"
+    >
+      <div className="mx-auto flex h-full min-h-0 w-full max-w-content flex-col gap-2">
+        <Panel>
+          <SubPanel className="gap-3 px-5 py-3">
+            <div>
+              <h2 className="m-0 truncate text-2xl font-black">{name}</h2>
+              {mappack.mxAuthor && (
+                <span className="text-sm">By {mappack.mxAuthor}</span>
+              )}
+            </div>
 
-  return error ? (
-    error.message
-  ) : (
-    <>
-      <CampaignHeader
-        bannerImgUrl={null}
-        title={mappack?.mxName ?? ""}
-        startDate={startDate}
-        authors={mappack?.mxAuthor && <span>By {mappack.mxAuthor}</span>}
-      />
+            <div className="flex flex-wrap gap-2">
+              {mappack.mxCreatedAt && (
+                <Badge variant="secondary">
+                  <CalendarDays />
+                  {format(parseApiDate(mappack.mxCreatedAt), "dd/MM/yyyy")}
+                </Badge>
+              )}
+              <Badge variant="secondary">
+                <MapIcon />
+                {mappack.nbMaps} maps
+              </Badge>
+            </div>
+          </SubPanel>
+        </Panel>
 
-      <CampaignTable data={data} nbMaps={mappack?.nbMaps ?? 0} />
-    </>
+        <Panel
+          className="flex min-h-0 flex-1 flex-col"
+          header={<SectionHeader title="Leaderboard" />}
+        >
+          <Suspense>
+            <MappackStandings
+              mappackId={mxId}
+              mappackName={name}
+              mappack={mappack}
+            />
+          </Suspense>
+        </Panel>
+      </div>
+    </PageShell>
   );
 }

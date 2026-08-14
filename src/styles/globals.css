@@ -1,1 +1,143 @@
-@layer reset, base, tokens, recipes, utilities;
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * The site is dark-only: the palette below is the dark theme, applied on :root
+ * so every shadcn component picks it up without a theme toggle.
+ */
+:root {
+  --radius: 0.625rem;
+
+  /* Layout scale. The logo drives the sidebar width, bar heights and radii. */
+  --logo-size: 50px;
+  --content-max: 1300px;
+
+  /*
+   * Containers nest: a bar or a block holds panels, a panel holds insets.
+   * Each level sits `--panel-inset` inside its parent and drops that much
+   * radius, so nested corners stay concentric with the ones around them.
+   * Always pair a radius with the matching padding (`p-inset`).
+   */
+  --panel-inset: 0.5rem;
+  --bar-radius: calc(var(--logo-size) + var(--panel-inset));
+  --block-radius: calc(var(--logo-size) / 2 + var(--panel-inset));
+  --panel-radius: calc(var(--block-radius) - var(--panel-inset));
+  --inset-radius: calc(var(--panel-radius) - var(--panel-inset));
+
+  /* Surfaces are translucent so the background image stays visible. */
+  --surface: rgb(11 11 11 / 0.77);
+
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: var(--surface);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.16 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.53 0.115 258);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(1 0 0 / 8%);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(1 0 0 / 6%);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(1 0 0 / 12%);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.53 0.115 258);
+
+  /* Domain accents. */
+  --time: #346ab4;
+  --link: #87b0e9;
+  --medal-champion: #e6c043;
+  --medal-gold: #e6c043;
+  --medal-silver: #c4c4c4;
+  --medal-bronze: #ce8946;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-surface: var(--surface);
+  --color-time: var(--time);
+  --color-link: var(--link);
+  --color-medal-champion: var(--medal-champion);
+  --color-medal-gold: var(--medal-gold);
+  --color-medal-silver: var(--medal-silver);
+  --color-medal-bronze: var(--medal-bronze);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  /* Nesting order: bar/block → panel → inset. See `--panel-inset` above. */
+  --radius-bar: var(--bar-radius);
+  --radius-block: var(--block-radius);
+  --radius-panel: var(--panel-radius);
+  --radius-inset: var(--inset-radius);
+
+  --spacing-logo: var(--logo-size);
+  --spacing-inset: var(--panel-inset);
+  --container-content: var(--content-max);
+
+  --font-sans:
+    var(--lato), "Trebuchet MS", sans-serif, var(--forkAwesome),
+    var(--kenneyIcons);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    height: 100%;
+    min-width: 390px;
+    min-height: 390px;
+    color-scheme: dark;
+  }
+
+  body {
+    @apply flex h-full flex-col bg-cover bg-fixed bg-center bg-no-repeat font-sans font-normal text-foreground;
+    background-image: url("/img/background.jpg");
+  }
+
+  /* The tiny viewports the game browser reports need the whole UI scaled down. */
+  @media only screen and (max-width: 420px) {
+    html {
+      zoom: 0.8;
+    }
+  }
+
+  @media only screen and (max-width: 320px) {
+    html {
+      zoom: 0.6;
+    }
+  }
+}
+
+@utility scrollbar-slim {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-border) transparent;
+}

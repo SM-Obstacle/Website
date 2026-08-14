@@ -1,53 +1,61 @@
+import type { Metadata } from "next";
 import Markdown from "react-markdown";
 import rehypeRaw from "rehype-raw";
-import {
-  Article,
-  LastUpdate,
-  MdIframe,
-  MdImg,
-  MdLink,
-} from "@/components/Article";
+
+import { ArticleBody, markdownComponents } from "@/components/Article";
 import FormattedDate from "@/components/FormattedDate";
-import { type Article as ArticleType, fetchArticles } from "@/lib/article";
+import PageShell from "@/components/layout/PageShell";
+import { Panel } from "@/components/layout/Panel";
+import PageTitle from "@/components/layout/PageTitle";
+import { type Article, fetchArticles } from "@/lib/article";
+
+export const revalidate = 300;
+
+export const metadata: Metadata = {
+  title: "Latest news",
+};
 
 export default async function LatestNews() {
   const articles = await fetchArticles();
   const lastArticle = Object.entries(articles)
-    .filter(([key, _]) => key !== "__resources__")
-    .map(([_, article]) => article)
-    .reduce<ArticleType | null>((previous, current) => {
-      if (previous === null) {
-        return current;
-      } else {
-        return current.date > previous.date ? current : previous;
-      }
-    }, null);
+    .filter(([slug]) => slug !== "__resources__")
+    .map(([, article]) => article)
+    .reduce<Article | null>(
+      (latest, current) =>
+        latest === null || current.date > latest.date ? current : latest,
+      null,
+    );
 
   const content = await lastArticle?.fetchContent();
 
   return (
-    <Article>
-      {lastArticle ? (
-        <>
-          <div>
-            <Markdown
-              rehypePlugins={[rehypeRaw]}
-              components={{
-                iframe: MdIframe,
-                img: MdImg,
-                a: MdLink,
-              }}
+    <PageShell
+      titleSegments={[<PageTitle key="title">Latest news</PageTitle>]}
+      selectedMenu="resources"
+    >
+      <div className="scrollbar-slim mx-auto h-full w-full max-w-content overflow-y-auto">
+        <Panel className="p-5">
+          {lastArticle && content ? (
+            <ArticleBody
+              lastUpdate={
+                <>
+                  Date:{" "}
+                  <FormattedDate onlyDate>{lastArticle.date}</FormattedDate>
+                </>
+              }
             >
-              {content}
-            </Markdown>
-          </div>
-          <LastUpdate>
-            Date: <FormattedDate onlyDate>{lastArticle.date}</FormattedDate>
-          </LastUpdate>
-        </>
-      ) : (
-        <h1>No article found!</h1>
-      )}
-    </Article>
+              <Markdown
+                rehypePlugins={[rehypeRaw]}
+                components={markdownComponents}
+              >
+                {content}
+              </Markdown>
+            </ArticleBody>
+          ) : (
+            <p className="text-muted-foreground">No article found.</p>
+          )}
+        </Panel>
+      </div>
+    </PageShell>
   );
 }

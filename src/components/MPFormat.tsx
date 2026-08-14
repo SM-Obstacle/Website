@@ -4,7 +4,7 @@ import { type IToken, Style } from "@/lib/mpformat/tokens";
 import GenericToken from "@/lib/mpformat/tokens/generic_token";
 import LinkTokenClose from "@/lib/mpformat/tokens/link_token_close";
 import LinkTokenOpen from "@/lib/mpformat/tokens/link_token_open";
-import { css } from "../../@shadow-panda/styled-system/css";
+import { cn } from "@/lib/utils";
 import Link, { type LinkProps } from "./Link";
 
 function MPFormatGenericToken({ token }: { token: GenericToken }) {
@@ -103,20 +103,20 @@ export default function MPFormat({
 
 export function MPFormatLink({
   path,
-  component = Link,
+  component: Component = Link,
   children,
+  className,
   ...rest
 }: {
   path: string;
   component?: React.ElementType<LinkProps>;
   children: string;
 } & Omit<LinkProps, "href">) {
-  const Component = component;
   return (
     <Component
       title={toPlainText(parse(children))}
       href={path}
-      className={css({ textDecoration: "none" })}
+      className={cn("no-underline hover:underline", className)}
       {...rest}
     >
       <MPFormat disableLinks>{children}</MPFormat>

@@ -1,102 +1,64 @@
-import { GetMapQuery } from "@/app/__generated__/graphql";
+import { Flag, Map as MapIcon } from "lucide-react";
+
+import type { GetMapQuery } from "@/app/__generated__/graphql";
+import Link from "@/components/Link";
+import { Panel, SubPanel } from "@/components/layout/Panel";
 import MPFormat, { MPFormatLink } from "@/components/MPFormat";
-import { H2, H3 } from "@/components/ui/atoms/typography";
-import Block, { SubBlock } from "@/components/ui/organisms/Block";
-import { css } from "@shadow-panda/styled-system/css";
-import { FaMap } from "react-icons/fa6";
+import { Badge } from "@/components/ui/badge";
 import MxButton from "./MxButton";
 
 export default function MapInfo({ map }: { map: GetMapQuery["map"] }) {
   return (
-    <Block
-      className={css({
-        display: "flex",
-        flexDir: "row",
-        alignItems: "start",
-      })}
-    >
-      {/* Map picture */}
-      <div
-        className={css({
-          aspectRatio: "1 / 1",
-          width: "calc(var(--profile-picture-size) * 0.75)",
-          rounded: "calc(token(sizes.logoSize) / 2 - token(spacing.2))",
-          bgColor: "black",
-          margin: "token(spacing.3)",
-          lg: {
-            width: "var(--profile-picture-size)",
-          },
-        })}
-      >
-        <FaMap
-          className={css({
-            width: "30%",
-            height: "100%",
-            margin: "auto",
-          })}
-        />
+    <Panel className="flex-row items-start">
+      {/* Placeholder thumbnail: the API has no map previews. Sitting one inset
+          in from the panel, it takes the panel's radius so both corners curve
+          together. */}
+      <div className="flex aspect-square w-(--profile-picture-size) shrink-0 items-center justify-center rounded-panel bg-black">
+        <MapIcon className="size-1/3" />
       </div>
 
-      {/* Map info */}
-      <SubBlock
-        className={css({
-          width: "100%",
-          height: "100%",
-          padding: "token(spacing.2) token(spacing.5)",
+      <SubPanel className="h-full w-full min-w-0 gap-3 px-5 py-2">
+        <div className="flex items-start justify-between gap-2">
+          <div className="min-w-0">
+            <h2 className="m-0 truncate text-2xl font-bold">
+              <MPFormat>{map.name}</MPFormat>
+            </h2>
 
-          display: "grid",
-          gridTemplateRows: "auto auto 1fr auto",
-          gridTemplateColumns: "auto 1fr auto",
-        })}
-      >
-        {/* Name */}
-        <H2
-          className={css({
-            fontWeight: "bold",
-            fontSize: "2xl",
-          })}
-        >
-          <MPFormat>{map.name}</MPFormat>
-        </H2>
+            <h3 className="m-0 truncate text-base">
+              by{" "}
+              <MPFormatLink path={`/player/${map.player.login}`}>
+                {map.player.name}
+              </MPFormatLink>
+            </h3>
+          </div>
 
-        {/* Author */}
-        <H3
-          className={css({
-            gridRow: 2,
-          })}
-        >
-          by{" "}
-          <MPFormatLink path={`/player/${map.player.login}`}>
-            {map.player.name}
-          </MPFormatLink>
-        </H3>
-
-        {/* Badges */}
-        <div
-          className={css({
-            gridRow: 3,
-            gridColumn: "1 / -1",
-            height: "calc(4 * (1rem + token(spacing.0.5) + token(spacing.2)))",
-          })}
-        >
-          <div
-            className={css({
-              display: "flex",
-              flexDir: "row",
-              gap: "token(spacing.2)",
-              flexWrap: "wrap",
-            })}
-          ></div>
-        </div>
-
-        <div
-          className={css({
-            gridColumn: 3,
-          })}
-        >
           <MxButton gameId={map.gameId} />
         </div>
-      </SubBlock>
-    </Block>
+
+        <div className="flex flex-wrap gap-2">
+          {!!map.cpsNumber && (
+            <Badge variant="secondary">
+              <Flag />
+              {map.cpsNumber} cp{map.cpsNumber > 1 ? "s" : ""}
+            </Badge>
+          )}
+
+          {map.relatedEventEditions.map((related) => (
+            <Badge
+              key={`${related.edition.event.handle}-${related.edition.id}`}
+              variant="secondary"
+              asChild
+            >
+              <Link
+                href={`/event/${related.edition.event.handle}/${related.edition.id}/map/${related.map.gameId}`}
+              >
+                {related.edition.name}
+                {related.edition.subtitle ? ` ${related.edition.subtitle}` : ""}
+              </Link>
+            </Badge>
+          ))}
+        </div>
+      </SubPanel>
+    </Panel>
   );
 }

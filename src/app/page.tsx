@@ -1,96 +1,68 @@
-import PageBase from "@/components/ui/organisms/PageBase";
-import Block, { SubBlock } from "@/components/ui/organisms/Block";
-import { H1 } from "@/components/ui/atoms/typography";
-import CurrentEvents from "@/components/with-suspense/CurrentEvents";
-import LatestRecords from "@/components/with-suspense/LatestRecords";
-import MapOfTheWeek from "@/components/with-suspense/MapOfTheWeek";
-import PlayerOfTheWeek from "@/components/with-suspense/PlayerOfTheWeek";
-import { css } from "../../@shadow-panda/styled-system/css";
-import SeeMoreTitle from "@/components/ui/organisms/SeeMoreTitle";
+import { Suspense } from "react";
+
+import CurrentEvents from "@/components/home/CurrentEvents";
+import LatestRecords from "@/components/home/LatestRecords";
+import MapOfTheWeek from "@/components/home/MapOfTheWeek";
+import { OfTheWeekSkeleton } from "@/components/home/OfTheWeek";
+import PlayerOfTheWeek from "@/components/home/PlayerOfTheWeek";
+import PageShell from "@/components/layout/PageShell";
+import { Panel, SubPanel } from "@/components/layout/Panel";
+import PageTitle from "@/components/layout/PageTitle";
+import SectionHeader from "@/components/layout/SectionHeader";
+import { Skeleton } from "@/components/ui/skeleton";
+
+// Re-render at most once a minute so the page never serves stale data.
+export const revalidate = 60;
 
 export default function Home() {
   return (
-    <PageBase titleSegments={[<H1>Home</H1>]} selectedMenu="home">
-      <div
-        className={css({
-          height: "100%",
-          maxW: "token(sizes.maxContentWidth)",
-          margin: "auto",
-
-          display: "flex",
-          flexDir: "column",
-          gap: "token(spacing.2)",
-
-          md: {
-            display: "grid",
-            gridGap: "token(spacing.2)",
-            gridTemplateRows: "min-content auto auto",
-            gridTemplateColumns: "1fr 1fr",
-          },
-        })}
-      >
-        {/* Latest records */}
-        <Block
-          className={css({
-            minW: 0,
-            gridColumn: "1 / -1",
-            gridRow: 1,
-          })}
-          titleBar={
-            <SeeMoreTitle title="Latest records" buttonHref="/records" />
-          }
+    <PageShell
+      titleSegments={[<PageTitle key="title">Home</PageTitle>]}
+      selectedMenu="home"
+    >
+      <div className="scrollbar-slim mx-auto flex h-full w-full max-w-content flex-col gap-2 overflow-y-auto md:grid md:grid-cols-2 md:grid-rows-[min-content_auto_auto]">
+        <Panel
+          className="col-span-full row-start-1 min-w-0"
+          header={<SectionHeader title="Latest records" href="/records" />}
         >
-          <SubBlock minW={0}>
+          <SubPanel className="min-w-0">
             <LatestRecords />
-          </SubBlock>
-        </Block>
+          </SubPanel>
+        </Panel>
 
-        <Block
-          className={css({
-            gridColumn: 1,
-            gridRow: 2,
-          })}
-          titleBar={
-            <SeeMoreTitle title="Player of the week" buttonHref="/players" />
-          }
+        <Panel
+          className="col-start-1 row-start-2"
+          header={<SectionHeader title="Player of the week" href="/players" />}
         >
-          <SubBlock
-            className={css({
-              height: "100%",
-            })}
+          <SubPanel className="h-full">
+            <Suspense fallback={<OfTheWeekSkeleton />}>
+              <PlayerOfTheWeek />
+            </Suspense>
+          </SubPanel>
+        </Panel>
+
+        <Panel
+          className="col-start-2 row-start-2"
+          header={<SectionHeader title="Map of the week" href="/maps" />}
+        >
+          <SubPanel className="h-full">
+            <Suspense fallback={<OfTheWeekSkeleton />}>
+              <MapOfTheWeek />
+            </Suspense>
+          </SubPanel>
+        </Panel>
+
+        <Panel
+          className="col-span-full row-start-3"
+          header={<SectionHeader title="Current events" href="/events" />}
+        >
+          <Suspense
+            fallback={<Skeleton className="h-40 w-full rounded-panel bg-white/10" />}
           >
-            <PlayerOfTheWeek />
-          </SubBlock>
-        </Block>
-
-        <Block
-          className={css({
-            gridColumn: 2,
-            gridRow: 2,
-          })}
-          titleBar={<SeeMoreTitle title="Map of the week" buttonHref="/maps" />}
-        >
-          <SubBlock
-            className={css({
-              height: "100%",
-            })}
-          >
-            <MapOfTheWeek />
-          </SubBlock>
-        </Block>
-
-        <Block
-          className={css({
-            gridRow: 3,
-            gridColumn: "1 / -1",
-          })}
-          titleBar={
-            <SeeMoreTitle title="Current events" buttonHref="/events" />
-          }
-        >
-          <CurrentEvents />
-        </Block>
+            <CurrentEvents />
+          </Suspense>
+        </Panel>
       </div>
-    </PageBase>
+    </PageShell>
   );
 }
