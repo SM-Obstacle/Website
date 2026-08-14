@@ -1,11 +1,15 @@
 import { Medal } from "./ranked-record";
 
 export function getApiHost() {
-  return process.env.RECORDS_API_HOST || "http://127.0.0.1:3001";
+  return process.env.RECORDS_API_HOST || "127.0.0.1:3001";
 }
 
 export function getGraphqlApiUrl() {
-  return `${getApiHost()}/graphql`;
+  return `http://${getApiHost()}/graphql`;
+}
+
+export function getGraphqlApiWsUrl() {
+  return `ws://${getApiHost()}/graphql/subscriptions`;
 }
 
 type NumericMedal = {

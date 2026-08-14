@@ -19,6 +19,7 @@
     "@shadow-panda/style-context": "^0.7.1",
     "date-fns": "^4.1.0",
     "graphql": "^16.8.1",
+    "graphql-ws": "^6.0.7",
     "lodash": "^4.17.21",
     "lucide-react": "^0.562.0",
     "moment": "^2.30.1",

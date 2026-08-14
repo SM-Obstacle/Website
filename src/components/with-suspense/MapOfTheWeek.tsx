@@ -25,7 +25,7 @@ export default async function MapOfTheWeek() {
 
   return (
     <OfTheWeek
-      path={`/player/${data?.maps.nodes[0].map.gameId}`}
+      path={`/map/${data?.maps.nodes[0].map.gameId}`}
       name={data?.maps.nodes[0].map.name ?? ""}
       icon={<FaMap />}
     />

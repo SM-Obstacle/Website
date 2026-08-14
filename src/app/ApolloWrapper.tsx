@@ -1,12 +1,15 @@
 "use client";
 
-import { HttpLink } from "@apollo/client";
+import { ApolloLink, HttpLink } from "@apollo/client";
+import { GraphQLWsLink } from "@apollo/client/link/subscriptions";
 import {
   ApolloClient,
   ApolloNextAppProvider,
   InMemoryCache,
 } from "@apollo/client-integration-nextjs";
-import { getGraphqlApiUrl } from "@/lib/utils";
+import { getGraphqlApiUrl, getGraphqlApiWsUrl } from "@/lib/utils";
+import { createClient } from "graphql-ws";
+import { OperationTypeNode } from "graphql";
 
 // have a function to create a client for you
 function makeClient() {
@@ -26,11 +29,23 @@ function makeClient() {
     // const { data } = useSuspenseQuery(MY_QUERY, { context: { fetchOptions: { ... }}});
   });
 
+  const wsLink = new GraphQLWsLink(
+    createClient({
+      url: getGraphqlApiWsUrl(),
+    }),
+  );
+
+  const splitLink = ApolloLink.split(
+    ({ operationType }) => operationType === OperationTypeNode.SUBSCRIPTION,
+    wsLink,
+    httpLink,
+  );
+
   // use the `ApolloClient` from "@apollo/client-integration-nextjs"
   return new ApolloClient({
     // use the `InMemoryCache` from "@apollo/client-integration-nextjs"
     cache: new InMemoryCache(),
-    link: httpLink,
+    link: splitLink,
   });
 }
 
