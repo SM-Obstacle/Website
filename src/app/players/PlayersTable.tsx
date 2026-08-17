@@ -25,6 +25,7 @@ import {
 import { useUrlParams } from "@/hooks/useUrlParams";
 import { buildPlayersFilter } from "@/lib/filters";
 import { readPagination } from "@/lib/pagination";
+import { readSort } from "@/lib/sort";
 
 const GET_PLAYERS = gql(/* GraphQL */ `
   query GetPlayers(
@@ -71,6 +72,7 @@ export default function PlayersTable() {
     variables: {
       filter: buildPlayersFilter(searchParams),
       ...readPagination(searchParams),
+      ...readSort(searchParams, "playerMapRanking"),
     },
     notifyOnNetworkStatusChange: true,
   });
@@ -125,7 +127,10 @@ export default function PlayersTable() {
       </SubPanel>
 
       <SubPanel className="shrink-0">
-        <PaginationControls pageInfo={connection?.pageInfo} disabled={loading} />
+        <PaginationControls
+          pageInfo={connection?.pageInfo}
+          disabled={loading}
+        />
       </SubPanel>
     </>
   );

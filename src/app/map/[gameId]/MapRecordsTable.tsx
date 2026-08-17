@@ -3,10 +3,7 @@
 import { useQuery } from "@apollo/client/react";
 
 import { gql } from "@/app/__generated__";
-import {
-  MapRecordSortableField,
-  SortOrder,
-} from "@/app/__generated__/graphql";
+import { MapRecordSortableField, SortOrder } from "@/app/__generated__/graphql";
 import FormattedDate from "@/components/FormattedDate";
 import { SubPanel } from "@/components/layout/Panel";
 import { MPFormatLink } from "@/components/MPFormat";
@@ -32,6 +29,7 @@ import {
 import Time from "@/components/Time";
 import { useUrlParams } from "@/hooks/useUrlParams";
 import { readPagination } from "@/lib/pagination";
+import { readSort } from "@/lib/sort";
 
 const GET_MAP_RECORDS = gql(/* GraphQL */ `
   query GetMapRecords(
@@ -74,20 +72,13 @@ const PAGE_SIZE = 25;
 export default function MapRecordsTable({ gameId }: { gameId: string }) {
   const { searchParams } = useUrlParams();
 
-  const order = searchParams.get("order");
-  // The API's DESCENDING order walks dates upwards: oldest records first.
-  const oldestFirst = order === "desc";
+  const sort = readSort(searchParams, "mapRecords");
 
   const { data, previousData, loading, error } = useQuery(GET_MAP_RECORDS, {
     variables: {
       gameId,
       ...readPagination(searchParams, PAGE_SIZE),
-      ...(order && {
-        sort: {
-          field: MapRecordSortableField.Date,
-          order: oldestFirst ? SortOrder.Descending : SortOrder.Ascending,
-        },
-      }),
+      ...sort,
     },
     notifyOnNetworkStatusChange: true,
   });
@@ -108,7 +99,12 @@ export default function MapRecordsTable({ gameId }: { gameId: string }) {
               <LeaderboardHead className="w-[20%]">Time</LeaderboardHead>
               <WideOnlyHead className="w-[20%]">
                 <span className="flex items-center justify-end gap-1">
-                  <DateSortButton oldestFirst={oldestFirst} />
+                  <DateSortButton
+                    oldestFirst={
+                      sort.sort?.field === MapRecordSortableField.Date &&
+                      sort.sort.order === SortOrder.Descending
+                    }
+                  />
                   Date
                 </span>
               </WideOnlyHead>
@@ -147,7 +143,10 @@ export default function MapRecordsTable({ gameId }: { gameId: string }) {
       </SubPanel>
 
       <SubPanel className="shrink-0">
-        <PaginationControls pageInfo={connection?.pageInfo} disabled={loading} />
+        <PaginationControls
+          pageInfo={connection?.pageInfo}
+          disabled={loading}
+        />
       </SubPanel>
     </>
   );

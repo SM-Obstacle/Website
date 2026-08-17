@@ -19,10 +19,13 @@ export default function PageShell({
   className?: string;
 }>) {
   return (
-    <div className="flex h-full overflow-hidden p-2">
+    <div className="flex h-full min-h-0 overflow-hidden p-2">
       <SidebarNav selected={selectedMenu} />
 
-      <div className="flex min-w-0 flex-1 flex-col md:ms-[calc(var(--logo-size)+1.5rem)]">
+      {/* `min-h-0` so this column can shrink past its content: without it a
+          short viewport pushes the page past the bottom of the window, where
+          the shell's `overflow-hidden` clips it out of reach. */}
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col md:ms-[calc(var(--logo-size)+1.5rem)]">
         <TitleBar segments={titleSegments} selected={selectedMenu} />
 
         <main

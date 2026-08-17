@@ -19,7 +19,7 @@ export const NAV_PAGES = {
   maps: { title: "Maps", route: "/maps", icon: Map },
   players: { title: "Players", route: "/players", icon: Users },
   events: { title: "Events", route: "/events", icon: CalendarDays },
-  resources: { title: "Resources", route: "/links", icon: BookOpen },
+  articles: { title: "Articles", route: "/links", icon: BookOpen },
 } satisfies Record<string, NavPage>;
 
 export type NavKey = keyof typeof NAV_PAGES;

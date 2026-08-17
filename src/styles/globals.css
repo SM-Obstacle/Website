@@ -113,8 +113,12 @@
 
   html {
     height: 100%;
+    /*
+     * A floor on the width only. The shell fills the window exactly and its
+     * panels scroll internally, so a minimum height would just push the page
+     * below the fold on a short window, where `overflow-hidden` clips it.
+     */
     min-width: 390px;
-    min-height: 390px;
     color-scheme: dark;
   }
 

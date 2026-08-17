@@ -24,11 +24,16 @@ import {
 } from "@/components/tables/Leaderboard";
 import PaginationControls from "@/components/tables/PaginationControls";
 import DateSortButton from "@/components/tables/DateSortButton";
-import { TableError, TableMessage, TableSkeleton } from "@/components/tables/TableStates";
+import {
+  TableError,
+  TableMessage,
+  TableSkeleton,
+} from "@/components/tables/TableStates";
 import Time from "@/components/Time";
 import { useUrlParams } from "@/hooks/useUrlParams";
 import { buildRecordsFilter } from "@/lib/filters";
 import { readPagination } from "@/lib/pagination";
+import { readSort } from "@/lib/sort";
 
 const GET_RECORDS = gql(/* GraphQL */ `
   query GetRecordsConnection(
@@ -73,20 +78,13 @@ const COLUMNS = 5;
 export default function RecordsTable() {
   const { searchParams } = useUrlParams();
 
-  const order = searchParams.get("order");
-  // The API's DESCENDING order walks dates upwards: oldest records first.
-  const oldestFirst = order === "desc";
+  const sort = readSort(searchParams, "unorderedRecords");
 
   const { data, previousData, loading, error } = useQuery(GET_RECORDS, {
     variables: {
       filter: buildRecordsFilter(searchParams),
       ...readPagination(searchParams),
-      ...(order && {
-        sort: {
-          field: UnorderedRecordSortableField.Date,
-          order: oldestFirst ? SortOrder.Descending : SortOrder.Ascending,
-        },
-      }),
+      ...sort,
     },
     notifyOnNetworkStatusChange: true,
   });
@@ -108,7 +106,9 @@ export default function RecordsTable() {
               <LeaderboardHead className="w-[20%]">Time</LeaderboardHead>
               <WideOnlyHead className="w-[20%]">
                 <span className="flex items-center justify-end gap-1">
-                  <DateSortButton oldestFirst={oldestFirst} />
+                  <DateSortButton
+                    oldestFirst={sort.sort?.order === SortOrder.Descending}
+                  />
                   Date
                 </span>
               </WideOnlyHead>
@@ -152,7 +152,10 @@ export default function RecordsTable() {
       </SubPanel>
 
       <SubPanel className="shrink-0">
-        <PaginationControls pageInfo={connection?.pageInfo} disabled={loading} />
+        <PaginationControls
+          pageInfo={connection?.pageInfo}
+          disabled={loading}
+        />
       </SubPanel>
     </>
   );

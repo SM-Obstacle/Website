@@ -502,6 +502,10 @@ enum SortState {
 	REVERSE
 }
 
+type SubscriptionRoot {
+	latestRecords: RankedRecord!
+}
+
 input UnorderedRecordSort {
 	field: UnorderedRecordSortableField!
 	order: SortOrder
@@ -525,5 +529,6 @@ Provides a scalar specification URL for specifying the behavior of custom scalar
 directive @specifiedBy(url: String!) on SCALAR
 schema {
 	query: QueryRoot
+	subscription: SubscriptionRoot
 }
 

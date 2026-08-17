@@ -3,6 +3,7 @@
 import { ChevronDown, SlidersHorizontal, X } from "lucide-react";
 import { useMemo, useState } from "react";
 
+import { useFilters } from "@/components/layout/ListPage";
 import { Panel, SubPanel } from "@/components/layout/Panel";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -50,12 +51,11 @@ export default function FilterPanel({ groups }: { groups: FilterGroup[] }) {
 
   const [values, setValues] = useState(applied);
   const [lastApplied, setLastApplied] = useState(applied);
-  const [expanded, setExpanded] = useState(false);
+  // Owned by the layout: opening the filters hides the results beside them.
+  const { expanded, setExpanded } = useFilters();
 
   // Going back and forward in history changes the filters under us; follow it.
-  if (
-    Object.keys(applied).some((key) => applied[key] !== lastApplied[key])
-  ) {
+  if (Object.keys(applied).some((key) => applied[key] !== lastApplied[key])) {
     setLastApplied(applied);
     setValues(applied);
   }
@@ -84,9 +84,18 @@ export default function FilterPanel({ groups }: { groups: FilterGroup[] }) {
 
   return (
     <Panel
-      className={cn("h-fit overflow-hidden lg:h-full", expanded && "h-full")}
+      className={cn(
+        // Only as tall as its content, and never taller than the space it has:
+        // `min-h-0` lets the flex column above shrink it past that content, and
+        // the fields then scroll inside.
+        "min-h-0 overflow-hidden w-full",
+        // Collapsed on the narrow layout it is a bar, so it matches the height
+        // of the title bar above it and the corners round the same way. Opened,
+        // it takes the row the results gave up.
+        expanded && "h-full lg:h-auto",
+      )}
       header={
-        <div className="flex h-[calc(var(--logo-size)/1.5)] items-center justify-between gap-2">
+        <div className="flex h-logo items-center justify-between gap-2 lg:h-[calc(var(--logo-size)/1.5)]">
           <h2 className="m-0 flex items-center gap-3 text-xl font-extrabold">
             <SlidersHorizontal className="size-5 lg:hidden" aria-hidden />
             Filters
@@ -100,7 +109,7 @@ export default function FilterPanel({ groups }: { groups: FilterGroup[] }) {
           <Button
             variant="secondary"
             size="icon"
-            onClick={() => setExpanded((value) => !value)}
+            onClick={() => setExpanded(!expanded)}
             aria-expanded={expanded}
             aria-controls="filters-form"
             aria-label={expanded ? "Hide filters" : "Show filters"}
@@ -117,11 +126,13 @@ export default function FilterPanel({ groups }: { groups: FilterGroup[] }) {
         id="filters-form"
         onSubmit={apply}
         className={cn(
-          "min-h-0 flex-1 flex-col justify-between gap-2 lg:flex",
+          "min-h-0 flex-1 flex-col justify-between gap-inset lg:flex",
           expanded ? "flex" : "hidden",
         )}
       >
-        <div className="scrollbar-slim min-h-0 flex-1 space-y-2 overflow-y-auto rounded-panel">
+        {/* Rounded like a sub-panel so the groups are clipped along the same
+            curve as the panel around them. */}
+        <div className="scrollbar-slim flex min-h-0 flex-1 flex-col gap-inset overflow-y-auto rounded-panel">
           {groups.map((group) => (
             <SubPanel key={group.title} className="shrink-0 gap-1 p-3">
               <h3 className="m-0 px-2 text-base font-bold">{group.title}</h3>
@@ -164,7 +175,7 @@ export default function FilterPanel({ groups }: { groups: FilterGroup[] }) {
           ))}
         </div>
 
-        <div className="flex shrink-0 gap-2">
+        <div className="flex shrink-0 gap-inset">
           <Button
             type="submit"
             variant="secondary"

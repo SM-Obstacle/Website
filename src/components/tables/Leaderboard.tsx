@@ -18,10 +18,7 @@ export function Leaderboard({
 }: React.ComponentProps<typeof Table>) {
   return (
     <Table
-      className={cn(
-        "mx-5 my-2 w-[calc(100%-2.5rem)] table-fixed",
-        className,
-      )}
+      className={cn("mx-5 my-2 w-[calc(100%-2.5rem)] table-fixed", className)}
       {...props}
     />
   );
@@ -124,7 +121,10 @@ export function WideOnlyCell({
   ...props
 }: React.ComponentProps<typeof TableCell>) {
   return (
-    <LeaderboardCell className={cn("hidden md:table-cell", className)} {...props} />
+    <LeaderboardCell
+      className={cn("hidden md:table-cell", className)}
+      {...props}
+    />
   );
 }
 
@@ -133,6 +133,9 @@ export function WideOnlyHead({
   ...props
 }: React.ComponentProps<typeof TableHead>) {
   return (
-    <LeaderboardHead className={cn("hidden md:table-cell", className)} {...props} />
+    <LeaderboardHead
+      className={cn("hidden md:table-cell", className)}
+      {...props}
+    />
   );
 }

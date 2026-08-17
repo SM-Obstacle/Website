@@ -57,7 +57,9 @@ export default function Home() {
           header={<SectionHeader title="Current events" href="/events" />}
         >
           <Suspense
-            fallback={<Skeleton className="h-40 w-full rounded-panel bg-white/10" />}
+            fallback={
+              <Skeleton className="h-40 w-full rounded-panel bg-white/10" />
+            }
           >
             <CurrentEvents />
           </Suspense>

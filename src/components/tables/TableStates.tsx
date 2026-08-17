@@ -2,7 +2,11 @@ import { AlertTriangle } from "lucide-react";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
-import { LeaderboardBody, LeaderboardCell, LeaderboardRow } from "./Leaderboard";
+import {
+  LeaderboardBody,
+  LeaderboardCell,
+  LeaderboardRow,
+} from "./Leaderboard";
 
 export function TableSkeleton({
   rows = 12,

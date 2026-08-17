@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery } from "@apollo/client/react";
+import { useQuery, useSubscription } from "@apollo/client/react";
 import { Medal } from "lucide-react";
 
 import { gql } from "@/app/__generated__";
@@ -19,6 +19,22 @@ import {
 import { TableError, TableSkeleton } from "@/components/tables/TableStates";
 import Time from "@/components/Time";
 import { cn } from "@/lib/utils";
+
+const RECORDS_SUBSCRIPTION = gql(/* GraphQL */ `
+  subscription Records {
+    latestRecords {
+      player {
+        login
+        name
+      }
+      map {
+        gameId
+        name
+      }
+      ...RecordBase
+    }
+  }
+`);
 
 const GET_RECORDS = gql(/* GraphQL */ `
   query GetRecords(

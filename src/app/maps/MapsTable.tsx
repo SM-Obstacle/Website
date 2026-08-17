@@ -25,6 +25,7 @@ import {
 import { useUrlParams } from "@/hooks/useUrlParams";
 import { buildMapsFilter } from "@/lib/filters";
 import { readPagination } from "@/lib/pagination";
+import { readSort } from "@/lib/sort";
 
 const GET_MAPS = gql(/* GraphQL */ `
   query GetMaps(
@@ -75,6 +76,7 @@ export default function MapsTable() {
     variables: {
       filter: buildMapsFilter(searchParams),
       ...readPagination(searchParams),
+      ...readSort(searchParams, "playerMapRanking"),
     },
     notifyOnNetworkStatusChange: true,
   });
@@ -135,7 +137,10 @@ export default function MapsTable() {
       </SubPanel>
 
       <SubPanel className="shrink-0">
-        <PaginationControls pageInfo={connection?.pageInfo} disabled={loading} />
+        <PaginationControls
+          pageInfo={connection?.pageInfo}
+          disabled={loading}
+        />
       </SubPanel>
     </>
   );
