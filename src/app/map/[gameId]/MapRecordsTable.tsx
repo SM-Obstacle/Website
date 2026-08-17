@@ -8,7 +8,6 @@ import FormattedDate from "@/components/FormattedDate";
 import { SubPanel } from "@/components/layout/Panel";
 import { MPFormatLink } from "@/components/MPFormat";
 import NoPropagationLink from "@/components/NoPropagationLink";
-import RecordDialog from "@/components/records/RecordDialog";
 import {
   Leaderboard,
   LeaderboardBody,
@@ -158,8 +157,6 @@ export default function MapRecordsTable({ gameId }: { gameId: string }) {
           disabled={loading}
         />
       </SubPanel>
-
-      <RecordDialog recordId={selection.selected} onClose={selection.close} />
     </>
   );
 }

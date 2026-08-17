@@ -4,6 +4,7 @@ import FilterPanel, { type FilterGroup } from "@/components/filters/FilterPanel"
 import ListPage from "@/components/layout/ListPage";
 import PageShell from "@/components/layout/PageShell";
 import PageTitle from "@/components/layout/PageTitle";
+import WithRecordAside from "@/components/records/WithRecordAside";
 
 const FILTER_GROUPS: FilterGroup[] = [
   {
@@ -37,15 +38,17 @@ export default function RecordsLayout({ children }: LayoutProps<"/records">) {
       titleSegments={[<PageTitle key="title">Records</PageTitle>]}
       selectedMenu="records"
     >
-      <ListPage
-        filters={
-          <Suspense>
-            <FilterPanel groups={FILTER_GROUPS} />
-          </Suspense>
-        }
-      >
-        {children}
-      </ListPage>
+      <WithRecordAside>
+        <ListPage
+          filters={
+            <Suspense>
+              <FilterPanel groups={FILTER_GROUPS} />
+            </Suspense>
+          }
+        >
+          {children}
+        </ListPage>
+      </WithRecordAside>
     </PageShell>
   );
 }

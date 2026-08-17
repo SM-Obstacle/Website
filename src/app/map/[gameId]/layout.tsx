@@ -8,6 +8,7 @@ import { Panel } from "@/components/layout/Panel";
 import PageTitle from "@/components/layout/PageTitle";
 import SectionHeader from "@/components/layout/SectionHeader";
 import MPFormat from "@/components/MPFormat";
+import WithRecordAside from "@/components/records/WithRecordAside";
 import { parse, toPlainText } from "@/lib/mpformat/mpformat";
 import MapInfo from "./MapInfo";
 
@@ -93,21 +94,23 @@ export default async function MapLayout(props: LayoutProps<"/map/[gameId]">) {
       ]}
       selectedMenu="maps"
     >
-      <div className="mx-auto flex h-full min-h-0 w-full max-w-content flex-col gap-2 [--profile-picture-size:75px] lg:[--profile-picture-size:100px]">
-        <MapInfo map={data.map} />
+      <WithRecordAside>
+        <div className="mx-auto flex h-full min-h-0 w-full max-w-content flex-col gap-2 [--profile-picture-size:75px] lg:[--profile-picture-size:100px]">
+          <MapInfo map={data.map} />
 
-        <Panel
-          className="flex min-h-0 flex-1 flex-col"
-          header={
-            <SectionHeader
-              title="Leaderboard"
-              href={`/records?mapUid=${data.map.gameId}`}
-            />
-          }
-        >
-          {props.children}
-        </Panel>
-      </div>
+          <Panel
+            className="flex min-h-0 flex-1 flex-col"
+            header={
+              <SectionHeader
+                title="Leaderboard"
+                href={`/records?mapUid=${data.map.gameId}`}
+              />
+            }
+          >
+            {props.children}
+          </Panel>
+        </div>
+      </WithRecordAside>
     </PageShell>
   );
 }

@@ -7,7 +7,6 @@ import FormattedDate from "@/components/FormattedDate";
 import { SubPanel } from "@/components/layout/Panel";
 import { MPFormatLink } from "@/components/MPFormat";
 import NoPropagationLink from "@/components/NoPropagationLink";
-import RecordDialog from "@/components/records/RecordDialog";
 import {
   Leaderboard,
   LeaderboardBody,
@@ -54,6 +53,7 @@ const GET_PLAYER_RECORDS = gql(/* GraphQL */ `
         }
         nodes {
           map {
+            id
             gameId
             name
           }
@@ -134,8 +134,6 @@ export default function PlayerRecordsTable({ login }: { login: string }) {
       <SubPanel className="shrink-0">
         <PaginationControls pageInfo={connection?.pageInfo} disabled={loading} />
       </SubPanel>
-
-      <RecordDialog recordId={selection.selected} onClose={selection.close} />
     </>
   );
 }

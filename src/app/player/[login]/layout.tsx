@@ -7,6 +7,7 @@ import { Panel } from "@/components/layout/Panel";
 import PageTitle from "@/components/layout/PageTitle";
 import SectionHeader from "@/components/layout/SectionHeader";
 import MPFormat from "@/components/MPFormat";
+import WithRecordAside from "@/components/records/WithRecordAside";
 import { parse, toPlainText } from "@/lib/mpformat/mpformat";
 import PlayerInfo from "./PlayerInfo";
 
@@ -69,21 +70,23 @@ export default async function PlayerLayout(
       ]}
       selectedMenu="players"
     >
-      <div className="mx-auto flex h-full min-h-0 w-full max-w-content flex-col gap-2 [--profile-picture-size:75px] lg:[--profile-picture-size:100px]">
-        <PlayerInfo player={data.player} />
+      <WithRecordAside>
+        <div className="mx-auto flex h-full min-h-0 w-full max-w-content flex-col gap-2 [--profile-picture-size:75px] lg:[--profile-picture-size:100px]">
+          <PlayerInfo player={data.player} />
 
-        <Panel
-          className="flex min-h-0 flex-1 flex-col"
-          header={
-            <SectionHeader
-              title="Latest records"
-              href={`/records?playerLogin=${data.player.login}`}
-            />
-          }
-        >
-          {props.children}
-        </Panel>
-      </div>
+          <Panel
+            className="flex min-h-0 flex-1 flex-col"
+            header={
+              <SectionHeader
+                title="Latest records"
+                href={`/records?playerLogin=${data.player.login}`}
+              />
+            }
+          >
+            {props.children}
+          </Panel>
+        </div>
+      </WithRecordAside>
     </PageShell>
   );
 }

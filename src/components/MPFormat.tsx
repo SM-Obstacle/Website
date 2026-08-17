@@ -1,3 +1,5 @@
+"use client";
+
 import { rgb12to24 } from "@/lib/mpformat/color";
 import { parse, toPlainText } from "@/lib/mpformat/mpformat";
 import { type IToken, Style } from "@/lib/mpformat/tokens";
@@ -6,6 +8,7 @@ import LinkTokenClose from "@/lib/mpformat/tokens/link_token_close";
 import LinkTokenOpen from "@/lib/mpformat/tokens/link_token_open";
 import { cn } from "@/lib/utils";
 import Link, { type LinkProps } from "./Link";
+import { useTheme } from "next-themes";
 
 function MPFormatGenericToken({ token }: { token: GenericToken }) {
   return token.style ? (
@@ -93,7 +96,12 @@ export default function MPFormat({
   children: string;
   disableLinks?: boolean;
 }) {
-  const parsed = parse(children, { disableLinks });
+  const theme = useTheme();
+  const parsed = parse(children, {
+    disableLinks,
+    darkBackground: theme.resolvedTheme === "dark",
+    lightBackground: theme.resolvedTheme === "light",
+  });
   return (
     <span>
       <MPFormatInner tokens={parsed} />

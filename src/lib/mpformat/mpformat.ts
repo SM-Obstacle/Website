@@ -1,224 +1,228 @@
-import { invertLight } from './color'
-import { IToken, Style } from './tokens'
-import GenericToken from './tokens/generic_token'
-import LinkTokenClose from './tokens/link_token_close'
-import LinkTokenOpen from './tokens/link_token_open'
+import { invertLight, nudgeDark } from "./color";
+import { IToken, Style } from "./tokens";
+import GenericToken from "./tokens/generic_token";
+import LinkTokenClose from "./tokens/link_token_close";
+import LinkTokenOpen from "./tokens/link_token_open";
 
 export interface ParseOptions {
-  disableLinks?: boolean
-  lightBackground?: boolean
-  externalLinks?: boolean
+  disableLinks?: boolean;
+  lightBackground?: boolean;
+  darkBackground?: boolean;
+  externalLinks?: boolean;
 }
 
 export function parse(text: string, options: ParseOptions = {}): IToken[] {
-  let isCode = false
-  let isQuickLink = false
-  let isPrettyLink = false
-  let style = 0
-  const tokens: IToken[] = []
-  const styleStack: number[] = []
-  let nextToken = new GenericToken(null, null)
-  let nextLinkToken: LinkTokenOpen | null = null
-  let linkLevel = 0
-  let color: string | null = null
-  let endColor = false
-  let addChar = false
+  let isCode = false;
+  let isQuickLink = false;
+  let isPrettyLink = false;
+  let style = 0;
+  const tokens: IToken[] = [];
+  const styleStack: number[] = [];
+  let nextToken = new GenericToken(null, null);
+  let nextLinkToken: LinkTokenOpen | null = null;
+  let linkLevel = 0;
+  let color: string | null = null;
+  let endColor = false;
+  let addChar = false;
 
   function endLink() {
-    if (nextToken.text !== '') {
-      tokens.push(nextToken)
-      nextToken = new GenericToken(style, null)
-      tokens.push(new LinkTokenClose())
+    if (nextToken.text !== "") {
+      tokens.push(nextToken);
+      nextToken = new GenericToken(style, null);
+      tokens.push(new LinkTokenClose());
     } else if (tokens[tokens.length - 1] === nextLinkToken) {
-      tokens.pop()
+      tokens.pop();
     } else {
-      tokens.push(new LinkTokenClose())
+      tokens.push(new LinkTokenClose());
     }
 
-    nextLinkToken = null
-    isQuickLink = false
-    isPrettyLink = false
+    nextLinkToken = null;
+    isQuickLink = false;
+    isPrettyLink = false;
   }
 
   function endText(force: boolean = false) {
     if (force || style !== nextToken.style) {
-      if (nextToken.text !== '') {
-        tokens.push(nextToken)
-        nextToken = new GenericToken(style, null)
+      if (nextToken.text !== "") {
+        tokens.push(nextToken);
+        nextToken = new GenericToken(style, null);
       } else {
-        nextToken.style = style
+        nextToken.style = style;
       }
     }
   }
 
-  const ref = text.split('')
+  const ref = text.split("");
 
-  let j = 0
+  let j = 0;
   for (let index = j, len = ref.length; j < len; index = ++j) {
-    const c = ref[index]
+    const c = ref[index];
     if (isCode) {
-      const tok = c.toLowerCase()
+      const tok = c.toLowerCase();
       switch (tok) {
-        case 'i': {
-          style = style ^ Style.ITALIC
-          break
+        case "i": {
+          style = style ^ Style.ITALIC;
+          break;
         }
-        case 'o': {
-          style = style ^ Style.BOLD
-          break
+        case "o": {
+          style = style ^ Style.BOLD;
+          break;
         }
-        case 's': {
-          style = style ^ Style.SHADOWED
-          break
+        case "s": {
+          style = style ^ Style.SHADOWED;
+          break;
         }
-        case 'w': {
-          style = style | Style.WIDE
-          style = style & ~Style.NARROW
-          break
+        case "w": {
+          style = style | Style.WIDE;
+          style = style & ~Style.NARROW;
+          break;
         }
-        case 'n': {
-          style = style | Style.NARROW
-          style = style & ~Style.WIDE
-          break
+        case "n": {
+          style = style | Style.NARROW;
+          style = style & ~Style.WIDE;
+          break;
         }
-        case 'l':
-        case 'h':
-        case 'p': {
+        case "l":
+        case "h":
+        case "p": {
           if (nextLinkToken !== null) {
-            endLink()
+            endLink();
           } else {
-            endText(true)
+            endText(true);
             nextLinkToken = new LinkTokenOpen(
-              tok === 'h',
+              tok === "h",
               null,
-              options.externalLinks
-            )
+              options.externalLinks,
+            );
             if (!options.disableLinks) {
-              tokens.push(nextLinkToken)
+              tokens.push(nextLinkToken);
             }
-            isQuickLink = true
-            isPrettyLink = true
-            linkLevel = styleStack.length
+            isQuickLink = true;
+            isPrettyLink = true;
+            linkLevel = styleStack.length;
           }
-          break
+          break;
         }
-        case 'z': {
+        case "z": {
           style =
             styleStack.length === 0
               ? styleStack.length
-              : styleStack[styleStack.length - 1]
+              : styleStack[styleStack.length - 1];
           if (nextLinkToken) {
-            endLink()
+            endLink();
           }
-          break
+          break;
         }
-        case 'm': {
-          style = style & ~(Style.NARROW | Style.WIDE)
-          break
+        case "m": {
+          style = style & ~(Style.NARROW | Style.WIDE);
+          break;
         }
-        case 'g': {
+        case "g": {
           style =
             style &
             (styleStack.length === 0
               ? ~0x1fff
-              : styleStack[styleStack.length - 1] | ~0x1fff)
-          break
+              : styleStack[styleStack.length - 1] | ~0x1fff);
+          break;
         }
-        case '<': {
-          styleStack.push(style)
-          break
+        case "<": {
+          styleStack.push(style);
+          break;
         }
-        case '<': {
+        case "<": {
           if (styleStack.length !== 0) {
-            style = styleStack.pop()!
+            style = styleStack.pop()!;
             if (nextLinkToken && linkLevel > styleStack.length) {
-              endLink()
+              endLink();
             }
           }
-          break
+          break;
         }
-        case '$': {
-          nextToken.text += '$'
-          break
+        case "$": {
+          nextToken.text += "$";
+          break;
         }
         default: {
           if (/[a-f0-9]/i.test(c)) {
-            color = c
+            color = c;
           }
         }
       }
-      endText()
-      isCode = false
-    } else if (c === '$') {
-      isCode = true
+      endText();
+      isCode = false;
+    } else if (c === "$") {
+      isCode = true;
       if (isQuickLink && isPrettyLink) {
-        isPrettyLink = false
+        isPrettyLink = false;
       }
     } else if (color) {
-      endColor = false
-      addChar = false
+      endColor = false;
+      addChar = false;
 
       if (/[a-f0-9]/i.test(c)) {
-        color += c.replace(/[^a-f0-9]/gi, '0')
-        endColor = color.length === 3
+        color += c.replace(/[^a-f0-9]/gi, "0");
+        endColor = color.length === 3;
       } else {
         for (let i = 0, len = 3 - color.length; i < len; i += 1) {
-          color += '0'
+          color += "0";
         }
-        endColor = true
-        addChar = true
+        endColor = true;
+        addChar = true;
       }
 
       if (endColor) {
         if (options.lightBackground) {
-          color = invertLight(color)
+          color = invertLight(color);
         }
-        style = style & ~0xfff
-        style = style | Style.COLORED | (parseInt(color, 16) & 0xfff)
-        endText()
-        color = null
+        if (options.darkBackground) {
+          color = nudgeDark(color);
+        }
+        style = style & ~0xfff;
+        style = style | Style.COLORED | (parseInt(color, 16) & 0xfff);
+        endText();
+        color = null;
         if (addChar) {
-          nextToken.text += c
+          nextToken.text += c;
         }
       }
     } else if (isQuickLink && isPrettyLink) {
-      if (c === '[') {
-        isQuickLink = false
+      if (c === "[") {
+        isQuickLink = false;
       } else {
-        isPrettyLink = false
-        nextToken.text += c
+        isPrettyLink = false;
+        nextToken.text += c;
         if (nextLinkToken) {
-          nextLinkToken.link += c
+          nextLinkToken.link += c;
         }
       }
     } else if (isPrettyLink) {
-      if (c === ']') {
-        isPrettyLink = false
+      if (c === "]") {
+        isPrettyLink = false;
       } else if (nextLinkToken) {
-        nextLinkToken.link += c
+        nextLinkToken.link += c;
       }
     } else {
-      nextToken.text += c
+      nextToken.text += c;
       if (isQuickLink && nextLinkToken) {
-        nextLinkToken.link += c
+        nextLinkToken.link += c;
       }
     }
   }
 
-  if (nextToken.text !== '') {
-    tokens.push(nextToken)
+  if (nextToken.text !== "") {
+    tokens.push(nextToken);
   }
   if (nextLinkToken && !options.disableLinks) {
-    tokens.push(new LinkTokenClose())
+    tokens.push(new LinkTokenClose());
   }
 
-  return tokens
+  return tokens;
 }
 
 export function toHTML(tokens: IToken[]): string {
-  return tokens.map((tok) => tok.toHTML()).join('')
+  return tokens.map((tok) => tok.toHTML()).join("");
 }
 
 export function toPlainText(tokens: IToken[]): string {
-  return tokens.map((tok) => tok.toPlainText()).join('')
+  return tokens.map((tok) => tok.toPlainText()).join("");
 }

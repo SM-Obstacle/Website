@@ -162,7 +162,9 @@ export default function CheckpointsChart({
   const showing = (series: Series) => shown.includes(series);
 
   return (
-    <SubPanel className="gap-3 bg-black/40 px-3 py-4">
+    // `shrink-0`: in the side panel this sits in a scrolling column, and a
+    // squashed chart is worse than one you scroll to.
+    <SubPanel className="shrink-0 gap-3 bg-black/40 px-3 py-4">
       <div className="flex flex-wrap items-center justify-between gap-2 px-2">
         <h3 className="m-0 text-base font-bold">Checkpoints</h3>
 
