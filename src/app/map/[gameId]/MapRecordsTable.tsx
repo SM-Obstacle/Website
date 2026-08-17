@@ -7,6 +7,8 @@ import { MapRecordSortableField, SortOrder } from "@/app/__generated__/graphql";
 import FormattedDate from "@/components/FormattedDate";
 import { SubPanel } from "@/components/layout/Panel";
 import { MPFormatLink } from "@/components/MPFormat";
+import NoPropagationLink from "@/components/NoPropagationLink";
+import RecordDialog from "@/components/records/RecordDialog";
 import {
   Leaderboard,
   LeaderboardBody,
@@ -27,6 +29,7 @@ import {
   TableSkeleton,
 } from "@/components/tables/TableStates";
 import Time from "@/components/Time";
+import { useRowSelection } from "@/hooks/useRowSelection";
 import { useUrlParams } from "@/hooks/useUrlParams";
 import { readPagination } from "@/lib/pagination";
 import { readSort } from "@/lib/sort";
@@ -71,6 +74,7 @@ const PAGE_SIZE = 25;
 
 export default function MapRecordsTable({ gameId }: { gameId: string }) {
   const { searchParams } = useUrlParams();
+  const selection = useRowSelection("record");
 
   const sort = readSort(searchParams, "mapRecords");
 
@@ -122,10 +126,16 @@ export default function MapRecordsTable({ gameId }: { gameId: string }) {
           ) : (
             <LeaderboardBody className={loading ? "opacity-60" : undefined}>
               {records.map((record) => (
-                <LeaderboardRow key={record.id}>
+                <LeaderboardRow
+                  key={record.id}
+                  {...selection.rowProps(String(record.id))}
+                >
                   <RankCell>{record.rank}</RankCell>
                   <NameCell>
-                    <MPFormatLink path={`/player/${record.player.login}`}>
+                    <MPFormatLink
+                      component={NoPropagationLink}
+                      path={`/player/${record.player.login}`}
+                    >
                       {record.player.name}
                     </MPFormatLink>
                   </NameCell>
@@ -148,6 +158,8 @@ export default function MapRecordsTable({ gameId }: { gameId: string }) {
           disabled={loading}
         />
       </SubPanel>
+
+      <RecordDialog recordId={selection.selected} onClose={selection.close} />
     </>
   );
 }

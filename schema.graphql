@@ -108,6 +108,7 @@ type Map {
 	name: String!
 	score: Float!
 	relatedEventEditions: [RelatedEdition!]!
+	averageCpsTimes: [CheckpointTime!]!
 	averageRating: [PlayerRating!]!
 	records(rankSortBy: SortState, dateSortBy: SortState): [RankedRecord!]!
 	recordsConnection(
@@ -389,7 +390,6 @@ type RankedRecord {
 	rank: Int!
 	map: Map!
 	player: Player!
-	averageCpsTimes: [CheckpointTime!]!
 	cpsTimes: [CheckpointTime!]!
 	time: Int!
 	respawnCount: Int!

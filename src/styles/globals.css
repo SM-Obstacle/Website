@@ -51,6 +51,15 @@
 
   /* Domain accents. */
   --time: #346ab4;
+  /* The plotted series: the subject in a lighter --time, its reference in a
+     warm counterpart. The two stay apart under colour blindness and hold 3:1
+     against the panels they sit on. The reference sits lighter than a fill of
+     it should — it is only ever drawn as a thin line, and has to read where it
+     crosses the subject's bars. */
+  --chart-1: #4f8fd9;
+  --chart-2: #e0a458;
+  /* Backdrop of the chart panels, for ringing a mark that overlaps another. */
+  --chart-surface: #0e0e0e;
   --link: #87b0e9;
   --medal-champion: #e6c043;
   --medal-gold: #e6c043;
@@ -81,6 +90,8 @@
 
   --color-surface: var(--surface);
   --color-time: var(--time);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
   --color-link: var(--link);
   --color-medal-champion: var(--medal-champion);
   --color-medal-gold: var(--medal-gold);

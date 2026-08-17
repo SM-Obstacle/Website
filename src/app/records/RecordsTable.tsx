@@ -10,6 +10,8 @@ import {
 import FormattedDate from "@/components/FormattedDate";
 import { SubPanel } from "@/components/layout/Panel";
 import { MPFormatLink } from "@/components/MPFormat";
+import NoPropagationLink from "@/components/NoPropagationLink";
+import RecordDialog from "@/components/records/RecordDialog";
 import {
   Leaderboard,
   LeaderboardBody,
@@ -30,6 +32,7 @@ import {
   TableSkeleton,
 } from "@/components/tables/TableStates";
 import Time from "@/components/Time";
+import { useRowSelection } from "@/hooks/useRowSelection";
 import { useUrlParams } from "@/hooks/useUrlParams";
 import { buildRecordsFilter } from "@/lib/filters";
 import { readPagination } from "@/lib/pagination";
@@ -77,6 +80,7 @@ const COLUMNS = 5;
 
 export default function RecordsTable() {
   const { searchParams } = useUrlParams();
+  const selection = useRowSelection("record");
 
   const sort = readSort(searchParams, "unorderedRecords");
 
@@ -126,15 +130,24 @@ export default function RecordsTable() {
           ) : (
             <LeaderboardBody className={loading ? "opacity-60" : undefined}>
               {records.map((record) => (
-                <LeaderboardRow key={record.id}>
+                <LeaderboardRow
+                  key={record.id}
+                  {...selection.rowProps(String(record.id))}
+                >
                   <RankCell>{record.rank}</RankCell>
                   <NameCell>
-                    <MPFormatLink path={`/player/${record.player.login}`}>
+                    <MPFormatLink
+                      component={NoPropagationLink}
+                      path={`/player/${record.player.login}`}
+                    >
                       {record.player.name}
                     </MPFormatLink>
                   </NameCell>
                   <NameCell>
-                    <MPFormatLink path={`/map/${record.map.gameId}`}>
+                    <MPFormatLink
+                      component={NoPropagationLink}
+                      path={`/map/${record.map.gameId}`}
+                    >
                       {record.map.name}
                     </MPFormatLink>
                   </NameCell>
@@ -157,6 +170,8 @@ export default function RecordsTable() {
           disabled={loading}
         />
       </SubPanel>
+
+      <RecordDialog recordId={selection.selected} onClose={selection.close} />
     </>
   );
 }

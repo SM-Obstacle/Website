@@ -6,6 +6,8 @@ import { gql } from "@/app/__generated__";
 import FormattedDate from "@/components/FormattedDate";
 import { SubPanel } from "@/components/layout/Panel";
 import { MPFormatLink } from "@/components/MPFormat";
+import NoPropagationLink from "@/components/NoPropagationLink";
+import RecordDialog from "@/components/records/RecordDialog";
 import {
   Leaderboard,
   LeaderboardBody,
@@ -25,6 +27,7 @@ import {
   TableSkeleton,
 } from "@/components/tables/TableStates";
 import Time from "@/components/Time";
+import { useRowSelection } from "@/hooks/useRowSelection";
 import { useUrlParams } from "@/hooks/useUrlParams";
 import { readPagination } from "@/lib/pagination";
 
@@ -66,6 +69,7 @@ const PAGE_SIZE = 25;
 
 export default function PlayerRecordsTable({ login }: { login: string }) {
   const { searchParams } = useUrlParams();
+  const selection = useRowSelection("record");
 
   const { data, previousData, loading, error } = useQuery(GET_PLAYER_RECORDS, {
     variables: { login, ...readPagination(searchParams, PAGE_SIZE) },
@@ -101,10 +105,16 @@ export default function PlayerRecordsTable({ login }: { login: string }) {
           ) : (
             <LeaderboardBody className={loading ? "opacity-60" : undefined}>
               {records.map((record) => (
-                <LeaderboardRow key={record.id}>
+                <LeaderboardRow
+                  key={record.id}
+                  {...selection.rowProps(String(record.id))}
+                >
                   <RankCell>{record.rank}</RankCell>
                   <NameCell>
-                    <MPFormatLink path={`/map/${record.map.gameId}`}>
+                    <MPFormatLink
+                      component={NoPropagationLink}
+                      path={`/map/${record.map.gameId}`}
+                    >
                       {record.map.name}
                     </MPFormatLink>
                   </NameCell>
@@ -124,6 +134,8 @@ export default function PlayerRecordsTable({ login }: { login: string }) {
       <SubPanel className="shrink-0">
         <PaginationControls pageInfo={connection?.pageInfo} disabled={loading} />
       </SubPanel>
+
+      <RecordDialog recordId={selection.selected} onClose={selection.close} />
     </>
   );
 }

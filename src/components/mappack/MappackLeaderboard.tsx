@@ -17,8 +17,7 @@ import {
   WideOnlyHead,
 } from "@/components/tables/Leaderboard";
 import { TableMessage } from "@/components/tables/TableStates";
-import { useUrlParams } from "@/hooks/useUrlParams";
-import { cn } from "@/lib/utils";
+import { useRowSelection } from "@/hooks/useRowSelection";
 
 const COLUMNS = 5;
 
@@ -40,12 +39,8 @@ export default function MappackLeaderboard({
     close: () => void,
   ) => React.ReactNode;
 }) {
-  const { searchParams, setParams } = useUrlParams();
-  const selected = searchParams.get("player");
+  const selection = useRowSelection("player");
   const selectable = renderSelected !== undefined;
-
-  const select = (login: string) =>
-    setParams({ player: login === selected ? undefined : login });
 
   const leaderboard = mappack?.leaderboard ?? [];
 
@@ -80,23 +75,7 @@ export default function MappackLeaderboard({
               {leaderboard.map((entry) => (
                 <LeaderboardRow
                   key={entry.player.login}
-                  {...(selectable && {
-                    tabIndex: 0,
-                    onClick: () => select(entry.player.login),
-                    onKeyDown: (event: React.KeyboardEvent) => {
-                      if (event.key === "Enter" || event.key === " ") {
-                        event.preventDefault();
-                        select(entry.player.login);
-                      }
-                    },
-                  })}
-                  data-state={
-                    entry.player.login === selected ? "selected" : undefined
-                  }
-                  className={cn(
-                    selectable && "cursor-pointer",
-                    "data-[state=selected]:[&>td]:bg-white/20",
-                  )}
+                  {...(selectable && selection.rowProps(entry.player.login))}
                 >
                   <RankCell>{entry.rank}</RankCell>
                   <NameCell>
@@ -126,7 +105,7 @@ export default function MappackLeaderboard({
         </Leaderboard>
       </SubPanel>
 
-      {renderSelected?.(selected, () => setParams({ player: undefined }))}
+      {renderSelected?.(selection.selected, selection.close)}
     </>
   );
 }

@@ -7,6 +7,7 @@ import { gql } from "@/app/__generated__";
 import { SubPanel } from "@/components/layout/Panel";
 import { MedalImg } from "@/components/MedalImg";
 import { MPFormatLink } from "@/components/MPFormat";
+import Stat from "@/components/Stat";
 import {
   Leaderboard,
   LeaderboardBody,
@@ -90,15 +91,6 @@ const GET_CAMPAIGN_PLAYER_INFO = gql(/* GraphQL */ `
     }
   }
 `);
-
-function Stat({ label, value }: { label: string; value: React.ReactNode }) {
-  return (
-    <div className="flex flex-col items-center">
-      <span className="text-xs text-muted-foreground">{label}</span>
-      <code className="text-lg font-bold">{value}</code>
-    </div>
-  );
-}
 
 function MapGroup({
   title,
