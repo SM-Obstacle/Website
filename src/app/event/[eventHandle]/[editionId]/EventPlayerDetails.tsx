@@ -139,7 +139,10 @@ function MapGroup({
   title,
   medal,
   children,
-}: React.PropsWithChildren<{ title: React.ReactNode; medal?: React.ReactNode }>) {
+}: React.PropsWithChildren<{
+  title: React.ReactNode;
+  medal?: React.ReactNode;
+}>) {
   return (
     <Collapsible defaultOpen className="shrink-0 rounded-panel bg-sunken py-1">
       <CollapsibleTrigger className="group flex w-full items-center gap-2 px-4 py-2 text-left font-bold">

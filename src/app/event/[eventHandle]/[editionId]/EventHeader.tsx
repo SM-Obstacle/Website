@@ -63,11 +63,10 @@ export default function EventHeader({
 }) {
   return (
     <Panel>
-      {/* Dark whichever theme is on — `dark` re-declares the palette for this
-          subtree. What the header has to hold against is the edition's own
-          banner under the scrim, not the page around it. */}
+      {/* Same scrim as the cards on /events, so the header an edition opens
+          into carries on from the card that was clicked. */}
       <SubPanel
-        className="dark gap-3 border border-transparent bg-black/50 bg-cover bg-center p-5 shadow-[inset_0_0_7em_black]"
+        className="gap-3 border border-transparent bg-(--banner-scrim) bg-cover bg-clip-padding bg-center p-5 shadow-[inset_0_0_7em_var(--banner-edge)]"
         style={
           edition.bannerImgUrl
             ? { backgroundImage: `url(${edition.bannerImgUrl})` }
@@ -75,7 +74,7 @@ export default function EventHeader({
         }
       >
         <div>
-          <h2 className="m-0 text-2xl font-black drop-shadow-[2px_2px_10px_black]">
+          <h2 className="m-0 text-2xl font-black drop-shadow-[2px_2px_10px_var(--banner-edge)]">
             <MPFormat>{edition.name}</MPFormat>
             {edition.subtitle ? ` ${edition.subtitle}` : ""}
           </h2>

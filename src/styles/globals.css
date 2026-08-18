@@ -44,6 +44,13 @@
   /* Laid over the background photo, which is a daylight scene: dark panels
      stand out on it unaided, light ones need it washed out first. */
   --backdrop-wash: rgb(255 255 255 / 0.5);
+  /* Laid over an event's banner, and standing in for the banner where an
+     edition has none — so it carries the theme's own tone rather than a fixed
+     one, and the cards sit level with the panels beside them either way.
+     `--banner-edge` is the same tone at full strength, for the vignette that
+     pulls the corners of the image in and the glow behind the title. */
+  --banner-scrim: rgb(255 255 255 / 0.72);
+  --banner-edge: #fff;
 
   --background: oklch(0.985 0 0);
   --foreground: oklch(0.19 0 0);
@@ -93,6 +100,8 @@
   --sunken-opaque: rgb(0 0 0 / 0.7);
   --selected: oklch(1 0 0 / 20%);
   --backdrop-wash: rgb(0 0 0 / 0);
+  --banner-scrim: rgb(0 0 0 / 0.6);
+  --banner-edge: #000;
 
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
@@ -123,11 +132,10 @@
 
 /*
  * The tokens that are only ever another one under a name a shadcn component
- * knows. They have to be declared against both palettes rather than once on
- * `:root`, because `var()` in a custom property is substituted where it is
- * declared: derived on `:root` alone, they would resolve to the light value
- * and inherit it into a block that carries `dark` on its own — an event banner
- * would end up with the page's ink on its scrim.
+ * knows. Both palettes have to declare them rather than `:root` alone, because
+ * `var()` in a custom property is substituted where it is declared: derived on
+ * `:root` only, they would resolve against the light palette and inherit that
+ * value into any subtree that carries `dark` on its own.
  */
 :root,
 .dark {

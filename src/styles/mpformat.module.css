@@ -9,10 +9,10 @@
  * properties; the theme is read here rather than in JS, so the markup stays
  * theme-agnostic and MPFormat can render on the server.
  *
- * What it reads is the nearest `.dark` — the class next-themes puts on <html>,
- * but also the one a block that stays dark in either theme carries, such as an
- * event banner. Light is the default, matching the palette on `:root`: it is
- * what shows if next-themes' pre-paint script never runs.
+ * What it reads is the nearest `.dark` — normally the class next-themes puts
+ * on <html>, but any subtree that pins itself dark works the same way. Light
+ * is the default, matching the palette on `:root`: it is what shows if
+ * next-themes' pre-paint script never runs.
  */
 .themed {
   color: var(--mp-light);

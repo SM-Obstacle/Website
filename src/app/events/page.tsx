@@ -68,12 +68,15 @@ export default async function EventsPage() {
               {events.map(({ event: { handle }, edition }) => (
                 <li key={`${handle}_${edition.id}`}>
                   <Link href={`/event/${handle}/${edition.id}`}>
-                    {/* Dark whichever theme is on — `dark` re-declares the
-                        palette for this subtree. What the card has to hold
-                        against is the edition's own banner under the scrim,
-                        not the page around it. */}
+                    {/* The scrim goes over the banner where there is one and
+                        stands in for it where there is not, so an edition
+                        without artwork reads as a plain card in the theme's
+                        own tone rather than a dark slab. */}
                     <SubPanel
-                      className="dark h-full justify-between gap-3 border border-transparent bg-black/60 bg-cover bg-center p-5 shadow-[inset_0_0_7em_black] transition-colors hover:border-white/40"
+                      // `bg-clip-padding` keeps the banner out from under the
+                      // border, which the vignette does not reach: left there
+                      // it draws a hard ring of raw image around the card.
+                      className="h-full justify-between gap-3 border border-transparent bg-(--banner-scrim) bg-cover bg-clip-padding bg-center p-5 shadow-[inset_0_0_7em_var(--banner-edge)] transition-colors hover:border-foreground/40"
                       style={
                         edition.bannerImgUrl
                           ? {
@@ -83,11 +86,11 @@ export default async function EventsPage() {
                       }
                     >
                       <div>
-                        <h2 className="m-0 text-2xl font-bold drop-shadow-[2px_2px_10px_black]">
+                        <h2 className="m-0 text-2xl font-bold drop-shadow-[2px_2px_10px_var(--banner-edge)]">
                           <MPFormat>{edition.name}</MPFormat>
                         </h2>
                         {edition.subtitle && (
-                          <p className="m-0 text-sm text-white/80">
+                          <p className="m-0 text-sm text-foreground/80">
                             {edition.subtitle}
                           </p>
                         )}
