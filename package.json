@@ -4,8 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "build": "next build && yarn copy-standalone-assets",
+    "copy-standalone-assets": "rm -rf .next/standalone/public .next/standalone/.next/static && cp -r public .next/standalone/public && cp -r .next/static .next/standalone/.next/static",
+    "start": "node .next/standalone/server.js",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "compile": "graphql-codegen"

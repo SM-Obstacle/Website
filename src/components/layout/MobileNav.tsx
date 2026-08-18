@@ -16,7 +16,7 @@ import { NAV_PAGES, type NavKey } from "./pages";
 import ThemeToggle from "./ThemeToggle";
 
 /** Below `md` the rail collapses into a sheet opened from the title bar logo. */
-export default function MobileNav({ selected }: { selected: NavKey }) {
+export default function MobileNav({ selected }: { selected?: NavKey }) {
   const [open, setOpen] = useState(false);
 
   return (

@@ -90,7 +90,6 @@ export default function RecordsTable() {
       ...readPagination(searchParams),
       ...sort,
     },
-    notifyOnNetworkStatusChange: true,
   });
 
   const connection = (data ?? previousData)?.recordsConnection;

@@ -18,7 +18,7 @@ export default function Logo({
     <span
       role="img"
       aria-label="ShootMania Obstacle logo"
-      className={cn("inline-block shrink-0 bg-current", className)}
+      className={cn("block shrink-0 bg-current", className)}
       style={{
         width,
         height,

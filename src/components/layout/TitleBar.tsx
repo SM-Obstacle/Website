@@ -9,7 +9,7 @@ export default function TitleBar({
   selected,
 }: {
   segments: React.ReactNode[];
-  selected: NavKey;
+  selected?: NavKey;
 }) {
   return (
     <div className="fixed inset-s-2 top-2 z-50 w-[calc(100%-1rem)] md:inset-s-[calc(var(--logo-size)+2rem)] md:w-[calc(100%-var(--logo-size)-2.5rem)]">

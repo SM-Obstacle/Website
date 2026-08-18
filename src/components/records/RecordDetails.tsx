@@ -11,6 +11,7 @@ import Stat from "@/components/Stat";
 import Time from "@/components/Time";
 import { Skeleton } from "@/components/ui/skeleton";
 import CheckpointsChart from "./CheckpointsChart";
+import RecordFlags from "./RecordFlags";
 
 const GET_RECORD = gql(/* GraphQL */ `
   query GetRecord($recordId: Int!) {
@@ -20,6 +21,7 @@ const GET_RECORD = gql(/* GraphQL */ `
       time
       respawnCount
       recordDate
+      flags
       player {
         login
         name
@@ -139,6 +141,8 @@ export default function RecordDetails({
           )}
         </div>
       </SubPanel>
+
+      <RecordFlags flags={record?.flags} />
 
       {record ? (
         record.cpsTimes.length > 0 && (
