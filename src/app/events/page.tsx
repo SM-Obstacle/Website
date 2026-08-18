@@ -10,6 +10,7 @@ import { Panel, SubPanel } from "@/components/layout/Panel";
 import PageTitle from "@/components/layout/PageTitle";
 import MPFormat from "@/components/MPFormat";
 import { Badge } from "@/components/ui/badge";
+import catchGqlError from "@/lib/catchError";
 
 // Re-render at most once a minute so the page never serves stale data.
 export const revalidate = 60;
@@ -39,8 +40,7 @@ const GET_EVENTS = gql(/* GraphQL */ `
 export default async function EventsPage() {
   const { data, error } = await query({
     query: GET_EVENTS,
-    errorPolicy: "all",
-  });
+  }).catch(catchGqlError);
 
   const events = (data?.events ?? [])
     .flatMap((event) => event.editions.map((edition) => ({ event, edition })))

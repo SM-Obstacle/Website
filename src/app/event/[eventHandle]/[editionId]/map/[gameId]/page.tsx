@@ -13,6 +13,10 @@ import MPFormat, { MPFormatLink } from "@/components/MPFormat";
 import { Badge } from "@/components/ui/badge";
 import { parse, toPlainText } from "@/lib/mpformat/mpformat";
 import EventMapRecordsTable from "./EventMapRecordsTable";
+import { CombinedGraphQLErrors, ErrorLike } from "@apollo/client";
+import LoadErrorPanel from "@/components/layout/LoadErrorPanel";
+import catchGqlError from "@/lib/catchError";
+import Markdown from "react-markdown";
 
 const GET_EVENT_MAP_INFO = gql(/* GraphQL */ `
   query GetEventMapInfo(
@@ -49,8 +53,7 @@ const fetchMap = cache(
     query({
       query: GET_EVENT_MAP_INFO,
       variables: { eventHandle, editionId, gameId },
-      errorPolicy: "all",
-    }),
+    }).catch(catchGqlError),
 );
 
 export async function generateMetadata(
@@ -85,14 +88,15 @@ export default async function EventMapPage(
         titleSegments={[<PageTitle key="title">Events</PageTitle>]}
         selectedMenu="events"
       >
-        <Panel className="m-auto p-8">
-          Could not load this map: {error?.message ?? "unknown map"}
-        </Panel>
+        <LoadErrorPanel title="Invalid event map">
+          <p>Could not load this map: {error?.message ?? "unknown map"}</p>
+        </LoadErrorPanel>
       </PageShell>
     );
   }
 
-  const eventName = edition.name + (edition.subtitle ? ` ${edition.subtitle}` : "");
+  const eventName =
+    edition.name + (edition.subtitle ? ` ${edition.subtitle}` : "");
   const originalGameId =
     eventMap.originalMap?.gameId ||
     (eventMap.linkToOriginal ? eventMap.map.gameId : undefined);

@@ -5,6 +5,7 @@ import { query } from "@/app/ApolloClient";
 import { SubPanel } from "@/components/layout/Panel";
 import { MPFormatLink } from "@/components/MPFormat";
 import podiumImg from "../../../public/img/podium.svg";
+import catchGqlError from "@/lib/catchError";
 
 const GET_TRENDING_EVENT_EDITIONS = gql(/* GraphQL */ `
   query GetTrendingEventEditions($limit: Int, $lastDays: Int, $lbLimit: Int) {
@@ -38,8 +39,7 @@ export default async function CurrentEvents() {
   const { data } = await query({
     query: GET_TRENDING_EVENT_EDITIONS,
     variables: { limit: 2, lbLimit: 3 },
-    errorPolicy: "all",
-  });
+  }).catch(catchGqlError);
 
   const editions = data?.trendingEventEditions ?? [];
 

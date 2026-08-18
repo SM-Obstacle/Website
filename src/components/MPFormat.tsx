@@ -1,40 +1,45 @@
-"use client";
-
-import { rgb12to24 } from "@/lib/mpformat/color";
+import { invertLight, nudgeDark, rgb12toHex } from "@/lib/mpformat/color";
 import { parse, toPlainText } from "@/lib/mpformat/mpformat";
 import { type IToken, Style } from "@/lib/mpformat/tokens";
 import GenericToken from "@/lib/mpformat/tokens/generic_token";
 import LinkTokenClose from "@/lib/mpformat/tokens/link_token_close";
 import LinkTokenOpen from "@/lib/mpformat/tokens/link_token_open";
 import { cn } from "@/lib/utils";
+import styles from "@/styles/mpformat.module.css";
 import Link, { type LinkProps } from "./Link";
-import { useTheme } from "next-themes";
+
+/*
+ * The colour a token asks for is emitted twice, darkened for a light
+ * background and brightened for a dark one, and `.themed` picks the one the
+ * current theme calls for. Nothing here depends on the resolved theme, which
+ * is what keeps the component renderable on the server.
+ */
+function coloredStyle(style: number) {
+  const rgb = (style & 0xfff).toString(16).padStart(3, "0");
+  return {
+    "--mp-light": rgb12toHex(invertLight(rgb)),
+    "--mp-dark": rgb12toHex(nudgeDark(rgb)),
+  };
+}
 
 function MPFormatGenericToken({ token }: { token: GenericToken }) {
+  const colored = (token.style & Style.COLORED) !== 0;
+
   return token.style ? (
     <span
-      style={{
-        ...(token.style & Style.COLORED && {
-          color: (() => {
-            let color = rgb12to24(token.style & 0xfff).toString(16);
-            if (color.length === 1) {
-              color = `00000${color}`;
-            } else if (color.length === 2) {
-              color = `0000${color}`;
-            } else if (color.length === 4) {
-              color = `00${color}`;
-            }
-            return `#${color}`;
-          })(),
-        }),
-        ...(token.style & Style.ITALIC && { fontStyle: "italic" }),
-        ...(token.style & Style.BOLD && { fontWeight: "bold" }),
-        ...(token.style & Style.SHADOWED && {
-          textShadow: "1px 1px 1px rgba(0, 0, 0, 0.5)",
-        }),
-        ...(token.style & Style.WIDE && { fontSize: "105%" }),
-        ...(token.style & Style.NARROW && { fontSize: "95%" }),
-      }}
+      className={cn(colored && styles.themed)}
+      style={
+        {
+          ...(colored && coloredStyle(token.style)),
+          ...(token.style & Style.ITALIC && { fontStyle: "italic" }),
+          ...(token.style & Style.BOLD && { fontWeight: "bold" }),
+          ...(token.style & Style.SHADOWED && {
+            textShadow: "1px 1px 1px rgba(0, 0, 0, 0.5)",
+          }),
+          ...(token.style & Style.WIDE && { fontSize: "105%" }),
+          ...(token.style & Style.NARROW && { fontSize: "95%" }),
+        } as React.CSSProperties
+      }
     >
       {token.text}
     </span>
@@ -96,12 +101,7 @@ export default function MPFormat({
   children: string;
   disableLinks?: boolean;
 }) {
-  const theme = useTheme();
-  const parsed = parse(children, {
-    disableLinks,
-    darkBackground: theme.resolvedTheme === "dark",
-    lightBackground: theme.resolvedTheme === "light",
-  });
+  const parsed = parse(children, { disableLinks });
   return (
     <span>
       <MPFormatInner tokens={parsed} />

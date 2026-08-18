@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import type { PropsWithChildren } from "react";
 import { gql } from "@/app/__generated__";
 import { query } from "@/app/ApolloClient";
+import catchGqlError from "@/lib/catchError";
 
 const GET_EVENT_EDITION_FROM_MX_ID = gql(/* GraphQL */ `
   query GetEventEditionFromMxId($mxId: Int!) {
@@ -23,8 +24,7 @@ export default async function Layout({
   const eventEdition = await query({
     query: GET_EVENT_EDITION_FROM_MX_ID,
     variables: { mxId },
-    errorPolicy: "all",
-  });
+  }).catch(catchGqlError);
 
   if (eventEdition.data?.eventEditionFromMxId) {
     const handle = eventEdition.data.eventEditionFromMxId.event.handle;

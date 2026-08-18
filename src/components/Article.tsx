@@ -4,6 +4,7 @@ import rehypeRaw from "rehype-raw";
 
 import { Panel, SubPanel } from "./layout/Panel";
 import Link from "./Link";
+import { cn } from "@/lib/utils";
 
 /**
  * Markdown renderers shared by the articles and the resources page — the
@@ -53,15 +54,22 @@ export function ArticlePanel({
   title,
   meta,
   body,
+  className,
 }: {
   title: string;
   meta?: React.ReactNode;
   body: string;
+  className?: string;
 }) {
   return (
     <div className="mx-auto flex h-full min-h-0 w-full max-w-content flex-col">
       <Panel className="flex min-h-0 flex-1 flex-col">
-        <SubPanel className="scrollbar-slim min-h-0 flex-1 gap-0 overflow-y-auto px-6 py-5">
+        <SubPanel
+          className={cn(
+            "scrollbar-slim min-h-0 flex-1 gap-0 overflow-y-auto px-6 py-5",
+            className,
+          )}
+        >
           <header className="mb-4">
             <h1 className="m-0 text-3xl font-black">{title}</h1>
 

@@ -13,6 +13,9 @@ import MappackLeaderboard from "@/components/mappack/MappackLeaderboard";
 import { parse, toPlainText } from "@/lib/mpformat/mpformat";
 import EventHeader from "./EventHeader";
 import EventPlayerAside from "./EventPlayerAside";
+import Link from "next/link";
+import LoadErrorPanel from "@/components/layout/LoadErrorPanel";
+import catchGqlError from "@/lib/catchError";
 
 const GET_CAMPAIGN_LEADERBOARD = gql(/* GraphQL */ `
   query GetCampaignLeaderboard($eventHandle: String!, $editionId: Int!) {
@@ -43,8 +46,7 @@ const fetchEdition = cache(async (eventHandle: string, editionId: number) =>
   query({
     query: GET_CAMPAIGN_LEADERBOARD,
     variables: { eventHandle, editionId },
-    errorPolicy: "all",
-  }),
+  }).catch(catchGqlError),
 );
 
 function editionTitle(name: string, subtitle?: string | null) {
@@ -62,7 +64,9 @@ export async function generateMetadata(
   const edition = data?.event.edition;
 
   return {
-    title: edition ? toPlainText(parse(editionTitle(edition.name, edition.subtitle))) : eventHandle,
+    title: edition
+      ? toPlainText(parse(editionTitle(edition.name, edition.subtitle)))
+      : eventHandle,
   };
 }
 
@@ -82,21 +86,22 @@ export default async function EventEditionPage(
         titleSegments={[<PageTitle key="title">Events</PageTitle>]}
         selectedMenu="events"
       >
-        <Panel className="m-auto p-8">
+        <LoadErrorPanel title="Invalid edition">
           Could not load this event: {error?.message ?? "unknown edition"}
-        </Panel>
+        </LoadErrorPanel>
       </PageShell>
     );
   }
 
   const eventName = editionTitle(edition.name, edition.subtitle);
-  const admins =
-    edition.admins.length > 0 ? edition.admins : data.event.admins;
+  const admins = edition.admins.length > 0 ? edition.admins : data.event.admins;
 
   return (
     <PageShell
       titleSegments={[
-        <PageTitle key="title">Events</PageTitle>,
+        <PageTitle key="title">
+          <Link href="/events">Events</Link>
+        </PageTitle>,
         <PageTitle key="event">{eventName}</PageTitle>,
       ]}
       selectedMenu="events"

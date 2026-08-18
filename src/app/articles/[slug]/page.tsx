@@ -6,6 +6,7 @@ import FormattedDate from "@/components/FormattedDate";
 import PageShell from "@/components/layout/PageShell";
 import PageTitle from "@/components/layout/PageTitle";
 import { fetchArticles, RESOURCES_SLUG } from "@/lib/article";
+import Link from "next/link";
 
 export const revalidate = 300;
 
@@ -26,7 +27,9 @@ export async function generateMetadata(
   return { title: article ? await article.fetchTitle() : slug };
 }
 
-export default async function ArticlePage(props: PageProps<"/articles/[slug]">) {
+export default async function ArticlePage(
+  props: PageProps<"/articles/[slug]">,
+) {
   const { slug } = await props.params;
   const article = await findArticle(slug);
 
@@ -39,7 +42,9 @@ export default async function ArticlePage(props: PageProps<"/articles/[slug]">) 
   return (
     <PageShell
       titleSegments={[
-        <PageTitle key="title">Articles</PageTitle>,
+        <PageTitle key="title">
+          <Link href="/links">Blog</Link>
+        </PageTitle>,
         <PageTitle key="article">{title}</PageTitle>,
       ]}
       selectedMenu="articles"

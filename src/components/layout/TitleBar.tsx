@@ -12,7 +12,7 @@ export default function TitleBar({
   selected: NavKey;
 }) {
   return (
-    <div className="fixed start-2 top-2 z-50 w-[calc(100%-1rem)] md:start-[calc(var(--logo-size)+2rem)] md:w-[calc(100%-var(--logo-size)-2.5rem)]">
+    <div className="fixed inset-s-2 top-2 z-50 w-[calc(100%-1rem)] md:inset-s-[calc(var(--logo-size)+2rem)] md:w-[calc(100%-var(--logo-size)-2.5rem)]">
       <div className="flex min-h-[calc(var(--logo-size)+var(--panel-inset)*2)] w-full items-center gap-2 rounded-bar bg-card p-inset backdrop-blur-sm">
         <MobileNav selected={selected} />
 
@@ -22,17 +22,11 @@ export default function TitleBar({
               {i > 0 && (
                 <ChevronRight className="size-5 shrink-0" aria-hidden />
               )}
-              <div className="min-w-0 truncate">{segment}</div>
+              <div className="min-w-0">{segment}</div>
             </Fragment>
           ))}
         </div>
       </div>
-
-      {/* Fades the page content out behind the floating bar on small screens. */}
-      <div
-        aria-hidden
-        className="fixed inset-x-0 top-0 -z-10 h-[calc(var(--logo-size)+2rem)] backdrop-blur-sm [mask-image:linear-gradient(black,transparent)] md:hidden"
-      />
     </div>
   );
 }

@@ -12,6 +12,7 @@ import PageTitle from "@/components/layout/PageTitle";
 import SectionHeader from "@/components/layout/SectionHeader";
 import { Badge } from "@/components/ui/badge";
 import MappackStandings from "./MappackStandings";
+import catchGqlError from "@/lib/catchError";
 
 const GET_MAPPACK_LEADERBOARD = gql(/* GraphQL */ `
   query GetMappackLeaderboard($mappackId: String!) {
@@ -28,8 +29,7 @@ const fetchMappack = cache(async (mappackId: string) =>
   query({
     query: GET_MAPPACK_LEADERBOARD,
     variables: { mappackId },
-    errorPolicy: "all",
-  }),
+  }).catch(catchGqlError),
 );
 
 export async function generateMetadata(

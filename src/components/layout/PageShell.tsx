@@ -15,7 +15,7 @@ export default function PageShell({
   children,
 }: React.PropsWithChildren<{
   titleSegments: React.ReactNode[];
-  selectedMenu: NavKey;
+  selectedMenu?: NavKey;
   className?: string;
 }>) {
   return (

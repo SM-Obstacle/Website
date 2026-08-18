@@ -19,7 +19,7 @@ export default async function ArticlesIndex() {
 
   return (
     <PageShell
-      titleSegments={[<PageTitle key="title">Articles</PageTitle>]}
+      titleSegments={[<PageTitle key="title">Blog</PageTitle>]}
       selectedMenu="articles"
     >
       <div className="scrollbar-slim mx-auto h-full w-full max-w-content overflow-y-auto">

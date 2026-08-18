@@ -1,13 +1,15 @@
-import { invertLight, nudgeDark } from "./color";
 import { IToken, Style } from "./tokens";
 import GenericToken from "./tokens/generic_token";
 import LinkTokenClose from "./tokens/link_token_close";
 import LinkTokenOpen from "./tokens/link_token_open";
 
+/*
+ * Colours are kept exactly as written in the text. Adapting them to the
+ * background they end up on is the renderer's job, not the parser's, so the
+ * same parse output serves both themes.
+ */
 export interface ParseOptions {
   disableLinks?: boolean;
-  lightBackground?: boolean;
-  darkBackground?: boolean;
   externalLinks?: boolean;
 }
 
@@ -171,12 +173,6 @@ export function parse(text: string, options: ParseOptions = {}): IToken[] {
       }
 
       if (endColor) {
-        if (options.lightBackground) {
-          color = invertLight(color);
-        }
-        if (options.darkBackground) {
-          color = nudgeDark(color);
-        }
         style = style & ~0xfff;
         style = style | Style.COLORED | (parseInt(color, 16) & 0xfff);
         endText();

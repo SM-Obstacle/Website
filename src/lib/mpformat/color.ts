@@ -11,6 +11,13 @@ export function rgb12to24(color: number): number {
   );
 }
 
+/** Widens a 3-digit `rgb` triplet into the `#rrggbb` CSS notation. */
+export function rgb12toHex(hexColor: string): string {
+  return `#${rgb12to24(parseInt(hexColor, 16))
+    .toString(16)
+    .padStart(6, "0")}`;
+}
+
 export function rgbToLuminance(rgb: RGBColor): number {
   return (
     0.2126 * Math.pow(rgb[0] / 255, 2.2) +

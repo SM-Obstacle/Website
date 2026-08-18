@@ -3,13 +3,16 @@ import type { Metadata } from "next";
 import { gql } from "@/app/__generated__";
 import { query } from "@/app/ApolloClient";
 import PageShell from "@/components/layout/PageShell";
-import { Panel } from "@/components/layout/Panel";
+import { Panel, SubPanel } from "@/components/layout/Panel";
 import PageTitle from "@/components/layout/PageTitle";
 import SectionHeader from "@/components/layout/SectionHeader";
 import MPFormat from "@/components/MPFormat";
 import WithRecordAside from "@/components/records/WithRecordAside";
 import { parse, toPlainText } from "@/lib/mpformat/mpformat";
 import PlayerInfo from "./PlayerInfo";
+import Link from "next/link";
+import LoadErrorPanel from "@/components/layout/LoadErrorPanel";
+import catchGqlError from "@/lib/catchError";
 
 const GET_PLAYER_INFO = gql(/* GraphQL */ `
   query GetPlayer($login: String!) {
@@ -30,8 +33,7 @@ export async function generateMetadata(
   const { data } = await query({
     query: GET_PLAYER_INFO,
     variables: { login },
-    errorPolicy: "all",
-  });
+  }).catch(catchGqlError);
 
   return { title: data ? toPlainText(parse(data.player.name)) : login };
 }
@@ -44,8 +46,7 @@ export default async function PlayerLayout(
   const { data, error } = await query({
     query: GET_PLAYER_INFO,
     variables: { login },
-    errorPolicy: "all",
-  });
+  }).catch(catchGqlError);
 
   if (error || !data) {
     return (
@@ -53,9 +54,9 @@ export default async function PlayerLayout(
         titleSegments={[<PageTitle key="title">Players</PageTitle>]}
         selectedMenu="players"
       >
-        <Panel className="m-auto p-8">
+        <LoadErrorPanel title="Invalid player">
           Could not load this player: {error?.message ?? "unknown error"}
-        </Panel>
+        </LoadErrorPanel>
       </PageShell>
     );
   }
@@ -63,7 +64,9 @@ export default async function PlayerLayout(
   return (
     <PageShell
       titleSegments={[
-        <PageTitle key="title">Players</PageTitle>,
+        <PageTitle key="title">
+          <Link href="/players">Players</Link>
+        </PageTitle>,
         <PageTitle key="player">
           <MPFormat>{data.player.name}</MPFormat>
         </PageTitle>,

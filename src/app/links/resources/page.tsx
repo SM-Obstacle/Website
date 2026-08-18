@@ -6,6 +6,7 @@ import FormattedDate from "@/components/FormattedDate";
 import PageShell from "@/components/layout/PageShell";
 import PageTitle from "@/components/layout/PageTitle";
 import { fetchArticles, RESOURCES_SLUG } from "@/lib/article";
+import Link from "next/link";
 
 export const revalidate = 300;
 
@@ -25,7 +26,9 @@ export default async function ResourcesPage() {
   return (
     <PageShell
       titleSegments={[
-        <PageTitle key="title">Articles</PageTitle>,
+        <PageTitle key="title">
+          <Link href="/links">Blog</Link>
+        </PageTitle>,
         <PageTitle key="resources">{title}</PageTitle>,
       ]}
       selectedMenu="articles"
