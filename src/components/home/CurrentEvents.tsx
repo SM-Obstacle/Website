@@ -30,8 +30,8 @@ const GET_TRENDING_EVENT_EDITIONS = gql(/* GraphQL */ `
 /** Where each podium place sits around the podium image. */
 const PODIUM_PLACES = [
   "col-start-2 row-start-1 text-center text-2xl",
-  "col-start-1 row-start-3 text-right text-xl",
-  "col-start-3 row-start-4 text-left",
+  "col-start-1 row-start-2 text-right text-xl",
+  "col-start-3 row-start-3 text-left",
 ];
 
 export default async function CurrentEvents() {
@@ -52,7 +52,7 @@ export default async function CurrentEvents() {
   }
 
   return (
-    <div className="flex h-full flex-1 flex-col gap-2 md:flex-row [&>*]:flex-1">
+    <div className="flex h-full flex-1 flex-col gap-2 md:flex-row *:flex-1">
       {editions.map((edition, i) => (
         // The API can surface the same edition twice, so the index disambiguates.
         <SubPanel key={`${edition.event.handle}-${edition.id}-${i}`}>

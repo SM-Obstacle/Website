@@ -1,9 +1,10 @@
 "use client";
 
-import { X } from "lucide-react";
-
-import { Panel } from "@/components/layout/Panel";
-import { Button } from "@/components/ui/button";
+import {
+  DetailColumn,
+  DetailPanel,
+  WIDE_ENOUGH_FOR_A_PANEL,
+} from "@/components/layout/DetailAside";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { useRowSelection } from "@/hooks/useRowSelection";
 import RecordDetails, {
@@ -12,9 +13,6 @@ import RecordDetails, {
   useSelectedRecord,
 } from "./RecordDetails";
 import RecordDialog from "./RecordDialog";
-
-/** Tailwind's `xl`: below it the panel would leave the list nothing to live on. */
-const WIDE_ENOUGH_FOR_A_PANEL = "(min-width: 80rem)";
 
 function RecordPanel({
   recordId,
@@ -28,44 +26,14 @@ function RecordPanel({
   if (!selected) return null;
 
   return (
-    <aside className="flex min-h-0 w-80 shrink-0 flex-col 2xl:w-96">
-      <Panel
-        // Only as tall as the record needs, and never taller than the column
-        // it has: `min-h-0` lets the flex column above shrink it past that
-        // content, and the details then scroll inside.
-        className="min-h-0 overflow-hidden"
-        header={
-          <div className="flex items-start gap-2">
-            <div className="min-w-0 flex-1">
-              <h2 className="m-0 truncate text-xl font-bold">
-                <RecordPlayerName record={record} />
-              </h2>
-              {/* A div, not a p: the placeholder it holds while loading is a
-                  block, which a paragraph may not contain. */}
-              <div className="truncate text-sm text-muted-foreground">
-                <RecordMapName record={record} />
-              </div>
-            </div>
-
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              onClick={onClose}
-              aria-label="Close record details"
-              className="-me-1 shrink-0"
-            >
-              <X />
-            </Button>
-          </div>
-        }
-      >
-        {/* Rounded like a sub-panel so what scrolls is clipped along the same
-            curve as the panel around it. */}
-        <div className="scrollbar-slim flex min-h-0 flex-1 flex-col gap-inset overflow-y-auto rounded-panel">
-          <RecordDetails record={record} error={error} />
-        </div>
-      </Panel>
-    </aside>
+    <DetailPanel
+      title={<RecordPlayerName record={record} />}
+      subtitle={<RecordMapName record={record} />}
+      closeLabel="Close record details"
+      onClose={onClose}
+    >
+      <RecordDetails record={record} error={error} />
+    </DetailPanel>
   );
 }
 
@@ -79,7 +47,11 @@ export default function RecordAside() {
   const wide = useMediaQuery(WIDE_ENOUGH_FOR_A_PANEL);
 
   return wide ? (
-    <RecordPanel recordId={selection.selected} onClose={selection.close} />
+    <DetailColumn selected={selection.selected}>
+      {(recordId) => (
+        <RecordPanel recordId={recordId} onClose={selection.close} />
+      )}
+    </DetailColumn>
   ) : (
     <RecordDialog recordId={selection.selected} onClose={selection.close} />
   );

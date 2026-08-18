@@ -27,7 +27,8 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`dark ${lato.variable} ${kenneyIcons.variable} ${forkawesomeManiaicons.variable}`}
+      className={`${lato.variable} ${kenneyIcons.variable} ${forkawesomeManiaicons.variable}`}
+      suppressHydrationWarning
     >
       <body>
         <ThemeProvider attribute="class" defaultTheme="dark">

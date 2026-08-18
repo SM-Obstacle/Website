@@ -2,6 +2,7 @@
 
 import type { MappackLbFragment } from "@/app/__generated__/graphql";
 import MappackLeaderboard from "@/components/mappack/MappackLeaderboard";
+import { useRowSelection } from "@/hooks/useRowSelection";
 import MappackPlayerDialog from "./MappackPlayerDialog";
 
 export default function MappackStandings({
@@ -13,17 +14,18 @@ export default function MappackStandings({
   mappackName: string;
   mappack: MappackLbFragment | null | undefined;
 }) {
+  const selection = useRowSelection("player");
+
   return (
-    <MappackLeaderboard
-      mappack={mappack}
-      renderSelected={(login, close) => (
-        <MappackPlayerDialog
-          mappackId={mappackId}
-          mappackName={mappackName}
-          login={login}
-          onClose={close}
-        />
-      )}
-    />
+    <>
+      <MappackLeaderboard mappack={mappack} selectable />
+
+      <MappackPlayerDialog
+        mappackId={mappackId}
+        mappackName={mappackName}
+        login={selection.selected}
+        onClose={selection.close}
+      />
+    </>
   );
 }

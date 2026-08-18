@@ -8,9 +8,11 @@ import PageShell from "@/components/layout/PageShell";
 import { Panel } from "@/components/layout/Panel";
 import PageTitle from "@/components/layout/PageTitle";
 import SectionHeader from "@/components/layout/SectionHeader";
+import WithDetailAside from "@/components/layout/WithDetailAside";
+import MappackLeaderboard from "@/components/mappack/MappackLeaderboard";
 import { parse, toPlainText } from "@/lib/mpformat/mpformat";
 import EventHeader from "./EventHeader";
-import EventLeaderboard from "./EventLeaderboard";
+import EventPlayerAside from "./EventPlayerAside";
 
 const GET_CAMPAIGN_LEADERBOARD = gql(/* GraphQL */ `
   query GetCampaignLeaderboard($eventHandle: String!, $editionId: Int!) {
@@ -99,23 +101,28 @@ export default async function EventEditionPage(
       ]}
       selectedMenu="events"
     >
-      <div className="mx-auto flex h-full min-h-0 w-full max-w-content flex-col gap-2">
-        <EventHeader edition={edition} admins={admins} />
+      <WithDetailAside
+        aside={
+          <EventPlayerAside
+            eventHandle={eventHandle}
+            editionId={editionId}
+            eventName={eventName}
+          />
+        }
+      >
+        <div className="mx-auto flex h-full min-h-0 w-full max-w-content flex-col gap-2">
+          <EventHeader edition={edition} admins={admins} />
 
-        <Panel
-          className="flex min-h-0 flex-1 flex-col"
-          header={<SectionHeader title="Leaderboard" />}
-        >
-          <Suspense>
-            <EventLeaderboard
-              eventHandle={eventHandle}
-              editionId={editionId}
-              eventName={eventName}
-              mappack={edition.mappack}
-            />
-          </Suspense>
-        </Panel>
-      </div>
+          <Panel
+            className="flex min-h-0 flex-1 flex-col"
+            header={<SectionHeader title="Leaderboard" />}
+          >
+            <Suspense>
+              <MappackLeaderboard mappack={edition.mappack} selectable />
+            </Suspense>
+          </Panel>
+        </div>
+      </WithDetailAside>
     </PageShell>
   );
 }
