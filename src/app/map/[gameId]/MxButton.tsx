@@ -53,7 +53,7 @@ export default function MxButton({ gameId }: { gameId: string }) {
           onClick={handleMxClick}
           variant="secondary"
           size="icon"
-          className="shrink-0 rounded-full bg-black hover:bg-white/15"
+          className="shrink-0 rounded-full bg-sunken hover:bg-accent"
           disabled={isDisabled}
           aria-label="Open on ManiaExchange"
         >

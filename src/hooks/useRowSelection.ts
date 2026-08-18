@@ -38,7 +38,7 @@ export function useRowSelection(param: string) {
       }
     },
     "data-state": value === selected ? "selected" : undefined,
-    className: "cursor-pointer data-[state=selected]:[&>td]:bg-white/20",
+    className: "cursor-pointer data-[state=selected]:[&>td]:bg-selected",
   });
 
   return { selected, select, close, rowProps };

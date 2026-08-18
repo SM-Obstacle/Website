@@ -4,10 +4,16 @@
 @custom-variant dark (&:is(.dark *));
 
 /*
- * The site is dark-only: the palette below is the dark theme, applied on :root
- * so every shadcn component picks it up without a theme toggle.
+ * Two palettes. `:root` holds the light one and `.dark` overrides the colours
+ * that differ — `.dark` being the class next-themes puts on <html> once it has
+ * resolved the theme, from the system preference unless the visitor picked one.
+ *
+ * Only colours are themed. Everything below down to `--surface` is the layout
+ * scale, which both themes share.
  */
 :root {
+  color-scheme: light;
+
   --radius: 0.625rem;
 
   /* Layout scale. The logo drives the sidebar width, bar heights and radii. */
@@ -27,44 +33,110 @@
   --inset-radius: calc(var(--panel-radius) - var(--panel-inset));
 
   /* Surfaces are translucent so the background image stays visible. */
-  --surface: rgb(11 11 11 / 0.77);
+  --surface: rgb(255 255 255 / 0.78);
+  /* A recessed area inside a panel: the stat strips, the charts, the rows a
+     leaderboard marks out. */
+  --sunken: rgb(0 0 0 / 0.05);
+  /* The same, for a sticky leaderboard head */
+  --sunken-opaque: rgb(237 237 239 / 0.88);
+  /* The row a list has selected. Has to read above the hover tint. */
+  --selected: oklch(0 0 0 / 14%);
+  /* Laid over the background photo, which is a daylight scene: dark panels
+     stand out on it unaided, light ones need it washed out first. */
+  --backdrop-wash: rgb(255 255 255 / 0.5);
 
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: var(--surface);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.16 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.53 0.115 258);
+  --background: oklch(0.985 0 0);
+  --foreground: oklch(0.19 0 0);
+  --popover: oklch(0.99 0 0);
+  --primary: oklch(0.48 0.13 258);
   --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(1 0 0 / 8%);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(1 0 0 / 6%);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(1 0 0 / 12%);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
+  --secondary: oklch(0 0 0 / 6%);
+  --muted: oklch(0 0 0 / 4%);
+  --muted-foreground: oklch(0.44 0 0);
+  --accent: oklch(0 0 0 / 9%);
+  --destructive: oklch(0.52 0.21 27.325);
   --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(1 0 0 / 12%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.53 0.115 258);
+  --border: oklch(0 0 0 / 12%);
+  --input: oklch(0 0 0 / 20%);
 
-  /* Domain accents. */
+  /* Domain accents. The brand blue clears 4.5:1 on either surface, so it is
+     the one colour both themes share. */
   --time: #346ab4;
   /* The plotted series: the subject in a lighter --time, its reference in a
      warm counterpart. The two stay apart under colour blindness and hold 3:1
-     against the panels they sit on. The reference sits lighter than a fill of
-     it should — it is only ever drawn as a thin line, and has to read where it
-     crosses the subject's bars. */
+     against the panels they sit on. */
+  --chart-1: #2f6db8;
+  --chart-2: #9c6410;
+  /* Backdrop of the chart panels, for ringing a mark that overlaps another. */
+  --chart-surface: #ededee;
+  --link: #1f5fb0;
+  /* The gradient on a call-to-action button, deeper stop to paler stop, with
+     `--cta-foreground` as its label. The two themes run opposite ends of the
+     same blue ramp — a fill dark enough to carry white ink reads as a hole
+     punched in a light page — so the ink flips with them. */
+  --cta-from: #9cc3ee;
+  --cta-to: #d3e4f9;
+  --cta-foreground: #14345e;
+  /* Worn as ink — a rank, a label — so these are the medals darkened until
+     they read on a light panel rather than the metallic tones themselves. */
+  --medal-champion: #8f7207;
+  --medal-gold: #8f7207;
+  --medal-silver: #6b6b6b;
+  --medal-bronze: #96601f;
+}
+
+.dark {
+  color-scheme: dark;
+
+  --surface: rgb(11 11 11 / 0.77);
+  --sunken: rgb(0 0 0 / 0.4);
+  --sunken-opaque: rgb(0 0 0 / 0.7);
+  --selected: oklch(1 0 0 / 20%);
+  --backdrop-wash: rgb(0 0 0 / 0);
+
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --popover: oklch(0.16 0 0);
+  --primary: oklch(0.53 0.115 258);
+  --secondary: oklch(1 0 0 / 8%);
+  --muted: oklch(1 0 0 / 6%);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(1 0 0 / 12%);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 15%);
+
+  /* The reference line sits lighter than a fill of it should — it is only ever
+     drawn thin, and has to read where it crosses the subject's bars. */
   --chart-1: #4f8fd9;
   --chart-2: #e0a458;
-  /* Backdrop of the chart panels, for ringing a mark that overlaps another. */
   --chart-surface: #0e0e0e;
   --link: #87b0e9;
+  --cta-from: #152a48;
+  --cta-to: #275087;
+  --cta-foreground: oklch(0.985 0 0);
   --medal-champion: #e6c043;
   --medal-gold: #e6c043;
   --medal-silver: #c4c4c4;
   --medal-bronze: #ce8946;
+}
+
+/*
+ * The tokens that are only ever another one under a name a shadcn component
+ * knows. They have to be declared against both palettes rather than once on
+ * `:root`, because `var()` in a custom property is substituted where it is
+ * declared: derived on `:root` alone, they would resolve to the light value
+ * and inherit it into a block that carries `dark` on its own — an event banner
+ * would end up with the page's ink on its scrim.
+ */
+:root,
+.dark {
+  --card: var(--surface);
+  --card-foreground: var(--foreground);
+  --popover-foreground: var(--foreground);
+  --secondary-foreground: var(--foreground);
+  --accent-foreground: var(--foreground);
+  --ring: var(--primary);
 }
 
 @theme inline {
@@ -89,10 +161,16 @@
   --color-ring: var(--ring);
 
   --color-surface: var(--surface);
+  --color-sunken: var(--sunken);
+  --color-sunken-opaque: var(--sunken-opaque);
+  --color-selected: var(--selected);
   --color-time: var(--time);
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-link: var(--link);
+  --color-cta-from: var(--cta-from);
+  --color-cta-to: var(--cta-to);
+  --color-cta-foreground: var(--cta-foreground);
   --color-medal-champion: var(--medal-champion);
   --color-medal-gold: var(--medal-gold);
   --color-medal-silver: var(--medal-silver);
@@ -130,12 +208,17 @@
      * below the fold on a short window, where `overflow-hidden` clips it.
      */
     min-width: 390px;
-    color-scheme: dark;
   }
 
   body {
     @apply flex h-full flex-col bg-cover bg-fixed bg-center bg-no-repeat font-sans font-normal text-foreground;
-    background-image: url("/img/background.jpg");
+    /* The wash is a layer of its own rather than part of the photo, so the two
+       themes can share one image. `--backdrop-wash` is transparent on dark. */
+    background-image: linear-gradient(
+        var(--backdrop-wash),
+        var(--backdrop-wash)
+      ),
+      url("/img/background.jpg");
   }
 
   /* The tiny viewports the game browser reports need the whole UI scaled down. */

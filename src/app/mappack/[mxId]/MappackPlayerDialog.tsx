@@ -64,7 +64,7 @@ export default function MappackPlayerDialog({
         {error ? (
           <p className="px-3 pb-2 text-destructive">{error.message}</p>
         ) : (
-          <SubPanel className="bg-black/40 p-3">
+          <SubPanel className="bg-sunken p-3">
             <Leaderboard className="mx-0 w-full">
               <LeaderboardHeader className="[&_th]:bg-transparent">
                 <LeaderboardRow>

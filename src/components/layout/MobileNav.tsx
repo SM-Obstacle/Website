@@ -13,6 +13,7 @@ import {
 import { cn } from "@/lib/utils";
 import Logo from "./Logo";
 import { NAV_PAGES, type NavKey } from "./pages";
+import ThemeToggle from "./ThemeToggle";
 
 /** Below `md` the rail collapses into a sheet opened from the title bar logo. */
 export default function MobileNav({ selected }: { selected: NavKey }) {
@@ -64,6 +65,13 @@ export default function MobileNav({ selected }: { selected: NavKey }) {
             })}
           </ul>
         </nav>
+
+        {/* Below the pages, and outside the nav: a setting, not a destination. */}
+        <ThemeToggle
+          withLabel
+          className="mx-2 gap-3 rounded-full px-4 py-3 text-lg hover:bg-accent"
+          iconClassName="size-5"
+        />
       </SheetContent>
     </Sheet>
   );

@@ -31,7 +31,7 @@ export function LeaderboardHeader({
   return (
     <TableHeader
       className={cn(
-        "sticky top-0 z-10 text-base [&_tr]:border-0 [&_th]:bg-black/70",
+        "sticky top-2 backdrop-blur-[calc(var(--blur-xs)/2)] z-10 text-base [&_tr]:border-0 [&_th]:bg-sunken-opaque",
         className,
       )}
       {...props}
@@ -50,7 +50,7 @@ export function LeaderboardRow({
       className={cn(
         "border-0 hover:bg-transparent",
         "[&>td]:transition-colors [&>td]:first:rounded-s-md [&>td]:last:rounded-e-md",
-        "even:[&>td]:bg-white/6 hover:[&>td]:bg-white/12",
+        "even:[&>td]:bg-muted hover:[&>td]:bg-accent",
         className,
       )}
       {...props}

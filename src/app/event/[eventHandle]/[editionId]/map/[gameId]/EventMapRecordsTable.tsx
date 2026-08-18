@@ -237,7 +237,7 @@ export default function EventMapRecordsTable({
                 ) : (
                   <LeaderboardRow
                     key={`medal-${row.medal}`}
-                    className="[&>td]:bg-black/60"
+                    className="[&>td]:bg-sunken"
                   >
                     <LeaderboardCell className="flex justify-end">
                       <MedalImg mdl={row.medal} />

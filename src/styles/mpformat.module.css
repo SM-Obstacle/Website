@@ -6,17 +6,18 @@
  * A colour picked in-game can come out unreadable once it sits on one of our
  * backgrounds: too light on a light theme, too dark on a dark one. Both
  * adaptations are computed while rendering and handed over as custom
- * properties; the theme is read here rather than in JS, from the class
- * next-themes puts on <html>, so the markup stays theme-agnostic and MPFormat
- * can render on the server.
+ * properties; the theme is read here rather than in JS, so the markup stays
+ * theme-agnostic and MPFormat can render on the server.
  *
- * Dark is the default: the site ships dark-only, and it is also what shows if
- * next-themes' pre-paint script never runs.
+ * What it reads is the nearest `.dark` — the class next-themes puts on <html>,
+ * but also the one a block that stays dark in either theme carries, such as an
+ * event banner. Light is the default, matching the palette on `:root`: it is
+ * what shows if next-themes' pre-paint script never runs.
  */
 .themed {
-  color: var(--mp-dark);
+  color: var(--mp-light);
 }
 
-:global(html:not(.dark)) .themed {
-  color: var(--mp-light);
+:global(.dark) .themed {
+  color: var(--mp-dark);
 }

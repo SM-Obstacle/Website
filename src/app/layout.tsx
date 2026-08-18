@@ -7,8 +7,12 @@ import { forkawesomeManiaicons, kenneyIcons, lato } from "./fonts";
 import "@/styles/globals.css";
 import { ThemeProvider } from "next-themes";
 
+// Tints the browser's own chrome, so it follows the theme along with the page.
 export const viewport: Viewport = {
-  themeColor: "#060503",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f4f5f6" },
+    { media: "(prefers-color-scheme: dark)", color: "#060503" },
+  ],
 };
 
 export const metadata: Metadata = {
@@ -31,7 +35,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body>
-        <ThemeProvider attribute="class" defaultTheme="dark">
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <ApolloWrapper>
             <TooltipProvider delayDuration={300}>
               <NextTopLoader height={2} showSpinner={false} color="#346ab4" />

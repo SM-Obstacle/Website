@@ -113,7 +113,7 @@ export default function FilterPanel({ groups }: { groups: FilterGroup[] }) {
             aria-expanded={expanded}
             aria-controls="filters-form"
             aria-label={expanded ? "Hide filters" : "Show filters"}
-            className="rounded-full bg-black hover:bg-white/15 lg:hidden"
+            className="rounded-full bg-sunken hover:bg-accent lg:hidden"
           >
             <ChevronDown
               className={cn("transition-transform", !expanded && "-rotate-90")}
@@ -179,7 +179,7 @@ export default function FilterPanel({ groups }: { groups: FilterGroup[] }) {
           <Button
             type="submit"
             variant="secondary"
-            className="h-logo flex-1 rounded-full border border-transparent bg-black transition-colors hover:bg-white/10 active:border-white"
+            className="h-logo flex-1 rounded-full border border-transparent bg-sunken transition-colors hover:bg-accent active:border-foreground"
           >
             Filter
           </Button>

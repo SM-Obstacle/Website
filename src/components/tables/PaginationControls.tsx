@@ -30,7 +30,7 @@ export default function PaginationControls({
       <Button
         variant="secondary"
         size="icon-lg"
-        className="rounded-full border border-transparent bg-black transition-colors enabled:hover:bg-white/10 active:border-white"
+        className="rounded-full border border-transparent bg-sunken transition-colors enabled:hover:bg-accent active:border-foreground"
         aria-label="Previous page"
         disabled={disabled || !previousCursor}
         onClick={() => previousCursor && goTo("before", previousCursor)}
@@ -41,7 +41,7 @@ export default function PaginationControls({
       <Button
         variant="secondary"
         size="icon-lg"
-        className="rounded-full border border-transparent bg-black transition-colors enabled:hover:bg-white/10 active:border-white"
+        className="rounded-full border border-transparent bg-sunken transition-colors enabled:hover:bg-accent active:border-foreground"
         aria-label="Next page"
         disabled={disabled || !nextCursor}
         onClick={() => nextCursor && goTo("after", nextCursor)}

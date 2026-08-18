@@ -9,6 +9,7 @@ import {
 import { cn } from "@/lib/utils";
 import Logo from "./Logo";
 import { NAV_PAGES, type NavKey } from "./pages";
+import ThemeToggle from "./ThemeToggle";
 
 /** The icon rail, pinned to the left edge from `md` up. */
 export default function SidebarNav({ selected }: { selected?: NavKey }) {
@@ -50,6 +51,13 @@ export default function SidebarNav({ selected }: { selected?: NavKey }) {
           );
         })}
       </ul>
+
+      {/* Pinned to the foot of the rail: a setting, not one of the pages. */}
+      <ThemeToggle
+        tooltipSide="right"
+        className="mt-auto mb-4 justify-center"
+        iconClassName="size-[calc(var(--logo-size)-1.75rem)]"
+      />
     </nav>
   );
 }

@@ -73,7 +73,7 @@ export function RecordPlayerName({ record }: { record?: SelectedRecord }) {
       {record.player.name}
     </MPFormatLink>
   ) : (
-    <Skeleton className="inline-block h-6 w-48 bg-white/10" />
+    <Skeleton className="inline-block h-6 w-48" />
   );
 }
 
@@ -86,15 +86,15 @@ export function RecordMapName({ record }: { record?: SelectedRecord }) {
       </MPFormatLink>
     </>
   ) : (
-    <Skeleton className="inline-block h-4 w-32 bg-white/10" />
+    <Skeleton className="inline-block h-4 w-32" />
   );
 }
 
 function StatSkeleton() {
   return (
     <div className="flex flex-col items-center gap-1.5">
-      <Skeleton className="h-3 w-14 bg-white/10" />
-      <Skeleton className="h-5 w-20 bg-white/10" />
+      <Skeleton className="h-3 w-14" />
+      <Skeleton className="h-5 w-20" />
     </div>
   );
 }
@@ -116,7 +116,7 @@ export default function RecordDetails({
       {/* Sized against the container, not the window: the same four figures sit
           in a row inside the dialog and two-up inside the side panel, which is
           narrow on the very screens the window query would call wide. */}
-      <SubPanel className="@container shrink-0 bg-black/40 px-3 py-4">
+      <SubPanel className="@container shrink-0 bg-sunken px-3 py-4">
         <div className="grid grid-cols-2 gap-4 @sm:flex @sm:justify-around">
           {record ? (
             <>
@@ -148,8 +148,8 @@ export default function RecordDetails({
           />
         )
       ) : (
-        <SubPanel className="shrink-0 bg-black/40 p-3">
-          <Skeleton className="h-64 w-full bg-white/5" />
+        <SubPanel className="shrink-0 bg-sunken p-3">
+          <Skeleton className="h-64 w-full" />
         </SubPanel>
       )}
     </>

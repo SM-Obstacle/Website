@@ -23,7 +23,7 @@ export default function DateSortButton({
     <Button
       variant="secondary"
       size="icon-sm"
-      className="border border-transparent bg-black transition-colors hover:border-white"
+      className="border border-transparent bg-sunken transition-colors hover:border-foreground"
       aria-label={oldestFirst ? "Show newest first" : "Show oldest first"}
       onClick={() =>
         setParams(

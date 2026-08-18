@@ -24,7 +24,9 @@ export default function SectionHeader({
         <Button
           asChild
           size="sm"
-          className="group shrink-0 rounded-full border border-[#152A48] bg-linear-[-75deg,#152A48,#275087] text-base text-white transition-colors hover:border-black hover:bg-linear-[-75deg,black,#152A48] active:border-white"
+          // Hover darkens the whole button rather than swapping in a second
+          // gradient, so the two themes need one pair of stops between them.
+          className="group shrink-0 rounded-full border border-cta-from bg-linear-[-75deg,var(--cta-from),var(--cta-to)] text-base text-cta-foreground transition-[filter,border-color] hover:brightness-90 active:border-cta-foreground"
         >
           <Link href={href}>
             {linkLabel}

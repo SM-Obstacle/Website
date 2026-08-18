@@ -25,7 +25,7 @@ export default async function ArticlesIndex() {
       <div className="scrollbar-slim mx-auto h-full w-full max-w-content overflow-y-auto">
         <Panel className="h-full gap-inset">
           <Link href="/links/resources" className="group">
-            <SubPanel className="flex-row items-center gap-4 p-5 transition-colors hover:bg-white/10">
+            <SubPanel className="flex-row items-center gap-4 p-5 transition-colors hover:bg-accent">
               <BookOpen className="size-8 shrink-0" aria-hidden />
 
               <div className="min-w-0 flex-1">
@@ -52,7 +52,7 @@ export default async function ArticlesIndex() {
               {articles.map((article) => (
                 <li key={article.slug}>
                   <Link href={`/articles/${article.slug}`} className="group">
-                    <SubPanel className="gap-1 p-5 transition-colors hover:bg-white/10">
+                    <SubPanel className="gap-1 p-5 transition-colors hover:bg-accent">
                       <div className="flex items-center gap-2">
                         <h2 className="m-0 min-w-0 flex-1 truncate text-xl font-bold">
                           {article.title}

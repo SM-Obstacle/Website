@@ -13,7 +13,7 @@ export default function MapInfo({ map }: { map: GetMapQuery["map"] }) {
       {/* Placeholder thumbnail: the API has no map previews. Sitting one inset
           in from the panel, it takes the panel's radius so both corners curve
           together. */}
-      <div className="flex aspect-square w-(--profile-picture-size) shrink-0 items-center justify-center rounded-panel bg-black">
+      <div className="flex aspect-square w-(--profile-picture-size) shrink-0 items-center justify-center rounded-panel bg-sunken">
         <MapIcon className="size-1/3" />
       </div>
 

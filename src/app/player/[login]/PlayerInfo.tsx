@@ -28,7 +28,7 @@ export default function PlayerInfo({
   return (
     <Panel className="flex-row items-center">
       {/* Placeholder avatar: the API has no profile pictures. */}
-      <div className="flex aspect-square w-(--profile-picture-size) shrink-0 items-center justify-center rounded-full bg-black">
+      <div className="flex aspect-square w-(--profile-picture-size) shrink-0 items-center justify-center rounded-full bg-sunken">
         <User className="size-1/3" />
       </div>
 

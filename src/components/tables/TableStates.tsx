@@ -21,7 +21,7 @@ export function TableSkeleton({
         <LeaderboardRow key={row}>
           {Array.from({ length: columns }, (_, column) => (
             <LeaderboardCell key={column}>
-              <Skeleton className="h-4 w-full bg-white/10" />
+              <Skeleton className="h-4 w-full" />
             </LeaderboardCell>
           ))}
         </LeaderboardRow>

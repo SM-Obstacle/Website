@@ -28,7 +28,7 @@ export const markdownComponents: Components = {
     />
   ),
   code: (props) => (
-    <code className="rounded-sm bg-black/50 px-1 py-0.5" {...props} />
+    <code className="rounded-sm bg-sunken px-1 py-0.5" {...props} />
   ),
   a: ({ ref: _ref, ...props }) => (
     <Link explicit href={props.href ?? "#"} {...props} />

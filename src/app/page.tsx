@@ -58,7 +58,7 @@ export default function Home() {
         >
           <Suspense
             fallback={
-              <Skeleton className="h-40 w-full rounded-panel bg-white/10" />
+              <Skeleton className="h-40 w-full rounded-panel" />
             }
           >
             <CurrentEvents />

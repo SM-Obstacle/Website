@@ -141,7 +141,7 @@ function MapGroup({
   children,
 }: React.PropsWithChildren<{ title: React.ReactNode; medal?: React.ReactNode }>) {
   return (
-    <Collapsible defaultOpen className="shrink-0 rounded-panel bg-black/40 py-1">
+    <Collapsible defaultOpen className="shrink-0 rounded-panel bg-sunken py-1">
       <CollapsibleTrigger className="group flex w-full items-center gap-2 px-4 py-2 text-left font-bold">
         {title}
         <span className="ms-auto flex items-center gap-2">
@@ -185,7 +185,7 @@ export default function EventPlayerDetails({
     // spread out inside the dialog and tighten up inside the side panel, which
     // is narrow on the very screens the window query would call wide.
     <div className="@container flex shrink-0 flex-col gap-inset">
-      <SubPanel className="shrink-0 gap-3 bg-black/40 p-3">
+      <SubPanel className="shrink-0 gap-3 bg-sunken p-3">
         <div className="grid grid-cols-2 gap-3 @md:flex @md:justify-around">
           <Stat label="Rank" value={player.rank} />
           <Stat label="Rank average" value={player.rankAvg} />

@@ -68,8 +68,12 @@ export default async function EventsPage() {
               {events.map(({ event: { handle }, edition }) => (
                 <li key={`${handle}_${edition.id}`}>
                   <Link href={`/event/${handle}/${edition.id}`}>
+                    {/* Dark whichever theme is on — `dark` re-declares the
+                        palette for this subtree. What the card has to hold
+                        against is the edition's own banner under the scrim,
+                        not the page around it. */}
                     <SubPanel
-                      className="h-full justify-between gap-3 border border-transparent bg-black/60 bg-cover bg-center p-5 shadow-[inset_0_0_7em_black] transition-colors hover:border-white/40"
+                      className="dark h-full justify-between gap-3 border border-transparent bg-black/60 bg-cover bg-center p-5 shadow-[inset_0_0_7em_black] transition-colors hover:border-white/40"
                       style={
                         edition.bannerImgUrl
                           ? {
