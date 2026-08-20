@@ -75,6 +75,10 @@ export function buildRecordsFilter(
     map: orUndefined({
       mapUid: text(params, "mapUid"),
       mapName: text(params, "mapName"),
+      author: orUndefined({
+        playerLogin: text(params, "mapAuthorLogin"),
+        playerName: text(params, "mapAuthorName"),
+      }),
     }),
     beforeDate: text(params, "beforeDate"),
     afterDate: text(params, "afterDate"),

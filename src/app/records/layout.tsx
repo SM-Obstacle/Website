@@ -1,6 +1,8 @@
 import { Suspense } from "react";
 
-import FilterPanel, { type FilterGroup } from "@/components/filters/FilterPanel";
+import FilterPanel, {
+  type FilterGroup,
+} from "@/components/filters/FilterPanel";
 import ListPage from "@/components/layout/ListPage";
 import PageShell from "@/components/layout/PageShell";
 import PageTitle from "@/components/layout/PageTitle";
@@ -19,6 +21,8 @@ const FILTER_GROUPS: FilterGroup[] = [
     fields: [
       { name: "mapUid", label: "Map UID", type: "text" },
       { name: "mapName", label: "Name", type: "text" },
+      { name: "mapAuthorLogin", label: "Author login", type: "text" },
+      { name: "mapAuthorName", label: "Author name", type: "text" },
     ],
   },
   {
