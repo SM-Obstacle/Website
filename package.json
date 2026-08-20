@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build && yarn copy-standalone-assets",
-    "copy-standalone-assets": "rm -rf .next/standalone/public .next/standalone/.next/static && cp -r public .next/standalone/public && cp -r .next/static .next/standalone/.next/static",
+    "copy-standalone-assets": "rm -rf .next/standalone/public .next/standalone/.next/static .next/standalone/data && cp -r public .next/standalone/public && cp -r .next/static .next/standalone/.next/static && cp -r data .next/standalone/data",
     "start": "node .next/standalone/server.js",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",

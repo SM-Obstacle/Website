@@ -13,50 +13,54 @@ export default function MapInfo({ map }: { map: GetMapQuery["map"] }) {
       {/* Placeholder thumbnail: the API has no map previews. Sitting one inset
           in from the panel, it takes the panel's radius so both corners curve
           together. */}
-      <div className="flex aspect-square w-(--profile-picture-size) shrink-0 items-center justify-center rounded-panel bg-sunken">
+      <div className="flex aspect-square h-full min-w-(--profile-picture-size) shrink-0 items-center justify-center rounded-panel bg-sunken">
         <MapIcon className="size-1/3" />
       </div>
 
       <SubPanel className="h-full w-full min-w-0 gap-3 px-5 py-2">
-        <div className="flex items-start justify-between gap-2">
-          <div className="min-w-0">
-            <h2 className="m-0 truncate text-2xl font-bold">
-              <MPFormat>{map.name}</MPFormat>
-            </h2>
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex flex-col gap-inset">
+            <div className="min-w-0">
+              <h2 className="m-0 truncate text-2xl font-bold">
+                <MPFormat>{map.name}</MPFormat>
+              </h2>
 
-            <h3 className="m-0 truncate text-base">
-              by{" "}
-              <MPFormatLink path={`/player/${map.player.login}`}>
-                {map.player.name}
-              </MPFormatLink>
-            </h3>
+              <h3 className="m-0 truncate text-base">
+                by{" "}
+                <MPFormatLink path={`/player/${map.player.login}`}>
+                  {map.player.name}
+                </MPFormatLink>
+              </h3>
+            </div>
+
+            <div className="flex flex-wrap gap-2">
+              {!!map.cpsNumber && (
+                <Badge variant="secondary">
+                  <Flag />
+                  {map.cpsNumber} cp{map.cpsNumber > 1 ? "s" : ""}
+                </Badge>
+              )}
+
+              {map.relatedEventEditions.map((related) => (
+                <Badge
+                  key={`${related.edition.event.handle}-${related.edition.id}`}
+                  variant="secondary"
+                  asChild
+                >
+                  <Link
+                    href={`/event/${related.edition.event.handle}/${related.edition.id}/map/${related.map.gameId}`}
+                  >
+                    {related.edition.name}
+                    {related.edition.subtitle
+                      ? ` ${related.edition.subtitle}`
+                      : ""}
+                  </Link>
+                </Badge>
+              ))}
+            </div>
           </div>
 
-          <MxButton gameId={map.gameId} />
-        </div>
-
-        <div className="flex flex-wrap gap-2">
-          {!!map.cpsNumber && (
-            <Badge variant="secondary">
-              <Flag />
-              {map.cpsNumber} cp{map.cpsNumber > 1 ? "s" : ""}
-            </Badge>
-          )}
-
-          {map.relatedEventEditions.map((related) => (
-            <Badge
-              key={`${related.edition.event.handle}-${related.edition.id}`}
-              variant="secondary"
-              asChild
-            >
-              <Link
-                href={`/event/${related.edition.event.handle}/${related.edition.id}/map/${related.map.gameId}`}
-              >
-                {related.edition.name}
-                {related.edition.subtitle ? ` ${related.edition.subtitle}` : ""}
-              </Link>
-            </Badge>
-          ))}
+          <MxButton mxId={map.mxId ?? null} />
         </div>
       </SubPanel>
     </Panel>

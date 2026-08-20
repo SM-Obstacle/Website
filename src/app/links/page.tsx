@@ -57,22 +57,24 @@ export default async function ArticlesIndex() {
                 {articles.map((article) => (
                   <li key={article.slug}>
                     <Link href={`/articles/${article.slug}`} className="group">
-                      <SubPanel className="gap-1 p-5 transition-colors hover:bg-accent">
-                        <div className="flex items-center gap-2">
-                          <h2 className="m-0 min-w-0 flex-1 truncate text-xl font-bold">
+                      <SubPanel className="flex-row items-center gap-4 p-5 transition-colors hover:bg-accent">
+                        <div className="flex min-w-0 flex-1 flex-col gap-1">
+                          <h2 className="m-0 truncate text-xl font-bold">
                             {article.title}
                           </h2>
-                          <ChevronRight
-                            className="size-5 shrink-0 transition-transform group-hover:translate-x-1"
-                            aria-hidden
-                          />
+                          <p className="m-0 text-sm text-muted-foreground">
+                            <FormattedDate onlyDate>
+                              {article.date}
+                            </FormattedDate>
+                            {article.authors.length > 0 &&
+                              ` — by ${article.authors.join(", ")}`}
+                          </p>
                         </div>
 
-                        <p className="m-0 text-sm text-muted-foreground">
-                          <FormattedDate onlyDate>{article.date}</FormattedDate>
-                          {article.authors.length > 0 &&
-                            ` — by ${article.authors.join(", ")}`}
-                        </p>
+                        <ChevronRight
+                          className="size-5 shrink-0 transition-transform group-hover:translate-x-1"
+                          aria-hidden
+                        />
                       </SubPanel>
                     </Link>
                   </li>

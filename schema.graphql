@@ -101,6 +101,7 @@ type EventEditionPlayerRank {
 
 type Map {
 	id: ID!
+	mxId: Int
 	gameId: String!
 	playerId: ID!
 	cpsNumber: Int
