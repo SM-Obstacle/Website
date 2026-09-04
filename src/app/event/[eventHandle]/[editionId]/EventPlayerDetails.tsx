@@ -4,6 +4,7 @@ import { useQuery } from "@apollo/client/react";
 import { ChevronDown, Circle } from "lucide-react";
 
 import { gql } from "@/app/__generated__";
+import { useOpenedPanel } from "@/components/layout/DetailAside";
 import { SubPanel } from "@/components/layout/Panel";
 import { MedalImg } from "@/components/MedalImg";
 import { MPFormatLink } from "@/components/MPFormat";
@@ -169,6 +170,8 @@ export default function EventPlayerDetails({
   player?: SelectedEventPlayer;
   error?: { message: string };
 }) {
+  const opened = useOpenedPanel();
+
   if (error) {
     return <p className="px-3 pb-2 text-destructive">{error.message}</p>;
   }
@@ -227,104 +230,117 @@ export default function EventPlayerDetails({
         )}
       </SubPanel>
 
-      {player.unfinishedMaps.length > 0 && (
-        <MapGroup title="Unfinished maps">
-          <Leaderboard className="mx-0 w-full">
-            <LeaderboardHeader className="[&_th]:bg-transparent">
-              <LeaderboardRow>
-                <LeaderboardHead>Map</LeaderboardHead>
-                <LeaderboardHead className="w-20 text-right @md:w-32">
-                  Last<span className="hidden @md:inline"> rank</span>
-                </LeaderboardHead>
-              </LeaderboardRow>
-            </LeaderboardHeader>
-            <LeaderboardBody>
-              {player.unfinishedMaps.map((entry) => (
-                <LeaderboardRow key={entry.map.gameId}>
-                  <NameCell>
-                    <MPFormatLink
-                      path={`/event/${eventHandle}/${editionId}/map/${entry.map.gameId}`}
-                    >
-                      {entry.map.name}
-                    </MPFormatLink>
-                  </NameCell>
-                  <RankCell>
-                    {entry.lastRank > 0 ? entry.lastRank : "—"}
-                  </RankCell>
-                </LeaderboardRow>
-              ))}
-            </LeaderboardBody>
-          </Leaderboard>
-        </MapGroup>
-      )}
-
-      {player.categorizedRanks.map(
-        (category) =>
-          category.ranks.length > 0 && (
-            <MapGroup
-              key={category.categoryName}
-              medal={<MedalImg mdl={category.medal} />}
-              title={
-                <span className="flex min-w-0 items-center gap-2">
-                  {category.hexColor && (
-                    <Circle
-                      className="size-3 shrink-0"
-                      fill={`#${category.hexColor}`}
-                      stroke="none"
-                    />
-                  )}
-                  <span className="truncate">{category.categoryName}</span>
-                  {category.nbMaps > 0 && (
-                    <Badge variant="secondary">
-                      {category.ranks.length}/{category.nbMaps}
-                    </Badge>
-                  )}
-                </span>
-              }
-            >
+      {opened ? (
+        <>
+          {player.unfinishedMaps.length > 0 && (
+            <MapGroup title="Unfinished maps">
               <Leaderboard className="mx-0 w-full">
                 <LeaderboardHeader className="[&_th]:bg-transparent">
                   <LeaderboardRow>
-                    <LeaderboardHead className="w-14 text-right @md:w-20">
-                      Rank
-                    </LeaderboardHead>
                     <LeaderboardHead>Map</LeaderboardHead>
-                    <LeaderboardHead className="w-20 @md:w-32">
-                      Time
-                    </LeaderboardHead>
-                    <LeaderboardHead className="w-10 text-right @md:w-16">
-                      {/* The medals speak for themselves once the column is
-                          too narrow to name them without spilling over. */}
-                      <span className="sr-only @md:not-sr-only">Medal</span>
+                    <LeaderboardHead className="w-20 text-right @md:w-32">
+                      Last<span className="hidden @md:inline"> rank</span>
                     </LeaderboardHead>
                   </LeaderboardRow>
                 </LeaderboardHeader>
                 <LeaderboardBody>
-                  {category.ranks.map((rank) => (
-                    <LeaderboardRow key={rank.map.map.gameId}>
-                      <RankCell>
-                        {rank.rank}
-                        <small>/{rank.map.lastRank}</small>
-                      </RankCell>
+                  {player.unfinishedMaps.map((entry) => (
+                    <LeaderboardRow key={entry.map.gameId}>
                       <NameCell>
                         <MPFormatLink
-                          path={`/event/${eventHandle}/${editionId}/map/${rank.map.map.gameId}`}
+                          path={`/event/${eventHandle}/${editionId}/map/${entry.map.gameId}`}
                         >
-                          {rank.map.map.name}
+                          {entry.map.name}
                         </MPFormatLink>
                       </NameCell>
-                      <TimeCell>
-                        <Time>{rank.time}</Time>
-                      </TimeCell>
-                      <NameCell className="flex justify-end">
-                        <MedalImg mdl={rank.medal} />
-                      </NameCell>
+                      <RankCell>
+                        {entry.lastRank > 0 ? entry.lastRank : "—"}
+                      </RankCell>
                     </LeaderboardRow>
                   ))}
                 </LeaderboardBody>
               </Leaderboard>
             </MapGroup>
-          ),
+          )}
+
+          {player.categorizedRanks.map(
+            (category) =>
+              category.ranks.length > 0 && (
+                <MapGroup
+                  key={category.categoryName}
+                  medal={<MedalImg mdl={category.medal} />}
+                  title={
+                    <span className="flex min-w-0 items-center gap-2">
+                      {category.hexColor && (
+                        <Circle
+                          className="size-3 shrink-0"
+                          fill={`#${category.hexColor}`}
+                          stroke="none"
+                        />
+                      )}
+                      <span className="truncate">{category.categoryName}</span>
+                      {category.nbMaps > 0 && (
+                        <Badge variant="secondary">
+                          {category.ranks.length}/{category.nbMaps}
+                        </Badge>
+                      )}
+                    </span>
+                  }
+                >
+                  <Leaderboard className="mx-0 w-full">
+                    <LeaderboardHeader className="[&_th]:bg-transparent">
+                      <LeaderboardRow>
+                        <LeaderboardHead className="w-14 text-right @md:w-20">
+                          Rank
+                        </LeaderboardHead>
+                        <LeaderboardHead>Map</LeaderboardHead>
+                        <LeaderboardHead className="w-20 @md:w-32">
+                          Time
+                        </LeaderboardHead>
+                        <LeaderboardHead className="w-10 text-right @md:w-16">
+                          {/* The medals speak for themselves once the column is
+                              too narrow to name them without spilling over. */}
+                          <span className="sr-only @md:not-sr-only">Medal</span>
+                        </LeaderboardHead>
+                      </LeaderboardRow>
+                    </LeaderboardHeader>
+                    <LeaderboardBody>
+                      {category.ranks.map((rank) => (
+                        <LeaderboardRow key={rank.map.map.gameId}>
+                          <RankCell>
+                            {rank.rank}
+                            <small>/{rank.map.lastRank}</small>
+                          </RankCell>
+                          <NameCell>
+                            <MPFormatLink
+                              path={`/event/${eventHandle}/${editionId}/map/${rank.map.map.gameId}`}
+                            >
+                              {rank.map.map.name}
+                            </MPFormatLink>
+                          </NameCell>
+                          <TimeCell>
+                            <Time>{rank.time}</Time>
+                          </TimeCell>
+                          <NameCell className="flex justify-end">
+                            <MedalImg mdl={rank.medal} />
+                          </NameCell>
+                        </LeaderboardRow>
+                      ))}
+                    </LeaderboardBody>
+                  </Leaderboard>
+                </MapGroup>
+              ),
+          )}
+        </>
+      ) : (
+        // The map tables cost more to build than one frame of the panel's
+        // arrival has to spare. They wait behind the placeholder that already
+        // stands in for them while they load.
+        <SubPanel className="shrink-0 p-3">
+          <Leaderboard className="mx-0 w-full">
+            <TableSkeleton columns={3} rows={6} />
+          </Leaderboard>
+        </SubPanel>
       )}
     </div>
   );
