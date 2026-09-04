@@ -20,6 +20,7 @@ const GET_MAP_INFO = gql(/* GraphQL */ `
     map(gameId: $gameId) {
       gameId
       mxId
+      mxIdStatus
       name
       cpsNumber
       player {

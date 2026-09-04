@@ -1,11 +1,12 @@
 import { Flag, Map as MapIcon } from "lucide-react";
 
-import type { GetMapQuery } from "@/app/__generated__/graphql";
+import { MxIdStatus, type GetMapQuery } from "@/app/__generated__/graphql";
 import Link from "@/components/Link";
 import { Panel, SubPanel } from "@/components/layout/Panel";
 import MPFormat, { MPFormatLink } from "@/components/MPFormat";
 import { Badge } from "@/components/ui/badge";
 import MxButton from "./MxButton";
+import FallbackMxButton from "./FallbackMxButton";
 
 export default function MapInfo({ map }: { map: GetMapQuery["map"] }) {
   return (
@@ -60,7 +61,11 @@ export default function MapInfo({ map }: { map: GetMapQuery["map"] }) {
             </div>
           </div>
 
-          <MxButton mxId={map.mxId ?? null} />
+          {map.mxIdStatus === MxIdStatus.Unknown ? (
+            <FallbackMxButton mapUid={map.gameId} />
+          ) : (
+            <MxButton mxId={map.mxId ?? null} />
+          )}
         </div>
       </SubPanel>
     </Panel>

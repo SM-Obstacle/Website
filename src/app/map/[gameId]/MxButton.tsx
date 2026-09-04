@@ -10,12 +10,12 @@ import {
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
-const btnVariants = buttonVariants({
+export const btnVariants = buttonVariants({
   size: "icon",
   className: "shrink-0 rounded-full! cursor-pointer p-2",
 });
 
-function MxLogo() {
+export function MxLogo() {
   return (
     <Image alt="Mania Exchange Logo" src={mxPlanetLogo} className="size-5" />
   );
@@ -28,8 +28,8 @@ export default function MxButton({ mxId }: { mxId: number | null }) {
         <span className="inline-block w-fit">
           <Button
             className={btnVariants}
-            disabled={mxId === null}
-            aria-label="Map not available on ManiaExchange"
+            disabled
+            aria-label="Map not available in ManiaExchange"
           >
             <MxLogo />
           </Button>

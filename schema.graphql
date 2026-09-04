@@ -102,6 +102,11 @@ type EventEditionPlayerRank {
 type Map {
 	id: ID!
 	mxId: Int
+	"""
+	What we know about the MX ID of this map, to tell apart a map ManiaExchange doesn't have
+	from one we haven't got an answer for yet.
+	"""
+	mxIdStatus: MxIdStatus!
 	gameId: String!
 	playerId: ID!
 	cpsNumber: Int
@@ -224,6 +229,50 @@ type MedalTimes {
 	silverTime: Int!
 	goldTime: Int!
 	championTime: Int!
+}
+
+type MutationRoot {
+	"""
+	Asks the ManiaExchange API for the MX ID of a map right now, instead of leaving it to be
+	fetched in the background, and saves it in our database.
+	
+	This is what a "look for this map on ManiaExchange" button calls: it ignores what we may
+	have cached about this map being absent from ManiaExchange, which is the whole point, since
+	whoever presses that button knows better than our cache does.
+	
+	It costs a request to the ManiaExchange API, so **it can only be used once per mutation**.
+	A map whose MX ID we already have doesn't count, since it needs no request.
+	
+	Returns the map, whose `mxId` is null when ManiaExchange doesn't have it.
+	"""
+	forceFetchMxId(
+		"""
+		The UID of the map, as the game knows it.
+		"""
+		mapUid: String!
+	): Map!
+}
+
+"""
+What the API knows about the MX ID of a map.
+
+This tells apart a map ManiaExchange doesn't have from one we simply haven't got an answer for
+yet, which both leave `mxId` null.
+"""
+enum MxIdStatus {
+	"""
+	We have the MX ID of this map: the `mxId` field holds it.
+	"""
+	KNOWN
+	"""
+	ManiaExchange doesn't have this map. It's worth asking again in a while, but not now.
+	"""
+	NOT_ON_MX
+	"""
+	We have no answer for this map yet. It's being fetched, so `mxId` may be filled in a few
+	seconds; asking again later, or asking for it explicitly, is what tells.
+	"""
+	UNKNOWN
 }
 
 """
@@ -530,6 +579,7 @@ Provides a scalar specification URL for specifying the behavior of custom scalar
 directive @specifiedBy(url: String!) on SCALAR
 schema {
 	query: QueryRoot
+	mutation: MutationRoot
 	subscription: SubscriptionRoot
 }
 
