@@ -1,9 +1,11 @@
 "use client";
 
-import { useQuery } from "@apollo/client/react";
+import { skipToken, useQuery } from "@apollo/client/react";
+import { memo } from "react";
 
 import { gql } from "@/app/__generated__";
 import {
+  type MapRecordsFragment,
   MapRecordSortableField,
   SortOrder,
 } from "@/app/__generated__/graphql";
@@ -11,6 +13,7 @@ import FormattedDate from "@/components/FormattedDate";
 import { SubPanel } from "@/components/layout/Panel";
 import { MedalImg } from "@/components/MedalImg";
 import { MPFormatLink } from "@/components/MPFormat";
+import NoPropagationLink from "@/components/NoPropagationLink";
 import {
   Leaderboard,
   LeaderboardBody,
@@ -24,17 +27,41 @@ import {
   WideOnlyCell,
   WideOnlyHead,
 } from "@/components/tables/Leaderboard";
-import PaginationControls from "@/components/tables/PaginationControls";
 import DateSortButton from "@/components/tables/DateSortButton";
+import PaginationControls from "@/components/tables/PaginationControls";
 import {
   TableError,
   TableMessage,
   TableSkeleton,
 } from "@/components/tables/TableStates";
 import Time from "@/components/Time";
+import { selectableRowProps, useRowSelection } from "@/hooks/useRowSelection";
 import { useUrlParams } from "@/hooks/useUrlParams";
 import { readPagination } from "@/lib/pagination";
 import { Medal } from "@/lib/ranked-record";
+
+const GET_MAP_RECORDS = gql(/* GraphQL */ `
+  query GetMapRecords(
+    $gameId: String!
+    $first: Int
+    $last: Int
+    $after: String
+    $before: String
+    $sort: MapRecordSort
+  ) {
+    map(gameId: $gameId) {
+      recordsConnection(
+        first: $first
+        last: $last
+        after: $after
+        before: $before
+        sort: $sort
+      ) {
+        ...MapRecords
+      }
+    }
+  }
+`);
 
 const GET_EVENT_MAP_RECORDS = gql(/* GraphQL */ `
   query GetEventMapRecords(
@@ -63,19 +90,7 @@ const GET_EVENT_MAP_RECORDS = gql(/* GraphQL */ `
             before: $before
             sort: $sort
           ) {
-            pageInfo {
-              hasPreviousPage
-              hasNextPage
-              startCursor
-              endCursor
-            }
-            nodes {
-              player {
-                login
-                name
-              }
-              ...RecordBase
-            }
+            ...MapRecords
           }
         }
       }
@@ -86,6 +101,8 @@ const GET_EVENT_MAP_RECORDS = gql(/* GraphQL */ `
 const COLUMNS = 4;
 const PAGE_SIZE = 25;
 
+type RecordNode = MapRecordsFragment["nodes"][number];
+
 type MedalTimes = {
   bronzeTime: number;
   silverTime: number;
@@ -93,16 +110,10 @@ type MedalTimes = {
   championTime: number;
 };
 
-type RecordRow = {
-  kind: "record";
-  id: number;
-  rank: number;
-  time: number;
-  recordDate: string;
-  player: { login: string; name: string };
-};
-
-type MedalRow = { kind: "medal"; medal: Medal; time: number };
+/** A row of the leaderboard: someone's record, or a medal to beat. */
+type Row =
+  | { kind: "record"; time: number; record: RecordNode }
+  | { kind: "medal"; time: number; medal: Medal };
 
 const MEDAL_LABELS: Record<Medal, string> = {
   [Medal.Bronze]: "Bronze time",
@@ -114,79 +125,142 @@ const MEDAL_LABELS: Record<Medal, string> = {
 /**
  * Slots the medal times into the leaderboard so a player can see which medal
  * each record earned. A record that ties a medal time comes first.
+ *
+ * Only an event edition sets medal times; anywhere else this just walks the
+ * records through.
  */
 function withMedalRows(
-  records: RecordRow[],
+  records: readonly RecordNode[],
   medalTimes: MedalTimes | null | undefined,
-): (RecordRow | MedalRow)[] {
-  if (!medalTimes) return records;
+): Row[] {
+  const rows: Row[] = records.map((record) => ({
+    kind: "record",
+    time: record.time,
+    record,
+  }));
 
-  const medals: MedalRow[] = [
+  if (!medalTimes) return rows;
+
+  const medals: Row[] = [
     { kind: "medal", medal: Medal.Bronze, time: medalTimes.bronzeTime },
     { kind: "medal", medal: Medal.Silver, time: medalTimes.silverTime },
     { kind: "medal", medal: Medal.Gold, time: medalTimes.goldTime },
     { kind: "medal", medal: Medal.Champion, time: medalTimes.championTime },
   ];
 
-  return [...records, ...medals].sort(
+  return [...rows, ...medals].sort(
     (a, b) =>
       a.time - b.time ||
       (a.kind === "medal" ? 1 : 0) - (b.kind === "medal" ? 1 : 0),
   );
 }
 
-export default function EventMapRecordsTable({
-  eventHandle,
-  editionId,
-  gameId,
+/**
+ * One row of the leaderboard.
+ *
+ * Picking a row rewrites the query string, which re-renders everything reading
+ * it — this table included. Memoised on a record the cache hands back
+ * unchanged, only the two rows whose highlight moved are rendered again.
+ */
+const MapRecordRow = memo(function MapRecordRow({
+  record,
+  selected,
+  select,
 }: {
-  eventHandle: string;
-  editionId: number;
+  record: RecordNode;
+  selected: boolean;
+  select: (value: string) => void;
+}) {
+  return (
+    <LeaderboardRow
+      {...selectableRowProps(String(record.id), selected, select)}
+    >
+      <RankCell>{record.rank}</RankCell>
+      <NameCell>
+        <MPFormatLink
+          component={NoPropagationLink}
+          path={`/player/${record.player.login}`}
+        >
+          {record.player.name}
+        </MPFormatLink>
+      </NameCell>
+      <TimeCell>
+        <Time>{record.time}</Time>
+      </TimeCell>
+      <WideOnlyCell className="text-right">
+        <FormattedDate onlyDate>{record.recordDate}</FormattedDate>
+      </WideOnlyCell>
+    </LeaderboardRow>
+  );
+});
+
+/**
+ * The records set on a map, and the details of whichever one is picked.
+ *
+ * An event edition keeps its own records for its own copy of a map, so where
+ * they are read from is all that `event` changes: the rows, the paging and the
+ * selection are the same either way.
+ */
+export default function MapLeaderboard({
+  gameId,
+  event,
+}: {
   gameId: string;
+  event?: { handle: string; editionId: number };
 }) {
   const { searchParams } = useUrlParams();
+  const selection = useRowSelection("record");
 
   const order = searchParams.get("order");
   // The API's DESCENDING order walks dates upwards: oldest records first.
   const oldestFirst = order === "desc";
 
-  const { data, previousData, loading, error } = useQuery(
-    GET_EVENT_MAP_RECORDS,
-    {
-      variables: {
-        eventHandle,
-        editionId,
-        gameId,
-        ...readPagination(searchParams, PAGE_SIZE),
-        ...(order && {
-          sort: {
-            field: MapRecordSortableField.Date,
-            order: oldestFirst ? SortOrder.Descending : SortOrder.Ascending,
-          },
-        }),
+  const variables = {
+    gameId,
+    ...readPagination(searchParams, PAGE_SIZE),
+    // Left alone, the leaderboard comes back in rank order — the only
+    // ordering worth showing until someone asks for dates.
+    ...(order && {
+      sort: {
+        field: MapRecordSortableField.Date,
+        order: oldestFirst ? SortOrder.Descending : SortOrder.Ascending,
       },
-      notifyOnNetworkStatusChange: true,
-    },
+    }),
+  };
+
+  // The two leaderboards hang off different fields of the schema, so the query
+  // is the one thing that still changes with the page. Both hooks are declared
+  // — hooks always run — and the one this page has no use for is skipped.
+  const mapRecords = useQuery(
+    GET_MAP_RECORDS,
+    event ? skipToken : { variables, notifyOnNetworkStatusChange: true },
+  );
+  const eventRecords = useQuery(
+    GET_EVENT_MAP_RECORDS,
+    event
+      ? {
+          variables: {
+            ...variables,
+            eventHandle: event.handle,
+            editionId: event.editionId,
+          },
+          notifyOnNetworkStatusChange: true,
+        }
+      : skipToken,
   );
 
-  const map = (data ?? previousData)?.event.edition?.map;
-  const connection = map?.recordsConnection;
+  const { loading, error } = event ? eventRecords : mapRecords;
 
-  const records: RecordRow[] | undefined = connection?.nodes.map((node) => ({
-    kind: "record",
-    id: node.id,
-    rank: node.rank,
-    time: node.time,
-    recordDate: node.recordDate,
-    player: node.player,
-  }));
+  const eventMap = (eventRecords.data ?? eventRecords.previousData)?.event
+    .edition?.map;
+  const connection = event
+    ? eventMap?.recordsConnection
+    : (mapRecords.data ?? mapRecords.previousData)?.map.recordsConnection;
 
   // Sorting by date would scatter the medal markers through the list.
-  const rows = records
-    ? order
-      ? records
-      : withMedalRows(records, map?.medalTimes)
-    : undefined;
+  const rows =
+    connection &&
+    withMedalRows(connection.nodes, order ? null : eventMap?.medalTimes);
 
   return (
     <>
@@ -220,20 +294,12 @@ export default function EventMapRecordsTable({
             <LeaderboardBody className={loading ? "opacity-60" : undefined}>
               {rows.map((row) =>
                 row.kind === "record" ? (
-                  <LeaderboardRow key={`record-${row.id}`}>
-                    <RankCell>{row.rank}</RankCell>
-                    <NameCell>
-                      <MPFormatLink path={`/player/${row.player.login}`}>
-                        {row.player.name}
-                      </MPFormatLink>
-                    </NameCell>
-                    <TimeCell>
-                      <Time>{row.time}</Time>
-                    </TimeCell>
-                    <WideOnlyCell className="text-right">
-                      <FormattedDate onlyDate>{row.recordDate}</FormattedDate>
-                    </WideOnlyCell>
-                  </LeaderboardRow>
+                  <MapRecordRow
+                    key={`record-${row.record.id}`}
+                    record={row.record}
+                    selected={String(row.record.id) === selection.selected}
+                    select={selection.select}
+                  />
                 ) : (
                   <LeaderboardRow
                     key={`medal-${row.medal}`}
@@ -258,7 +324,10 @@ export default function EventMapRecordsTable({
       </SubPanel>
 
       <SubPanel className="shrink-0">
-        <PaginationControls pageInfo={connection?.pageInfo} disabled={loading} />
+        <PaginationControls
+          pageInfo={connection?.pageInfo}
+          disabled={loading}
+        />
       </SubPanel>
     </>
   );

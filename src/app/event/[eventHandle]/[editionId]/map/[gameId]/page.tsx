@@ -1,22 +1,14 @@
-import { Flag } from "lucide-react";
 import type { Metadata } from "next";
-import { cache, Suspense } from "react";
+import { cache } from "react";
 
 import { gql } from "@/app/__generated__";
 import { query } from "@/app/ApolloClient";
-import Link from "@/components/Link";
-import PageShell from "@/components/layout/PageShell";
-import { Panel, SubPanel } from "@/components/layout/Panel";
-import PageTitle from "@/components/layout/PageTitle";
-import SectionHeader from "@/components/layout/SectionHeader";
-import MPFormat, { MPFormatLink } from "@/components/MPFormat";
-import { Badge } from "@/components/ui/badge";
-import { parse, toPlainText } from "@/lib/mpformat/mpformat";
-import EventMapRecordsTable from "./EventMapRecordsTable";
-import { CombinedGraphQLErrors, ErrorLike } from "@apollo/client";
 import LoadErrorPanel from "@/components/layout/LoadErrorPanel";
+import PageShell from "@/components/layout/PageShell";
+import PageTitle from "@/components/layout/PageTitle";
+import MapPage from "@/components/map/MapPage";
 import catchGqlError from "@/lib/catchError";
-import Markdown from "react-markdown";
+import { parse, toPlainText } from "@/lib/mpformat/mpformat";
 
 const GET_EVENT_MAP_INFO = gql(/* GraphQL */ `
   query GetEventMapInfo(
@@ -30,13 +22,7 @@ const GET_EVENT_MAP_INFO = gql(/* GraphQL */ `
         subtitle
         map(gameId: $gameId) {
           map {
-            gameId
-            name
-            cpsNumber
-            player {
-              login
-              name
-            }
+            ...MapInfo
           }
           linkToOriginal
           originalMap {
@@ -95,73 +81,19 @@ export default async function EventMapPage(
     );
   }
 
-  const eventName =
-    edition.name + (edition.subtitle ? ` ${edition.subtitle}` : "");
-  const originalGameId =
-    eventMap.originalMap?.gameId ||
-    (eventMap.linkToOriginal ? eventMap.map.gameId : undefined);
-
   return (
-    <PageShell
-      titleSegments={[
-        <PageTitle key="title">Events</PageTitle>,
-        <PageTitle key="map">
-          <MPFormat>{eventMap.map.name}</MPFormat>
-        </PageTitle>,
-      ]}
-      selectedMenu="events"
-    >
-      <div className="mx-auto flex h-full min-h-0 w-full max-w-content flex-col gap-2">
-        <Panel>
-          <SubPanel className="gap-2 px-5 py-3">
-            <h2 className="m-0 truncate text-2xl font-bold">
-              <MPFormat>{eventMap.map.name}</MPFormat>
-            </h2>
-
-            <p className="m-0 text-sm">
-              by{" "}
-              <MPFormatLink path={`/player/${eventMap.map.player.login}`}>
-                {eventMap.map.player.name}
-              </MPFormatLink>{" "}
-              on{" "}
-              <Link explicit href={`/event/${eventHandle}/${editionId}`}>
-                {eventName}
-              </Link>
-              {originalGameId && (
-                <>
-                  {" — see the "}
-                  <Link explicit href={`/map/${originalGameId}`}>
-                    original map
-                  </Link>
-                </>
-              )}
-            </p>
-
-            {!!eventMap.map.cpsNumber && (
-              <div>
-                <Badge variant="secondary">
-                  <Flag />
-                  {eventMap.map.cpsNumber} cp
-                  {eventMap.map.cpsNumber > 1 ? "s" : ""}
-                </Badge>
-              </div>
-            )}
-          </SubPanel>
-        </Panel>
-
-        <Panel
-          className="flex min-h-0 flex-1 flex-col"
-          header={<SectionHeader title="Leaderboard" />}
-        >
-          <Suspense>
-            <EventMapRecordsTable
-              eventHandle={eventHandle}
-              editionId={editionId}
-              gameId={gameId}
-            />
-          </Suspense>
-        </Panel>
-      </div>
-    </PageShell>
+    <MapPage
+      map={eventMap.map}
+      event={{
+        handle: eventHandle,
+        editionId,
+        name: edition.name + (edition.subtitle ? ` ${edition.subtitle}` : ""),
+        // An edition either copies a map under a name of its own, or runs the
+        // original one as it is.
+        originalGameId:
+          eventMap.originalMap?.gameId ??
+          (eventMap.linkToOriginal ? eventMap.map.gameId : undefined),
+      }}
+    />
   );
 }

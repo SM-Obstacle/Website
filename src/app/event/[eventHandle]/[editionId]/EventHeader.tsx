@@ -22,7 +22,11 @@ function Authors({ admins }: { admins: Edition["admins"] }) {
           <MPFormatLink path={`/player/${admin.login}`}>
             {admin.name}
           </MPFormatLink>
-          {i < admins.length - 2 ? ", " : i === admins.length - 2 ? " and " : ""}
+          {i < admins.length - 2
+            ? ", "
+            : i === admins.length - 2
+              ? " and "
+              : ""}
         </Fragment>
       ))}
     </span>
@@ -33,7 +37,7 @@ function Authors({ admins }: { admins: Edition["admins"] }) {
 function UpdateBadge({ edition }: { edition: Edition }) {
   const nextUpdateIn = edition.mappack?.nextUpdateIn;
 
-  if (!nextUpdateIn) {
+  if (nextUpdateIn === null || nextUpdateIn === undefined) {
     return <Badge variant="destructive">Expired</Badge>;
   }
 

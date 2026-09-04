@@ -1,5 +1,4 @@
 import {
-  MapRecordSortableField,
   PlayerMapRankingSort,
   PlayerMapRankingSortableField,
   SortOrder,
@@ -28,7 +27,6 @@ function readOrderVariable(params: ReadableParams): OrderVariable {
 
 type SortableFieldMap = {
   unorderedRecords: UnorderedRecordSortableField;
-  mapRecords: MapRecordSortableField;
   playerMapRanking: PlayerMapRankingSortableField;
 };
 
@@ -48,14 +46,6 @@ function readFieldVariable<F extends SortableFields>(
       case "unorderedRecords": {
         return UnorderedRecordSortableField.Date;
       }
-      case "mapRecords":
-        switch (rawSort) {
-          case "rank":
-            return MapRecordSortableField.Rank;
-          case "date":
-            return MapRecordSortableField.Date;
-        }
-        break;
       case "playerMapRanking":
         switch (rawSort) {
           case "rank":
