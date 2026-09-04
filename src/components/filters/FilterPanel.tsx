@@ -1,7 +1,7 @@
 "use client";
 
 import { ChevronDown, SlidersHorizontal, X } from "lucide-react";
-import { useMemo, useState } from "react";
+import { memo, useMemo, useState } from "react";
 
 import { useFilters } from "@/components/layout/ListPage";
 import { Panel, SubPanel } from "@/components/layout/Panel";
@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useUrlParams } from "@/hooks/useUrlParams";
+import { useSetUrlParams, useUrlParams } from "@/hooks/useUrlParams";
 import { exactKey } from "@/lib/filters";
 import { PAGINATION_KEYS } from "@/lib/pagination";
 import { cn } from "@/lib/utils";
@@ -46,18 +46,38 @@ export interface FilterGroup {
  * Filters for a list page. The values live in the query string, and the list
  * itself re-queries from the client — so applying a filter never reloads the
  * page.
+ *
+ * Everything reading the query string is re-rendered whenever any part of it
+ * changes, and picking a row in the list beside these filters changes it. So
+ * this half is kept as thin as it can be: it reads the params the filters are
+ * actually made of and hands the form the same object as last time unless one
+ * of those params moved, which is what lets the form itself sit still.
  */
 export default function FilterPanel({ groups }: { groups: FilterGroup[] }) {
-  const { searchParams, setParams } = useUrlParams();
+  const { searchParams } = useUrlParams();
+
+  const names = useMemo(() => paramNames(groups), [groups]);
 
   // What the list is actually filtered by right now.
-  const applied = useMemo(
-    () =>
-      Object.fromEntries(
-        paramNames(groups).map((name) => [name, searchParams.get(name) ?? ""]),
-      ),
-    [groups, searchParams],
+  const read = Object.fromEntries(
+    names.map((name) => [name, searchParams.get(name) ?? ""]),
   );
+  const [applied, setApplied] = useState(read);
+  if (names.some((name) => applied[name] !== read[name])) {
+    setApplied(read);
+  }
+
+  return <FilterForm groups={groups} applied={applied} />;
+}
+
+const FilterForm = memo(function FilterForm({
+  groups,
+  applied,
+}: {
+  groups: FilterGroup[];
+  applied: Record<string, string>;
+}) {
+  const setParams = useSetUrlParams();
 
   const [values, setValues] = useState(applied);
   const [lastApplied, setLastApplied] = useState(applied);
@@ -238,4 +258,4 @@ export default function FilterPanel({ groups }: { groups: FilterGroup[] }) {
       </form>
     </Panel>
   );
-}
+});

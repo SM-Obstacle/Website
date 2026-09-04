@@ -13,7 +13,42 @@ export interface ParseOptions {
   externalLinks?: boolean;
 }
 
+/**
+ * Names go through here on every render of every row they appear in, and the
+ * same handful of them come back each time — so the token list a name parses
+ * to is kept rather than rebuilt. Tokens are only ever read afterwards, which
+ * is what makes one list shareable between all of a name's occurrences.
+ */
+const parsed = new Map<string, IToken[]>();
+
+/** Enough to hold a page of names several times over, and bounded all the same. */
+const PARSED_KEPT = 512;
+
 export function parse(text: string, options: ParseOptions = {}): IToken[] {
+  const key = `${options.disableLinks ? 1 : 0}${
+    options.externalLinks ? 1 : 0
+  }\u0000${text}`;
+
+  const hit = parsed.get(key);
+  if (hit) {
+    // Back to the end of the insertion order, so what the page keeps asking
+    // for isn't what gets dropped.
+    parsed.delete(key);
+    parsed.set(key, hit);
+    return hit;
+  }
+
+  const tokens = parseUncached(text, options);
+
+  if (parsed.size >= PARSED_KEPT) {
+    parsed.delete(parsed.keys().next().value!);
+  }
+  parsed.set(key, tokens);
+
+  return tokens;
+}
+
+function parseUncached(text: string, options: ParseOptions): IToken[] {
   let isCode = false;
   let isQuickLink = false;
   let isPrettyLink = false;

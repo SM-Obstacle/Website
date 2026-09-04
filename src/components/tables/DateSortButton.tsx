@@ -3,7 +3,7 @@
 import { ArrowDown, ArrowUp } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { useUrlParams } from "@/hooks/useUrlParams";
+import { useSetUrlParams } from "@/hooks/useUrlParams";
 import { PAGINATION_KEYS } from "@/lib/pagination";
 
 /**
@@ -17,7 +17,7 @@ export default function DateSortButton({
 }: {
   oldestFirst: boolean;
 }) {
-  const { setParams } = useUrlParams();
+  const setParams = useSetUrlParams();
 
   return (
     <Button

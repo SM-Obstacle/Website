@@ -5,6 +5,7 @@ import { useQuery } from "@apollo/client/react";
 import { gql } from "@/app/__generated__";
 import type { GetRecordQuery } from "@/app/__generated__/graphql";
 import FormattedDate from "@/components/FormattedDate";
+import { useOpenedPanel } from "@/components/layout/DetailAside";
 import { SubPanel } from "@/components/layout/Panel";
 import { MPFormatLink } from "@/components/MPFormat";
 import Stat from "@/components/Stat";
@@ -109,6 +110,8 @@ export default function RecordDetails({
   record?: SelectedRecord;
   error?: { message: string };
 }) {
+  const opened = useOpenedPanel();
+
   if (error) {
     return <p className="px-3 pb-2 text-destructive">{error.message}</p>;
   }
@@ -144,7 +147,7 @@ export default function RecordDetails({
 
       <RecordFlags flags={record?.flags} />
 
-      {record ? (
+      {record && opened ? (
         record.cpsTimes.length > 0 && (
           <CheckpointsChart
             cpsTimes={record.cpsTimes}

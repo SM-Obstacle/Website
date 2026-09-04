@@ -1,11 +1,12 @@
 "use client";
 
 import { useQuery } from "@apollo/client/react";
+import { memo } from "react";
 
 import { gql } from "@/app/__generated__";
 import {
+  type GetRecordsConnectionQuery,
   SortOrder,
-  UnorderedRecordSortableField,
 } from "@/app/__generated__/graphql";
 import FormattedDate from "@/components/FormattedDate";
 import { SubPanel } from "@/components/layout/Panel";
@@ -31,7 +32,7 @@ import {
   TableSkeleton,
 } from "@/components/tables/TableStates";
 import Time from "@/components/Time";
-import { useRowSelection } from "@/hooks/useRowSelection";
+import { selectableRowProps, useRowSelection } from "@/hooks/useRowSelection";
 import { useUrlParams } from "@/hooks/useUrlParams";
 import { buildRecordsFilter } from "@/lib/filters";
 import { readPagination } from "@/lib/pagination";
@@ -77,6 +78,58 @@ const GET_RECORDS = gql(/* GraphQL */ `
 `);
 
 const COLUMNS = 5;
+
+type RecordRowData = NonNullable<
+  GetRecordsConnectionQuery["recordsConnection"]
+>["nodes"][number];
+
+/**
+ * One row of the list.
+ *
+ * Picking a row rewrites the query string, which re-renders everything reading
+ * it — this table included. Memoised on a record the cache hands back
+ * unchanged, the fifty rows that didn't change then cost nothing, and only the
+ * two whose highlight moved are rendered again.
+ */
+const RecordRow = memo(function RecordRow({
+  record,
+  selected,
+  select,
+}: {
+  record: RecordRowData;
+  selected: boolean;
+  select: (value: string) => void;
+}) {
+  return (
+    <LeaderboardRow
+      {...selectableRowProps(String(record.id), selected, select)}
+    >
+      <RankCell>{record.rank}</RankCell>
+      <NameCell>
+        <MPFormatLink
+          component={NoPropagationLink}
+          path={`/player/${record.player.login}`}
+        >
+          {record.player.name}
+        </MPFormatLink>
+      </NameCell>
+      <NameCell>
+        <MPFormatLink
+          component={NoPropagationLink}
+          path={`/map/${record.map.gameId}`}
+        >
+          {record.map.name}
+        </MPFormatLink>
+      </NameCell>
+      <TimeCell>
+        <Time>{record.time}</Time>
+      </TimeCell>
+      <WideOnlyCell className="text-right">
+        <FormattedDate onlyDate>{record.recordDate}</FormattedDate>
+      </WideOnlyCell>
+    </LeaderboardRow>
+  );
+});
 
 export default function RecordsTable() {
   const { searchParams } = useUrlParams();
@@ -129,34 +182,12 @@ export default function RecordsTable() {
           ) : (
             <LeaderboardBody className={loading ? "opacity-60" : undefined}>
               {records.map((record) => (
-                <LeaderboardRow
+                <RecordRow
                   key={record.id}
-                  {...selection.rowProps(String(record.id))}
-                >
-                  <RankCell>{record.rank}</RankCell>
-                  <NameCell>
-                    <MPFormatLink
-                      component={NoPropagationLink}
-                      path={`/player/${record.player.login}`}
-                    >
-                      {record.player.name}
-                    </MPFormatLink>
-                  </NameCell>
-                  <NameCell>
-                    <MPFormatLink
-                      component={NoPropagationLink}
-                      path={`/map/${record.map.gameId}`}
-                    >
-                      {record.map.name}
-                    </MPFormatLink>
-                  </NameCell>
-                  <TimeCell>
-                    <Time>{record.time}</Time>
-                  </TimeCell>
-                  <WideOnlyCell className="text-right">
-                    <FormattedDate onlyDate>{record.recordDate}</FormattedDate>
-                  </WideOnlyCell>
-                </LeaderboardRow>
+                  record={record}
+                  selected={String(record.id) === selection.selected}
+                  select={selection.select}
+                />
               ))}
             </LeaderboardBody>
           )}

@@ -3,7 +3,7 @@
 import { ArrowLeft, ArrowRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-import { useUrlParams } from "@/hooks/useUrlParams";
+import { useSetUrlParams } from "@/hooks/useUrlParams";
 import type { PageInfo } from "@/lib/pagination";
 
 export default function PaginationControls({
@@ -13,7 +13,7 @@ export default function PaginationControls({
   pageInfo?: PageInfo;
   disabled?: boolean;
 }) {
-  const { setParams } = useUrlParams();
+  const setParams = useSetUrlParams();
 
   const previousCursor = pageInfo?.hasPreviousPage ? pageInfo.startCursor : null;
   const nextCursor = pageInfo?.hasNextPage ? pageInfo.endCursor : null;

@@ -3,7 +3,7 @@
 import { useQuery } from "@apollo/client/react";
 
 import { gql } from "@/app/__generated__";
-import { DetailPanel } from "@/components/layout/DetailAside";
+import { DetailPanel, useOpenedPanel } from "@/components/layout/DetailAside";
 import { SubPanel } from "@/components/layout/Panel";
 import { SectionLink } from "@/components/layout/SectionHeader";
 import MPFormat, { MPFormatLink } from "@/components/MPFormat";
@@ -71,7 +71,12 @@ function PlayerMapsTable({ login }: { login: string }) {
     variables: { login, first: MAPS_SHOWN },
   });
 
-  const maps = data?.maps.nodes;
+  // Fifty rows are more than a frame of the panel's own movement can build, and
+  // once they are cached they would land right in the middle of it. They wait
+  // behind the placeholder they were already loading behind.
+  const opened = useOpenedPanel();
+
+  const maps = opened ? data?.maps.nodes : undefined;
 
   return (
     // Narrower margins than a full-page leaderboard: this table lives in a

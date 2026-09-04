@@ -16,8 +16,18 @@ export type ParamUpdates = Record<string, string | number | undefined | null>;
  */
 export function useUrlParams() {
   const searchParams = useSearchParams();
+  return { searchParams, setParams: useSetUrlParams() };
+}
 
-  const setParams = useCallback(
+/**
+ * Writing the query string without reading it.
+ *
+ * `useSearchParams` re-renders its component on every change to the URL, which
+ * is more than a component that only ever writes to it needs — a button that
+ * pages the list has no reason to re-render because a row beside it was picked.
+ */
+export function useSetUrlParams() {
+  return useCallback(
     (
       updates: ParamUpdates,
       { remove = [], replace = false }: { remove?: readonly string[]; replace?: boolean } = {},
@@ -47,6 +57,4 @@ export function useUrlParams() {
     },
     [],
   );
-
-  return { searchParams, setParams };
 }

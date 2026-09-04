@@ -1,7 +1,9 @@
 "use client";
 
 import { X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 import { Panel } from "@/components/layout/Panel";
 import { Button } from "@/components/ui/button";
@@ -9,6 +11,38 @@ import { cn } from "@/lib/utils";
 
 /** Tailwind's `xl`: below it the panel would leave the list nothing to live on. */
 export const WIDE_ENOUGH_FOR_A_PANEL = "(min-width: 80rem)";
+
+/**
+ * How long the panel and the dialog take to come in. Matches the `duration-300`
+ * both animate with; there is nothing to read a Tailwind class back from.
+ */
+const OPENING_MS = 300;
+
+const NO_MOTION = "(prefers-reduced-motion: reduce)";
+
+/**
+ * Whether the panel has finished coming in.
+ *
+ * What a panel holds — a chart, a table of fifty maps — costs more to build
+ * than one frame of the movement has to spare, and building it halfway through
+ * is what the movement stutters on. Anything that heavy waits its turn behind
+ * the placeholder that was standing in for it while it loaded.
+ *
+ * Swapping what an open panel holds leaves this mounted: nothing moves then, so
+ * nothing waits.
+ */
+export function useOpenedPanel() {
+  const still = useMediaQuery(NO_MOTION);
+  const [opened, setOpened] = useState(false);
+
+  useEffect(() => {
+    // Nothing moved when motion is off, so there is nothing to wait out.
+    const timer = setTimeout(() => setOpened(true), still ? 0 : OPENING_MS);
+    return () => clearTimeout(timer);
+  }, [still]);
+
+  return opened;
+}
 
 /**
  * What a selected row opens beside the page: its name and whatever it belongs
