@@ -12,19 +12,22 @@ export const WIDE_ENOUGH_FOR_A_PANEL = "(min-width: 80rem)";
 
 /**
  * What a selected row opens beside the page: its name and whatever it belongs
- * to in the header, and everything else scrolling underneath.
+ * to in the header, everything else scrolling underneath, and an optional
+ * footer the scrolling never pushes out of sight.
  */
 export function DetailPanel({
   title,
   subtitle,
   closeLabel,
   onClose,
+  footer,
   children,
 }: React.PropsWithChildren<{
   title: React.ReactNode;
   subtitle: React.ReactNode;
   closeLabel: string;
   onClose: () => void;
+  footer?: React.ReactNode;
 }>) {
   return (
     <Panel
@@ -60,6 +63,8 @@ export function DetailPanel({
       <div className="scrollbar-slim flex min-h-0 flex-1 flex-col gap-inset overflow-y-auto rounded-panel">
         {children}
       </div>
+
+      {footer && <div className="w-full shrink-0 px-3">{footer}</div>}
     </Panel>
   );
 }

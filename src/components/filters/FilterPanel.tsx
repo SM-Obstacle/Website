@@ -7,9 +7,11 @@ import { useFilters } from "@/components/layout/ListPage";
 import { Panel, SubPanel } from "@/components/layout/Panel";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useUrlParams } from "@/hooks/useUrlParams";
+import { exactKey } from "@/lib/filters";
 import { PAGINATION_KEYS } from "@/lib/pagination";
 import { cn } from "@/lib/utils";
 import DateField from "./DateField";
@@ -21,6 +23,19 @@ export type FilterField = {
   type: "text" | "date" | "duration";
   placeholder?: string;
 };
+
+/**
+ * Text fields carry a companion `<name>Exact` param, holding whether the value
+ * is matched as a whole, case-sensitively, rather than looked for anywhere in
+ * the column.
+ */
+function paramNames(groups: FilterGroup[]): string[] {
+  return groups.flatMap((group) =>
+    group.fields.flatMap((field) =>
+      field.type === "text" ? [field.name, exactKey(field.name)] : [field.name],
+    ),
+  );
+}
 
 export interface FilterGroup {
   title: string;
@@ -39,12 +54,7 @@ export default function FilterPanel({ groups }: { groups: FilterGroup[] }) {
   const applied = useMemo(
     () =>
       Object.fromEntries(
-        groups.flatMap((group) =>
-          group.fields.map((field) => [
-            field.name,
-            searchParams.get(field.name) ?? "",
-          ]),
-        ),
+        paramNames(groups).map((name) => [name, searchParams.get(name) ?? ""]),
       ),
     [groups, searchParams],
   );
@@ -60,17 +70,28 @@ export default function FilterPanel({ groups }: { groups: FilterGroup[] }) {
     setValues(applied);
   }
 
-  const activeCount = Object.values(values).filter(
-    (value) => value !== "",
-  ).length;
+  const activeCount = groups
+    .flatMap((group) => group.fields)
+    .filter((field) => values[field.name] !== "").length;
 
   const setValue = (name: string, value: string) =>
     setValues((current) => ({ ...current, [name]: value }));
 
+  const setExact = (name: string, exact: boolean) =>
+    setValues((current) => ({ ...current, [exactKey(name)]: exact ? "1" : "" }));
+
   const apply = (event: React.FormEvent) => {
     event.preventDefault();
+    // An "exact match" left behind by a field the user emptied has nothing to
+    // qualify, so it shouldn't end up in the URL they share.
+    const applied = { ...values };
+    for (const group of groups) {
+      for (const field of group.fields) {
+        if (values[field.name] === "") applied[exactKey(field.name)] = "";
+      }
+    }
     // A new filter invalidates the cursor we were paging from.
-    setParams(values, { remove: PAGINATION_KEYS });
+    setParams(applied, { remove: PAGINATION_KEYS });
     setExpanded(false);
   };
 
@@ -143,14 +164,31 @@ export default function FilterPanel({ groups }: { groups: FilterGroup[] }) {
                     <Label htmlFor={field.name}>{field.label}</Label>
 
                     {field.type === "text" && (
-                      <Input
-                        id={field.name}
-                        name={field.name}
-                        placeholder={field.placeholder}
-                        className="rounded-full"
-                        value={values[field.name]}
-                        onChange={(e) => setValue(field.name, e.target.value)}
-                      />
+                      <>
+                        <Input
+                          id={field.name}
+                          name={field.name}
+                          placeholder={field.placeholder}
+                          className="rounded-full"
+                          value={values[field.name]}
+                          onChange={(e) => setValue(field.name, e.target.value)}
+                        />
+
+                        <Label
+                          htmlFor={exactKey(field.name)}
+                          className="px-2 pt-0.5 text-xs font-normal text-muted-foreground"
+                        >
+                          <Checkbox
+                            id={exactKey(field.name)}
+                            name={exactKey(field.name)}
+                            checked={values[exactKey(field.name)] === "1"}
+                            onCheckedChange={(checked) =>
+                              setExact(field.name, checked === true)
+                            }
+                          />
+                          Exact match
+                        </Label>
+                      </>
                     )}
 
                     {field.type === "date" && (

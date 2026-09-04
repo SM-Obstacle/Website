@@ -213,11 +213,11 @@ input MapsFilter {
 	"""
 	Filter by map UID
 	"""
-	mapUid: String
+	mapUid: StringFilter
 	"""
 	Filter by map name
 	"""
-	mapName: String
+	mapName: StringFilter
 	"""
 	Filter on the map author
 	"""
@@ -396,11 +396,11 @@ input PlayersFilter {
 	"""
 	Filter by player login
 	"""
-	playerLogin: String
+	playerLogin: StringFilter
 	"""
 	Filter by player name
 	"""
-	playerName: String
+	playerName: StringFilter
 }
 
 type QueryRoot {
@@ -550,6 +550,21 @@ enum SortOrder {
 enum SortState {
 	SORT
 	REVERSE
+}
+
+"""
+How a filter compares a string column against the text it is given
+"""
+input StringFilter {
+	"""
+	The text to compare the column against
+	"""
+	value: String!
+	"""
+	Match the whole column exactly and case-sensitively, instead of looking
+	for `value` anywhere in it
+	"""
+	exact: Boolean! = false
 }
 
 type SubscriptionRoot {

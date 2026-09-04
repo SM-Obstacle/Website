@@ -14,7 +14,8 @@ import RecordDetails, {
 } from "./RecordDetails";
 import RecordDialog from "./RecordDialog";
 
-function RecordPanel({
+/** The picked record, in whatever column the page hands it. */
+export function RecordPanel({
   recordId,
   onClose,
 }: {

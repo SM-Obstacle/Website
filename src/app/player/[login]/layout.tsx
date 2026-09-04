@@ -7,8 +7,9 @@ import { Panel, SubPanel } from "@/components/layout/Panel";
 import PageTitle from "@/components/layout/PageTitle";
 import SectionHeader from "@/components/layout/SectionHeader";
 import MPFormat from "@/components/MPFormat";
-import WithRecordAside from "@/components/records/WithRecordAside";
+import WithDetailAside from "@/components/layout/WithDetailAside";
 import { parse, toPlainText } from "@/lib/mpformat/mpformat";
+import PlayerAside from "./PlayerAside";
 import PlayerInfo from "./PlayerInfo";
 import Link from "next/link";
 import LoadErrorPanel from "@/components/layout/LoadErrorPanel";
@@ -73,7 +74,7 @@ export default async function PlayerLayout(
       ]}
       selectedMenu="players"
     >
-      <WithRecordAside>
+      <WithDetailAside aside={<PlayerAside player={data.player} />}>
         <div className="mx-auto flex h-full min-h-0 w-full max-w-content flex-col gap-2 [--profile-picture-size:75px] lg:[--profile-picture-size:100px]">
           <PlayerInfo player={data.player} />
 
@@ -82,14 +83,18 @@ export default async function PlayerLayout(
             header={
               <SectionHeader
                 title="Latest records"
-                href={`/records?playerLogin=${data.player.login}`}
+                // Exact: this player's own records, not those of every
+                // player whose login contains this one.
+                href={`/records?playerLogin=${encodeURIComponent(
+                  data.player.login,
+                )}&playerLoginExact=1`}
               />
             }
           >
             {props.children}
           </Panel>
         </div>
-      </WithRecordAside>
+      </WithDetailAside>
     </PageShell>
   );
 }

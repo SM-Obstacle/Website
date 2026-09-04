@@ -1,10 +1,12 @@
 import { AtSign, Flag, Gauge, User } from "lucide-react";
+import { Suspense } from "react";
 
 import type { GetPlayerQuery } from "@/app/__generated__/graphql";
 import { PlayerRole } from "@/app/__generated__/graphql";
 import { Panel, SubPanel } from "@/components/layout/Panel";
 import MPFormat from "@/components/MPFormat";
 import { Badge } from "@/components/ui/badge";
+import PlayerMapsButton from "./PlayerMapsButton";
 
 function PlayerZone({ zonePath }: { zonePath: string | null | undefined }) {
   if (!zonePath) return null;
@@ -33,9 +35,15 @@ export default function PlayerInfo({
       </div>
 
       <SubPanel className="h-full w-full min-w-0 gap-3 px-5 py-2">
-        <h2 className="m-0 truncate text-2xl font-bold">
-          <MPFormat>{player.name}</MPFormat>
-        </h2>
+        <div className="flex items-center gap-3">
+          <h2 className="m-0 min-w-0 flex-1 truncate text-2xl font-bold">
+            <MPFormat>{player.name}</MPFormat>
+          </h2>
+
+          <Suspense>
+            <PlayerMapsButton />
+          </Suspense>
+        </div>
 
         <div className="flex flex-wrap gap-2">
           <Badge variant="secondary">

@@ -108,7 +108,11 @@ export default async function MapLayout(props: LayoutProps<"/map/[gameId]">) {
             header={
               <SectionHeader
                 title="Leaderboard"
-                href={`/records?mapUid=${data.map.gameId}`}
+                // Exact: this map's own records, not those of every map
+                // whose UID contains this one.
+                href={`/records?mapUid=${encodeURIComponent(
+                  data.map.gameId,
+                )}&mapUidExact=1`}
               />
             }
           >

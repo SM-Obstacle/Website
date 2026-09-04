@@ -2,6 +2,7 @@ import type {
   MapsFilter,
   PlayersFilter,
   RecordsFilter,
+  StringFilter,
 } from "@/app/__generated__/graphql";
 
 /**
@@ -34,6 +35,25 @@ function text(params: ReadableParams, key: string): string | undefined {
   return params.get(key)?.trim() || undefined;
 }
 
+/** The param a text field's "exact match" checkbox writes to. */
+export function exactKey(key: string): string {
+  return `${key}Exact`;
+}
+
+/**
+ * A string comparison, exact when the field's companion `<key>Exact` param is
+ * set. Exact means the whole value, case-sensitively; otherwise the value is
+ * looked for anywhere in the column.
+ */
+function string(
+  params: ReadableParams,
+  key: string,
+): StringFilter | undefined {
+  const value = text(params, key);
+  if (value === undefined) return undefined;
+  return { value, exact: params.get(exactKey(key)) === "1" };
+}
+
 function number(params: ReadableParams, key: string): number | undefined {
   const raw = text(params, key);
   if (raw === undefined) return undefined;
@@ -52,8 +72,8 @@ export function buildPlayersFilter(
   params: ReadableParams,
 ): PlayersFilter | undefined {
   return orUndefined({
-    playerLogin: text(params, "playerLogin"),
-    playerName: text(params, "playerName"),
+    playerLogin: string(params, "playerLogin"),
+    playerName: string(params, "playerName"),
   });
 }
 
@@ -61,8 +81,8 @@ export function buildMapsFilter(
   params: ReadableParams,
 ): MapsFilter | undefined {
   return orUndefined({
-    mapUid: text(params, "mapUid"),
-    mapName: text(params, "mapName"),
+    mapUid: string(params, "mapUid"),
+    mapName: string(params, "mapName"),
     author: buildPlayersFilter(params),
   });
 }
@@ -73,11 +93,11 @@ export function buildRecordsFilter(
   return orUndefined({
     player: buildPlayersFilter(params),
     map: orUndefined({
-      mapUid: text(params, "mapUid"),
-      mapName: text(params, "mapName"),
+      mapUid: string(params, "mapUid"),
+      mapName: string(params, "mapName"),
       author: orUndefined({
-        playerLogin: text(params, "mapAuthorLogin"),
-        playerName: text(params, "mapAuthorName"),
+        playerLogin: string(params, "mapAuthorLogin"),
+        playerName: string(params, "mapAuthorName"),
       }),
     }),
     beforeDate: text(params, "beforeDate"),

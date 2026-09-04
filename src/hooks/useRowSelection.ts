@@ -12,21 +12,31 @@ import { useUrlParams } from "@/hooks/useUrlParams";
  * `LeaderboardRow` to make it selectable; the caller renders whatever the
  * selection opens, typically a dialog. Links inside a selectable row should use
  * `NoPropagationLink` so following them doesn't also select the row.
+ *
+ * `clears` names the params that whatever else could be sharing that popup is
+ * held in: picking or unpicking a row drops them, so the last thing picked is
+ * the one on screen and closing the popup leaves nothing behind to reopen it.
  */
-export function useRowSelection(param: string) {
+export function useRowSelection(
+  param: string,
+  { clears }: { clears?: readonly string[] } = {},
+) {
   const { searchParams, setParams } = useUrlParams();
   const selected = searchParams.get(param);
 
   const select = useCallback(
     (value: string) => {
-      setParams({ [param]: value === selected ? undefined : value });
+      setParams(
+        { [param]: value === selected ? undefined : value },
+        { remove: clears },
+      );
     },
-    [param, selected, setParams],
+    [clears, param, selected, setParams],
   );
 
   const close = useCallback(() => {
-    setParams({ [param]: undefined });
-  }, [param, setParams]);
+    setParams({ [param]: undefined }, { remove: clears });
+  }, [clears, param, setParams]);
 
   const rowProps = (value: string) => ({
     tabIndex: 0,

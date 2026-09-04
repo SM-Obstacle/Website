@@ -29,6 +29,7 @@ import Time from "@/components/Time";
 import { useRowSelection } from "@/hooks/useRowSelection";
 import { useUrlParams } from "@/hooks/useUrlParams";
 import { readPagination } from "@/lib/pagination";
+import { RECORD_SELECTION } from "./playerPanel";
 
 const GET_PLAYER_RECORDS = gql(/* GraphQL */ `
   query GetPlayerRecords(
@@ -69,7 +70,7 @@ const PAGE_SIZE = 25;
 
 export default function PlayerRecordsTable({ login }: { login: string }) {
   const { searchParams } = useUrlParams();
-  const selection = useRowSelection("record");
+  const selection = useRowSelection("record", RECORD_SELECTION);
 
   const { data, previousData, loading, error } = useQuery(GET_PLAYER_RECORDS, {
     variables: { login, ...readPagination(searchParams, PAGE_SIZE) },
