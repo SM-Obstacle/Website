@@ -7,6 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import EventPlayerDetails, {
   EventPlayerName,
   useSelectedEventPlayer,
@@ -34,20 +35,24 @@ export default function EventPlayerDialog({
 
   return (
     <Dialog open={selected} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-h-[85dvh] gap-inset overflow-y-auto rounded-block bg-popover p-inset sm:max-w-3xl">
-        <DialogHeader className="px-3 pt-2">
+      <DialogContent className="max-h-[85dvh] gap-inset rounded-block bg-popover p-inset sm:max-w-3xl">
+        <DialogHeader className="px-3 pe-10 pt-2">
           <DialogTitle className="truncate text-xl">
             <EventPlayerName player={player} login={login} />
           </DialogTitle>
           <DialogDescription>on {eventName}</DialogDescription>
         </DialogHeader>
 
-        <EventPlayerDetails
-          eventHandle={eventHandle}
-          editionId={editionId}
-          player={player}
-          error={error}
-        />
+        <ScrollArea className="min-h-0 rounded-panel">
+          <div className="flex flex-col gap-inset">
+            <EventPlayerDetails
+              eventHandle={eventHandle}
+              editionId={editionId}
+              player={player}
+              error={error}
+            />
+          </div>
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );

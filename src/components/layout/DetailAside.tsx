@@ -7,6 +7,7 @@ import { useMediaQuery } from "@/hooks/useMediaQuery";
 
 import { Panel } from "@/components/layout/Panel";
 import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 
 /** Tailwind's `xl`: below it the panel would leave the list nothing to live on. */
@@ -94,9 +95,9 @@ export function DetailPanel({
     >
       {/* Rounded like a sub-panel so what scrolls is clipped along the same
           curve as the panel around it. */}
-      <div className="scrollbar-slim flex min-h-0 flex-1 flex-col gap-inset overflow-y-auto rounded-panel">
-        {children}
-      </div>
+      <ScrollArea className="min-h-0 flex-1 rounded-panel">
+        <div className="flex flex-col gap-inset">{children}</div>
+      </ScrollArea>
 
       {footer && <div className="w-full shrink-0 px-3">{footer}</div>}
     </Panel>

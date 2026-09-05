@@ -28,6 +28,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { type PanelPlayer, playerMapsHref } from "./playerPanel";
 
 /**
@@ -162,8 +163,8 @@ export function PlayerMapsDialog({
 }) {
   return (
     <Dialog open={open} onOpenChange={(next) => !next && onClose()}>
-      <DialogContent className="max-h-[85dvh] gap-inset overflow-y-auto rounded-block bg-popover p-inset sm:max-w-2xl">
-        <DialogHeader className="px-3 pt-2">
+      <DialogContent className="max-h-[85dvh] gap-inset rounded-block bg-popover p-inset sm:max-w-2xl">
+        <DialogHeader className="px-3 pe-10 pt-2">
           <DialogTitle className="truncate text-xl">
             <MPFormat>{player.name}</MPFormat>
           </DialogTitle>
@@ -175,8 +176,10 @@ export function PlayerMapsDialog({
 
         {/* The list scrolls inside the dialog rather than lengthening it, so
             the button under it stays put instead of sitting fifty rows down. */}
-        <SubPanel className="scrollbar-slim max-h-[55dvh] overflow-y-auto bg-sunken">
-          <PlayerMapsTable login={player.login} />
+        <SubPanel className="min-h-0 bg-sunken">
+          <ScrollArea className="max-h-[55dvh]">
+            <PlayerMapsTable login={player.login} />
+          </ScrollArea>
         </SubPanel>
 
         <SectionLink

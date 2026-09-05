@@ -4,6 +4,7 @@ import rehypeRaw from "rehype-raw";
 
 import { Panel, SubPanel } from "./layout/Panel";
 import Link from "./Link";
+import { ScrollArea } from "./ui/scroll-area";
 import { cn } from "@/lib/utils";
 
 /**
@@ -64,23 +65,27 @@ export function ArticlePanel({
   return (
     <div className="mx-auto flex h-full min-h-0 w-full max-w-content flex-col">
       <Panel className="flex min-h-0 flex-1 flex-col">
-        <SubPanel
-          className={cn(
-            "scrollbar-slim min-h-0 flex-1 gap-0 overflow-y-auto px-6 py-5",
-            className,
-          )}
-        >
-          <header className="mb-4">
-            <h1 className="m-0 text-3xl font-black">{title}</h1>
+        <SubPanel className="min-h-0 flex-1">
+          <ScrollArea className="min-h-0 flex-1">
+            <div className={cn("grow px-6 py-5", className)}>
+              <header className="mb-4">
+                <h1 className="m-0 text-3xl font-black">{title}</h1>
 
-            {meta && (
-              <p className="mt-1 mb-0 text-sm text-muted-foreground">{meta}</p>
-            )}
-          </header>
+                {meta && (
+                  <p className="mt-1 mb-0 text-sm text-muted-foreground">
+                    {meta}
+                  </p>
+                )}
+              </header>
 
-          <Markdown rehypePlugins={[rehypeRaw]} components={markdownComponents}>
-            {body}
-          </Markdown>
+              <Markdown
+                rehypePlugins={[rehypeRaw]}
+                components={markdownComponents}
+              >
+                {body}
+              </Markdown>
+            </div>
+          </ScrollArea>
         </SubPanel>
       </Panel>
     </div>

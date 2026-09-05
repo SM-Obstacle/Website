@@ -17,6 +17,7 @@ import {
   WideOnlyHead,
 } from "@/components/tables/Leaderboard";
 import PaginationControls from "@/components/tables/PaginationControls";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   TableError,
   TableMessage,
@@ -86,54 +87,56 @@ export default function MapsTable() {
 
   return (
     <>
-      <SubPanel className="scrollbar-slim min-h-0 flex-1 overflow-y-auto">
-        <Leaderboard>
-          <LeaderboardHeader>
-            <LeaderboardRow>
-              <LeaderboardHead className="w-[10%] text-center">
-                #
-              </LeaderboardHead>
-              <LeaderboardHead className="w-[40%]">Map</LeaderboardHead>
-              <LeaderboardHead className="w-[35%]">Author</LeaderboardHead>
-              <WideOnlyHead className="w-[20%] text-right">Score</WideOnlyHead>
-            </LeaderboardRow>
-          </LeaderboardHeader>
+      <SubPanel className="min-h-0 flex-1">
+        <ScrollArea className="min-h-0 flex-1">
+          <Leaderboard>
+            <LeaderboardHeader>
+              <LeaderboardRow>
+                <LeaderboardHead className="w-[10%] text-center">
+                  #
+                </LeaderboardHead>
+                <LeaderboardHead className="w-[40%]">Map</LeaderboardHead>
+                <LeaderboardHead className="w-[35%]">Author</LeaderboardHead>
+                <WideOnlyHead className="w-[20%] text-right">Score</WideOnlyHead>
+              </LeaderboardRow>
+            </LeaderboardHeader>
 
-          {error ? (
-            <TableError columns={COLUMNS} message={error.message} />
-          ) : !maps ? (
-            <TableSkeleton columns={COLUMNS} />
-          ) : maps.length === 0 ? (
-            <TableMessage columns={COLUMNS}>
-              No map matches these filters.
-            </TableMessage>
-          ) : (
-            <LeaderboardBody className={loading ? "opacity-60" : undefined}>
-              {maps.map(({ rank, map }) => (
-                <LeaderboardRow key={map.id}>
-                  <RankCell>{rank}</RankCell>
-                  <NameCell>
-                    <MPFormatLink path={`/map/${map.gameId}`}>
-                      {map.name}
-                    </MPFormatLink>
-                  </NameCell>
-                  <NameCell>
-                    <MPFormatLink path={`/player/${map.player.login}`}>
-                      {map.player.name}
-                    </MPFormatLink>
-                  </NameCell>
-                  <WideOnlyCell className="text-right">
-                    <code>
-                      {map.score.toLocaleString(undefined, {
-                        maximumFractionDigits: 2,
-                      })}
-                    </code>
-                  </WideOnlyCell>
-                </LeaderboardRow>
-              ))}
-            </LeaderboardBody>
-          )}
-        </Leaderboard>
+            {error ? (
+              <TableError columns={COLUMNS} message={error.message} />
+            ) : !maps ? (
+              <TableSkeleton columns={COLUMNS} />
+            ) : maps.length === 0 ? (
+              <TableMessage columns={COLUMNS}>
+                No map matches these filters.
+              </TableMessage>
+            ) : (
+              <LeaderboardBody className={loading ? "opacity-60" : undefined}>
+                {maps.map(({ rank, map }) => (
+                  <LeaderboardRow key={map.id}>
+                    <RankCell>{rank}</RankCell>
+                    <NameCell>
+                      <MPFormatLink path={`/map/${map.gameId}`}>
+                        {map.name}
+                      </MPFormatLink>
+                    </NameCell>
+                    <NameCell>
+                      <MPFormatLink path={`/player/${map.player.login}`}>
+                        {map.player.name}
+                      </MPFormatLink>
+                    </NameCell>
+                    <WideOnlyCell className="text-right">
+                      <code>
+                        {map.score.toLocaleString(undefined, {
+                          maximumFractionDigits: 2,
+                        })}
+                      </code>
+                    </WideOnlyCell>
+                  </LeaderboardRow>
+                ))}
+              </LeaderboardBody>
+            )}
+          </Leaderboard>
+        </ScrollArea>
       </SubPanel>
 
       <SubPanel className="shrink-0">

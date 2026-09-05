@@ -18,6 +18,13 @@ export function Leaderboard({
 }: React.ComponentProps<typeof Table>) {
   return (
     <Table
+      // The container `Table` wraps itself in scrolls sideways, which makes it
+      // the scrollport the sticky head would stick to — and it is as tall as
+      // the table, so it never scrolls and the head never sticks. Nothing here
+      // overflows sideways to begin with: the layout is fixed and the cells
+      // that would elide instead. Handing the head back to whatever scrolls the
+      // table is what keeps it in place.
+      containerClassName="overflow-x-visible"
       className={cn("mx-5 my-2 w-[calc(100%-2.5rem)] table-fixed", className)}
       {...props}
     />

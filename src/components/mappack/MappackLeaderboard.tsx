@@ -19,6 +19,7 @@ import {
   WideOnlyHead,
 } from "@/components/tables/Leaderboard";
 import { TableMessage } from "@/components/tables/TableStates";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { selectableRowProps, useRowSelection } from "@/hooks/useRowSelection";
 
 const COLUMNS = 5;
@@ -96,45 +97,47 @@ export default function MappackLeaderboard({
   const leaderboard = mappack?.leaderboard ?? [];
 
   return (
-    <SubPanel className="scrollbar-slim min-h-0 flex-1 overflow-y-auto">
-      <Leaderboard>
-        <LeaderboardHeader>
-          <LeaderboardRow>
-            <LeaderboardHead className="w-[10%] text-center">
-              #
-            </LeaderboardHead>
-            <LeaderboardHead>Player</LeaderboardHead>
-            <LeaderboardHead className="w-[15%] text-right">
-              <span className="hidden xl:inline">Rank </span>Average
-            </LeaderboardHead>
-            <LeaderboardHead className="w-[15%] text-right">
-              <span className="hidden xl:inline">Maps </span>Finished
-            </LeaderboardHead>
-            <WideOnlyHead className="w-[15%] text-right">
-              Worst<span className="hidden xl:inline"> Rank</span>
-            </WideOnlyHead>
-          </LeaderboardRow>
-        </LeaderboardHeader>
+    <SubPanel className="min-h-0 flex-1">
+      <ScrollArea className="min-h-0 flex-1">
+        <Leaderboard>
+          <LeaderboardHeader>
+            <LeaderboardRow>
+              <LeaderboardHead className="w-[10%] text-center">
+                #
+              </LeaderboardHead>
+              <LeaderboardHead>Player</LeaderboardHead>
+              <LeaderboardHead className="w-[15%] text-right">
+                <span className="hidden xl:inline">Rank </span>Average
+              </LeaderboardHead>
+              <LeaderboardHead className="w-[15%] text-right">
+                <span className="hidden xl:inline">Maps </span>Finished
+              </LeaderboardHead>
+              <WideOnlyHead className="w-[15%] text-right">
+                Worst<span className="hidden xl:inline"> Rank</span>
+              </WideOnlyHead>
+            </LeaderboardRow>
+          </LeaderboardHeader>
 
-        {leaderboard.length === 0 ? (
-          <TableMessage columns={COLUMNS}>
-            Nobody has played this mappack yet.
-          </TableMessage>
-        ) : (
-          <LeaderboardBody>
-            {leaderboard.map((entry) => (
-              <MappackRow
-                key={entry.player.login}
-                entry={entry}
-                nbMaps={mappack?.nbMaps}
-                selectable={selectable}
-                selected={entry.player.login === selection.selected}
-                select={selection.select}
-              />
-            ))}
-          </LeaderboardBody>
-        )}
-      </Leaderboard>
+          {leaderboard.length === 0 ? (
+            <TableMessage columns={COLUMNS}>
+              Nobody has played this mappack yet.
+            </TableMessage>
+          ) : (
+            <LeaderboardBody>
+              {leaderboard.map((entry) => (
+                <MappackRow
+                  key={entry.player.login}
+                  entry={entry}
+                  nbMaps={mappack?.nbMaps}
+                  selectable={selectable}
+                  selected={entry.player.login === selection.selected}
+                  select={selection.select}
+                />
+              ))}
+            </LeaderboardBody>
+          )}
+        </Leaderboard>
+      </ScrollArea>
     </SubPanel>
   );
 }

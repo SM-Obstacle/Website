@@ -10,6 +10,7 @@ import { Panel, SubPanel } from "@/components/layout/Panel";
 import PageTitle from "@/components/layout/PageTitle";
 import MPFormat from "@/components/MPFormat";
 import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import catchGqlError from "@/lib/catchError";
 
 // Re-render at most once a minute so the page never serves stale data.
@@ -59,76 +60,78 @@ export default async function EventsPage() {
             Rounded like a sub-panel so what scrolls is clipped along the same
             curve as the panel around it. */}
         <Panel className="h-full min-h-0 overflow-hidden">
-          <div className="scrollbar-slim flex min-h-0 flex-1 flex-col gap-inset overflow-y-auto rounded-panel">
-            {error ? (
-              <SubPanel className="p-6 text-destructive">
-                Could not load the events: {error.message}
-              </SubPanel>
-            ) : events.length === 0 ? (
-              <SubPanel className="p-6 text-muted-foreground">
-                No event has been published yet.
-              </SubPanel>
-            ) : (
-              /* `auto-rows-fr` sizes every row to the tallest one rather than to
-               its own contents, so an edition carrying a subtitle doesn't make
-               its row taller than the rows below it. The link has to be a block
-               of full height for the card to reach the bottom of the row it is
-               given — as an inline box its `h-full` has nothing to fill. */
-              <ul className="grid auto-rows-fr gap-2 md:grid-cols-2">
-                {events.map(({ event: { handle }, edition }) => (
-                  <li key={`${handle}_${edition.id}`}>
-                    <Link
-                      href={`/event/${handle}/${edition.id}`}
-                      className="block h-full"
-                    >
-                      {/* The scrim goes over the banner where there is one and
-                        stands in for it where there is not, so an edition
-                        without artwork reads as a plain card in the theme's
-                        own tone rather than a dark slab. */}
-                      <SubPanel
-                        // `bg-clip-padding` keeps the banner out from under the
-                        // border, which the vignette does not reach: left there
-                        // it draws a hard ring of raw image around the card.
-                        className="h-full justify-between gap-3 border border-transparent bg-(--banner-scrim) bg-cover bg-clip-padding bg-center p-5 shadow-[inset_0_0_7em_var(--banner-edge)] transition-colors hover:border-foreground/40"
-                        style={
-                          edition.bannerImgUrl
-                            ? {
-                                backgroundImage: `url(${edition.bannerImgUrl})`,
-                              }
-                            : undefined
-                        }
+          <ScrollArea className="min-h-0 flex-1 rounded-panel">
+            <div className="flex flex-col gap-inset">
+              {error ? (
+                <SubPanel className="p-6 text-destructive">
+                  Could not load the events: {error.message}
+                </SubPanel>
+              ) : events.length === 0 ? (
+                <SubPanel className="p-6 text-muted-foreground">
+                  No event has been published yet.
+                </SubPanel>
+              ) : (
+                /* `auto-rows-fr` sizes every row to the tallest one rather than to
+                 its own contents, so an edition carrying a subtitle doesn't make
+                 its row taller than the rows below it. The link has to be a block
+                 of full height for the card to reach the bottom of the row it is
+                 given — as an inline box its `h-full` has nothing to fill. */
+                <ul className="grid auto-rows-fr gap-2 md:grid-cols-2">
+                  {events.map(({ event: { handle }, edition }) => (
+                    <li key={`${handle}_${edition.id}`}>
+                      <Link
+                        href={`/event/${handle}/${edition.id}`}
+                        className="block h-full"
                       >
-                        <div>
-                          <h2 className="m-0 text-2xl font-bold drop-shadow-[2px_2px_10px_var(--banner-edge)]">
-                            <MPFormat>{edition.name}</MPFormat>
-                          </h2>
-                          {edition.subtitle && (
-                            <p className="m-0 text-sm text-foreground/80">
-                              {edition.subtitle}
-                            </p>
-                          )}
-                        </div>
-
-                        <div className="flex flex-wrap gap-2">
-                          <Badge variant="secondary">
-                            {format(
-                              parseApiDate(edition.startDate),
-                              "dd/MM/yyyy",
+                        {/* The scrim goes over the banner where there is one and
+                          stands in for it where there is not, so an edition
+                          without artwork reads as a plain card in the theme's
+                          own tone rather than a dark slab. */}
+                        <SubPanel
+                          // `bg-clip-padding` keeps the banner out from under the
+                          // border, which the vignette does not reach: left there
+                          // it draws a hard ring of raw image around the card.
+                          className="h-full justify-between gap-3 border border-transparent bg-(--banner-scrim) bg-cover bg-clip-padding bg-center p-5 shadow-[inset_0_0_7em_var(--banner-edge)] transition-colors hover:border-foreground/40"
+                          style={
+                            edition.bannerImgUrl
+                              ? {
+                                  backgroundImage: `url(${edition.bannerImgUrl})`,
+                                }
+                              : undefined
+                          }
+                        >
+                          <div>
+                            <h2 className="m-0 text-2xl font-bold drop-shadow-[2px_2px_10px_var(--banner-edge)]">
+                              <MPFormat>{edition.name}</MPFormat>
+                            </h2>
+                            {edition.subtitle && (
+                              <p className="m-0 text-sm text-foreground/80">
+                                {edition.subtitle}
+                              </p>
                             )}
-                          </Badge>
-                          {edition.mappack && (
+                          </div>
+
+                          <div className="flex flex-wrap gap-2">
                             <Badge variant="secondary">
-                              {edition.mappack.nbMaps} maps
+                              {format(
+                                parseApiDate(edition.startDate),
+                                "dd/MM/yyyy",
+                              )}
                             </Badge>
-                          )}
-                        </div>
-                      </SubPanel>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
+                            {edition.mappack && (
+                              <Badge variant="secondary">
+                                {edition.mappack.nbMaps} maps
+                              </Badge>
+                            )}
+                          </div>
+                        </SubPanel>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </ScrollArea>
         </Panel>
       </div>
     </PageShell>

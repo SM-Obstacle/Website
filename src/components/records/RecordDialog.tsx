@@ -7,6 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import RecordDetails, {
   RecordMapName,
   RecordPlayerName,
@@ -25,8 +26,8 @@ export default function RecordDialog({
 
   return (
     <Dialog open={selected} onOpenChange={(next) => !next && onClose()}>
-      <DialogContent className="max-h-[85dvh] gap-inset overflow-y-auto rounded-block bg-popover p-inset sm:max-w-2xl">
-        <DialogHeader className="px-3 pt-2">
+      <DialogContent className="max-h-[85dvh] gap-inset rounded-block bg-popover p-inset sm:max-w-2xl">
+        <DialogHeader className="px-3 pe-10 pt-2">
           <DialogTitle className="truncate text-xl">
             <RecordPlayerName record={record} />
           </DialogTitle>
@@ -38,7 +39,11 @@ export default function RecordDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <RecordDetails record={record} error={error} />
+        <ScrollArea className="min-h-0 rounded-panel">
+          <div className="flex flex-col gap-inset">
+            <RecordDetails record={record} error={error} />
+          </div>
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );

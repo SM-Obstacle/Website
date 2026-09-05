@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { useSetUrlParams, useUrlParams } from "@/hooks/useUrlParams";
 import { exactKey } from "@/lib/filters";
 import { PAGINATION_KEYS } from "@/lib/pagination";
@@ -173,65 +174,67 @@ const FilterForm = memo(function FilterForm({
       >
         {/* Rounded like a sub-panel so the groups are clipped along the same
             curve as the panel around them. */}
-        <div className="scrollbar-slim flex min-h-0 flex-1 flex-col gap-inset overflow-y-auto rounded-panel">
-          {groups.map((group) => (
-            <SubPanel key={group.title} className="shrink-0 gap-1 p-3">
-              <h3 className="m-0 px-2 text-base font-bold">{group.title}</h3>
+        <ScrollArea className="min-h-0 flex-1 rounded-panel">
+          <div className="flex flex-col gap-inset">
+            {groups.map((group) => (
+              <SubPanel key={group.title} className="shrink-0 gap-1 p-3">
+                <h3 className="m-0 px-2 text-base font-bold">{group.title}</h3>
 
-              <div className="space-y-3 p-1">
-                {group.fields.map((field) => (
-                  <div key={field.name} className="flex flex-col gap-1">
-                    <Label htmlFor={field.name}>{field.label}</Label>
+                <div className="space-y-3 p-1">
+                  {group.fields.map((field) => (
+                    <div key={field.name} className="flex flex-col gap-1">
+                      <Label htmlFor={field.name}>{field.label}</Label>
 
-                    {field.type === "text" && (
-                      <>
-                        <Input
-                          id={field.name}
-                          name={field.name}
-                          placeholder={field.placeholder}
-                          className="rounded-full"
-                          value={values[field.name]}
-                          onChange={(e) => setValue(field.name, e.target.value)}
-                        />
-
-                        <Label
-                          htmlFor={exactKey(field.name)}
-                          className="px-2 pt-0.5 text-xs font-normal text-muted-foreground"
-                        >
-                          <Checkbox
-                            id={exactKey(field.name)}
-                            name={exactKey(field.name)}
-                            checked={values[exactKey(field.name)] === "1"}
-                            onCheckedChange={(checked) =>
-                              setExact(field.name, checked === true)
-                            }
+                      {field.type === "text" && (
+                        <>
+                          <Input
+                            id={field.name}
+                            name={field.name}
+                            placeholder={field.placeholder}
+                            className="rounded-full"
+                            value={values[field.name]}
+                            onChange={(e) => setValue(field.name, e.target.value)}
                           />
-                          Exact match
-                        </Label>
-                      </>
-                    )}
 
-                    {field.type === "date" && (
-                      <DateField
-                        id={field.name}
-                        value={values[field.name]}
-                        onChange={(value) => setValue(field.name, value)}
-                      />
-                    )}
+                          <Label
+                            htmlFor={exactKey(field.name)}
+                            className="px-2 pt-0.5 text-xs font-normal text-muted-foreground"
+                          >
+                            <Checkbox
+                              id={exactKey(field.name)}
+                              name={exactKey(field.name)}
+                              checked={values[exactKey(field.name)] === "1"}
+                              onCheckedChange={(checked) =>
+                                setExact(field.name, checked === true)
+                              }
+                            />
+                            Exact match
+                          </Label>
+                        </>
+                      )}
 
-                    {field.type === "duration" && (
-                      <DurationField
-                        id={field.name}
-                        value={values[field.name]}
-                        onChange={(value) => setValue(field.name, value)}
-                      />
-                    )}
-                  </div>
-                ))}
-              </div>
-            </SubPanel>
-          ))}
-        </div>
+                      {field.type === "date" && (
+                        <DateField
+                          id={field.name}
+                          value={values[field.name]}
+                          onChange={(value) => setValue(field.name, value)}
+                        />
+                      )}
+
+                      {field.type === "duration" && (
+                        <DurationField
+                          id={field.name}
+                          value={values[field.name]}
+                          onChange={(value) => setValue(field.name, value)}
+                        />
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </SubPanel>
+            ))}
+          </div>
+        </ScrollArea>
 
         <div className="flex shrink-0 gap-inset">
           <Button

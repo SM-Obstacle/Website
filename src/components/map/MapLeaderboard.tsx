@@ -35,6 +35,7 @@ import {
   TableSkeleton,
 } from "@/components/tables/TableStates";
 import Time from "@/components/Time";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { selectableRowProps, useRowSelection } from "@/hooks/useRowSelection";
 import { useUrlParams } from "@/hooks/useUrlParams";
 import { readPagination } from "@/lib/pagination";
@@ -264,63 +265,65 @@ export default function MapLeaderboard({
 
   return (
     <>
-      <SubPanel className="scrollbar-slim min-h-0 flex-1 overflow-y-auto">
-        <Leaderboard>
-          <LeaderboardHeader>
-            <LeaderboardRow>
-              <LeaderboardHead className="w-[10%] text-center">
-                #
-              </LeaderboardHead>
-              <LeaderboardHead>Player</LeaderboardHead>
-              <LeaderboardHead className="w-[20%]">Time</LeaderboardHead>
-              <WideOnlyHead className="w-[20%]">
-                <span className="flex items-center justify-end gap-1">
-                  <DateSortButton oldestFirst={oldestFirst} />
-                  Date
-                </span>
-              </WideOnlyHead>
-            </LeaderboardRow>
-          </LeaderboardHeader>
+      <SubPanel className="min-h-0 flex-1">
+        <ScrollArea className="min-h-0 flex-1">
+          <Leaderboard>
+            <LeaderboardHeader>
+              <LeaderboardRow>
+                <LeaderboardHead className="w-[10%] text-center">
+                  #
+                </LeaderboardHead>
+                <LeaderboardHead>Player</LeaderboardHead>
+                <LeaderboardHead className="w-[20%]">Time</LeaderboardHead>
+                <WideOnlyHead className="w-[20%]">
+                  <span className="flex items-center justify-end gap-1">
+                    <DateSortButton oldestFirst={oldestFirst} />
+                    Date
+                  </span>
+                </WideOnlyHead>
+              </LeaderboardRow>
+            </LeaderboardHeader>
 
-          {error ? (
-            <TableError columns={COLUMNS} message={error.message} />
-          ) : !rows ? (
-            <TableSkeleton columns={COLUMNS} rows={8} />
-          ) : rows.length === 0 ? (
-            <TableMessage columns={COLUMNS}>
-              No record has been set on this map yet.
-            </TableMessage>
-          ) : (
-            <LeaderboardBody className={loading ? "opacity-60" : undefined}>
-              {rows.map((row) =>
-                row.kind === "record" ? (
-                  <MapRecordRow
-                    key={`record-${row.record.id}`}
-                    record={row.record}
-                    selected={String(row.record.id) === selection.selected}
-                    select={selection.select}
-                  />
-                ) : (
-                  <LeaderboardRow
-                    key={`medal-${row.medal}`}
-                    className="[&>td]:bg-sunken"
-                  >
-                    <LeaderboardCell className="flex justify-end">
-                      <MedalImg mdl={row.medal} />
-                    </LeaderboardCell>
-                    <NameCell className="italic">
-                      {MEDAL_LABELS[row.medal]}
-                    </NameCell>
-                    <TimeCell>
-                      <Time>{row.time}</Time>
-                    </TimeCell>
-                    <WideOnlyCell />
-                  </LeaderboardRow>
-                ),
-              )}
-            </LeaderboardBody>
-          )}
-        </Leaderboard>
+            {error ? (
+              <TableError columns={COLUMNS} message={error.message} />
+            ) : !rows ? (
+              <TableSkeleton columns={COLUMNS} rows={8} />
+            ) : rows.length === 0 ? (
+              <TableMessage columns={COLUMNS}>
+                No record has been set on this map yet.
+              </TableMessage>
+            ) : (
+              <LeaderboardBody className={loading ? "opacity-60" : undefined}>
+                {rows.map((row) =>
+                  row.kind === "record" ? (
+                    <MapRecordRow
+                      key={`record-${row.record.id}`}
+                      record={row.record}
+                      selected={String(row.record.id) === selection.selected}
+                      select={selection.select}
+                    />
+                  ) : (
+                    <LeaderboardRow
+                      key={`medal-${row.medal}`}
+                      className="[&>td]:bg-sunken"
+                    >
+                      <LeaderboardCell className="flex justify-end">
+                        <MedalImg mdl={row.medal} />
+                      </LeaderboardCell>
+                      <NameCell className="italic">
+                        {MEDAL_LABELS[row.medal]}
+                      </NameCell>
+                      <TimeCell>
+                        <Time>{row.time}</Time>
+                      </TimeCell>
+                      <WideOnlyCell />
+                    </LeaderboardRow>
+                  ),
+                )}
+              </LeaderboardBody>
+            )}
+          </Leaderboard>
+        </ScrollArea>
       </SubPanel>
 
       <SubPanel className="shrink-0">

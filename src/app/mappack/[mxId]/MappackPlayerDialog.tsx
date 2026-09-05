@@ -22,6 +22,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const GET_MAPPACK_PLAYER_INFO = gql(/* GraphQL */ `
   query GetMappackPlayerInfo($mappackId: String!, $login: String!) {
@@ -51,8 +52,8 @@ export default function MappackPlayerDialog({
 
   return (
     <Dialog open={login !== null} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-h-[85dvh] gap-inset overflow-y-auto rounded-block bg-popover p-inset sm:max-w-2xl">
-        <DialogHeader className="px-3 pt-2">
+      <DialogContent className="max-h-[85dvh] gap-inset rounded-block bg-popover p-inset sm:max-w-2xl">
+        <DialogHeader className="px-3 pe-10 pt-2">
           <DialogTitle className="truncate text-xl">
             {login && (
               <MPFormatLink path={`/player/${login}`}>{login}</MPFormatLink>
@@ -61,42 +62,44 @@ export default function MappackPlayerDialog({
           <DialogDescription>on {mappackName}</DialogDescription>
         </DialogHeader>
 
-        {error ? (
-          <p className="px-3 pb-2 text-destructive">{error.message}</p>
-        ) : (
-          <SubPanel className="bg-sunken p-3">
-            <Leaderboard className="mx-0 w-full">
-              <LeaderboardHeader className="[&_th]:bg-transparent">
-                <LeaderboardRow>
-                  <LeaderboardHead className="w-24 text-right">
-                    Rank
-                  </LeaderboardHead>
-                  <LeaderboardHead>Map</LeaderboardHead>
-                </LeaderboardRow>
-              </LeaderboardHeader>
+        <ScrollArea className="min-h-0 rounded-panel">
+          {error ? (
+            <p className="px-3 pb-2 text-destructive">{error.message}</p>
+          ) : (
+            <SubPanel className="bg-sunken p-3">
+              <Leaderboard className="mx-0 w-full">
+                <LeaderboardHeader className="[&_th]:bg-transparent">
+                  <LeaderboardRow>
+                    <LeaderboardHead className="w-24 text-right">
+                      Rank
+                    </LeaderboardHead>
+                    <LeaderboardHead>Map</LeaderboardHead>
+                  </LeaderboardRow>
+                </LeaderboardHeader>
 
-              {loading || !ranks ? (
-                <TableSkeleton columns={2} rows={6} />
-              ) : (
-                <LeaderboardBody>
-                  {ranks.map((entry) => (
-                    <LeaderboardRow key={entry.map.gameId}>
-                      <RankCell>
-                        {entry.rank}
-                        <small>/{entry.lastRank}</small>
-                      </RankCell>
-                      <NameCell>
-                        <MPFormatLink path={`/map/${entry.map.gameId}`}>
-                          {entry.map.name}
-                        </MPFormatLink>
-                      </NameCell>
-                    </LeaderboardRow>
-                  ))}
-                </LeaderboardBody>
-              )}
-            </Leaderboard>
-          </SubPanel>
-        )}
+                {loading || !ranks ? (
+                  <TableSkeleton columns={2} rows={6} />
+                ) : (
+                  <LeaderboardBody>
+                    {ranks.map((entry) => (
+                      <LeaderboardRow key={entry.map.gameId}>
+                        <RankCell>
+                          {entry.rank}
+                          <small>/{entry.lastRank}</small>
+                        </RankCell>
+                        <NameCell>
+                          <MPFormatLink path={`/map/${entry.map.gameId}`}>
+                            {entry.map.name}
+                          </MPFormatLink>
+                        </NameCell>
+                      </LeaderboardRow>
+                    ))}
+                  </LeaderboardBody>
+                )}
+              </Leaderboard>
+            </SubPanel>
+          )}
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );

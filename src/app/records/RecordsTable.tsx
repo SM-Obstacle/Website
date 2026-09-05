@@ -32,6 +32,7 @@ import {
   TableSkeleton,
 } from "@/components/tables/TableStates";
 import Time from "@/components/Time";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { selectableRowProps, useRowSelection } from "@/hooks/useRowSelection";
 import { useUrlParams } from "@/hooks/useUrlParams";
 import { buildRecordsFilter } from "@/lib/filters";
@@ -150,48 +151,50 @@ export default function RecordsTable() {
 
   return (
     <>
-      <SubPanel className="scrollbar-slim min-h-0 flex-1 overflow-y-auto">
-        <Leaderboard>
-          <LeaderboardHeader>
-            <LeaderboardRow>
-              <LeaderboardHead className="w-[10%] text-center">
-                #
-              </LeaderboardHead>
-              <LeaderboardHead className="w-[35%]">Player</LeaderboardHead>
-              <LeaderboardHead className="w-[35%]">Map</LeaderboardHead>
-              <LeaderboardHead className="w-[20%]">Time</LeaderboardHead>
-              <WideOnlyHead className="w-[20%]">
-                <span className="flex items-center justify-end gap-1">
-                  <DateSortButton
-                    oldestFirst={sort.sort?.order === SortOrder.Descending}
-                  />
-                  Date
-                </span>
-              </WideOnlyHead>
-            </LeaderboardRow>
-          </LeaderboardHeader>
+      <SubPanel className="min-h-0 flex-1">
+        <ScrollArea className="min-h-0 flex-1">
+          <Leaderboard>
+            <LeaderboardHeader>
+              <LeaderboardRow>
+                <LeaderboardHead className="w-[10%] text-center">
+                  #
+                </LeaderboardHead>
+                <LeaderboardHead className="w-[35%]">Player</LeaderboardHead>
+                <LeaderboardHead className="w-[35%]">Map</LeaderboardHead>
+                <LeaderboardHead className="w-[20%]">Time</LeaderboardHead>
+                <WideOnlyHead className="w-[20%]">
+                  <span className="flex items-center justify-end gap-1">
+                    <DateSortButton
+                      oldestFirst={sort.sort?.order === SortOrder.Descending}
+                    />
+                    Date
+                  </span>
+                </WideOnlyHead>
+              </LeaderboardRow>
+            </LeaderboardHeader>
 
-          {error ? (
-            <TableError columns={COLUMNS} message={error.message} />
-          ) : !records ? (
-            <TableSkeleton columns={COLUMNS} />
-          ) : records.length === 0 ? (
-            <TableMessage columns={COLUMNS}>
-              No record matches these filters.
-            </TableMessage>
-          ) : (
-            <LeaderboardBody className={loading ? "opacity-60" : undefined}>
-              {records.map((record) => (
-                <RecordRow
-                  key={record.id}
-                  record={record}
-                  selected={String(record.id) === selection.selected}
-                  select={selection.select}
-                />
-              ))}
-            </LeaderboardBody>
-          )}
-        </Leaderboard>
+            {error ? (
+              <TableError columns={COLUMNS} message={error.message} />
+            ) : !records ? (
+              <TableSkeleton columns={COLUMNS} />
+            ) : records.length === 0 ? (
+              <TableMessage columns={COLUMNS}>
+                No record matches these filters.
+              </TableMessage>
+            ) : (
+              <LeaderboardBody className={loading ? "opacity-60" : undefined}>
+                {records.map((record) => (
+                  <RecordRow
+                    key={record.id}
+                    record={record}
+                    selected={String(record.id) === selection.selected}
+                    select={selection.select}
+                  />
+                ))}
+              </LeaderboardBody>
+            )}
+          </Leaderboard>
+        </ScrollArea>
       </SubPanel>
 
       <SubPanel className="shrink-0">
