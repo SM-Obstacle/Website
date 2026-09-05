@@ -73,6 +73,7 @@ export function LeaderboardHead({
     <TableHead
       className={cn(
         "h-auto px-1 py-1 text-left font-bold text-foreground first:rounded-s-md last:rounded-e-md",
+        "max-md:[&:has(+.hidden)]:rounded-e-md",
         className,
       )}
       {...props}

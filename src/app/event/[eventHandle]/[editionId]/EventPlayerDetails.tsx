@@ -235,7 +235,7 @@ export default function EventPlayerDetails({
           {player.unfinishedMaps.length > 0 && (
             <MapGroup title="Unfinished maps">
               <Leaderboard className="mx-0 w-full">
-                <LeaderboardHeader className="[&_th]:bg-transparent">
+                <LeaderboardHeader>
                   <LeaderboardRow>
                     <LeaderboardHead>Map</LeaderboardHead>
                     <LeaderboardHead className="w-20 text-right @md:w-32">
@@ -288,7 +288,7 @@ export default function EventPlayerDetails({
                   }
                 >
                   <Leaderboard className="mx-0 w-full">
-                    <LeaderboardHeader className="[&_th]:bg-transparent">
+                    <LeaderboardHeader>
                       <LeaderboardRow>
                         <LeaderboardHead className="w-14 text-right @md:w-20">
                           Rank
