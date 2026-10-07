@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import Logo from "./Logo";
+import MappackSearch from "./MappackSearch";
 import { NAV_PAGES, type NavKey } from "./pages";
 import ThemeToggle from "./ThemeToggle";
 
@@ -63,6 +64,9 @@ export default function MobileNav({ selected }: { selected?: NavKey }) {
                 </li>
               );
             })}
+            <li>
+              <MappackSearch withLabel />
+            </li>
           </ul>
         </nav>
 
