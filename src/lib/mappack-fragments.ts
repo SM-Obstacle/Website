@@ -20,6 +20,10 @@ export const MAPPACK_LB_FRAGMENT = gql(/* GraphQL */ `
 export const MAPPACK_PLAYER_INFO_FRAGMENT = gql(/* GraphQL */ `
   fragment MappackPlayerInfo on Mappack {
     player(login: $login) {
+      player {
+        login
+        name
+      }
       ranks {
         rank
         map {

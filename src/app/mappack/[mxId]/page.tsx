@@ -10,7 +10,9 @@ import PageShell from "@/components/layout/PageShell";
 import { Panel, SubPanel } from "@/components/layout/Panel";
 import PageTitle from "@/components/layout/PageTitle";
 import SectionHeader from "@/components/layout/SectionHeader";
+import WithDetailAside from "@/components/layout/WithDetailAside";
 import { Badge } from "@/components/ui/badge";
+import MappackPlayerAside from "./MappackPlayerAside";
 import MappackStandings from "./MappackStandings";
 import catchGqlError from "@/lib/catchError";
 
@@ -70,44 +72,44 @@ export default async function MappackPage(props: PageProps<"/mappack/[mxId]">) {
       ]}
       selectedMenu="events"
     >
-      <div className="mx-auto flex h-full min-h-0 w-full max-w-content flex-col gap-2">
-        <Panel>
-          <SubPanel className="gap-3 px-5 py-3">
-            <div>
-              <h2 className="m-0 truncate text-2xl font-black">{name}</h2>
-              {mappack.mxAuthor && (
-                <span className="text-sm">By {mappack.mxAuthor}</span>
-              )}
-            </div>
+      <WithDetailAside
+        aside={<MappackPlayerAside mappackId={mxId} mappackName={name} />}
+      >
+        <div className="mx-auto flex h-full min-h-0 w-full max-w-content flex-col gap-2">
+          <Panel>
+            <SubPanel className="gap-3 px-5 py-3">
+              <div>
+                <h2 className="m-0 truncate text-2xl font-black">{name}</h2>
+                {mappack.mxAuthor && (
+                  <span className="text-sm">By {mappack.mxAuthor}</span>
+                )}
+              </div>
 
-            <div className="flex flex-wrap gap-2">
-              {mappack.mxCreatedAt && (
+              <div className="flex flex-wrap gap-2">
+                {mappack.mxCreatedAt && (
+                  <Badge variant="secondary">
+                    <CalendarDays />
+                    {format(parseApiDate(mappack.mxCreatedAt), "dd/MM/yyyy")}
+                  </Badge>
+                )}
                 <Badge variant="secondary">
-                  <CalendarDays />
-                  {format(parseApiDate(mappack.mxCreatedAt), "dd/MM/yyyy")}
+                  <MapIcon />
+                  {mappack.nbMaps} maps
                 </Badge>
-              )}
-              <Badge variant="secondary">
-                <MapIcon />
-                {mappack.nbMaps} maps
-              </Badge>
-            </div>
-          </SubPanel>
-        </Panel>
+              </div>
+            </SubPanel>
+          </Panel>
 
-        <Panel
-          className="flex min-h-0 flex-1 flex-col"
-          header={<SectionHeader title="Leaderboard" />}
-        >
-          <Suspense>
-            <MappackStandings
-              mappackId={mxId}
-              mappackName={name}
-              mappack={mappack}
-            />
-          </Suspense>
-        </Panel>
-      </div>
+          <Panel
+            className="flex min-h-0 flex-1 flex-col"
+            header={<SectionHeader title="Leaderboard" />}
+          >
+            <Suspense>
+              <MappackStandings mappack={mappack} />
+            </Suspense>
+          </Panel>
+        </div>
+      </WithDetailAside>
     </PageShell>
   );
 }

@@ -1,20 +1,5 @@
 "use client";
 
-import { useQuery } from "@apollo/client/react";
-
-import { gql } from "@/app/__generated__";
-import { SubPanel } from "@/components/layout/Panel";
-import { MPFormatLink } from "@/components/MPFormat";
-import {
-  Leaderboard,
-  LeaderboardBody,
-  LeaderboardHead,
-  LeaderboardHeader,
-  LeaderboardRow,
-  NameCell,
-  RankCell,
-} from "@/components/tables/Leaderboard";
-import { TableSkeleton } from "@/components/tables/TableStates";
 import {
   Dialog,
   DialogContent,
@@ -23,14 +8,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-
-const GET_MAPPACK_PLAYER_INFO = gql(/* GraphQL */ `
-  query GetMappackPlayerInfo($mappackId: String!, $login: String!) {
-    mappack(mappackId: $mappackId) {
-      ...MappackPlayerInfo
-    }
-  }
-`);
+import MappackPlayerDetails, {
+  MappackPlayerName,
+  useMappackPlayer,
+} from "./MappackPlayerDetails";
 
 export default function MappackPlayerDialog({
   mappackId,
@@ -43,12 +24,7 @@ export default function MappackPlayerDialog({
   login: string | null;
   onClose: () => void;
 }) {
-  const { data, loading, error } = useQuery(GET_MAPPACK_PLAYER_INFO, {
-    variables: { mappackId, login: login ?? "" },
-    skip: !login,
-  });
-
-  const ranks = data?.mappack.player.ranks;
+  const player = useMappackPlayer(mappackId, login);
 
   return (
     <Dialog open={login !== null} onOpenChange={(open) => !open && onClose()}>
@@ -56,49 +32,14 @@ export default function MappackPlayerDialog({
         <DialogHeader className="px-3 pe-10 pt-2">
           <DialogTitle className="truncate text-xl">
             {login && (
-              <MPFormatLink path={`/player/${login}`}>{login}</MPFormatLink>
+              <MappackPlayerName player={player} />
             )}
           </DialogTitle>
           <DialogDescription>on {mappackName}</DialogDescription>
         </DialogHeader>
 
         <ScrollArea className="min-h-0 rounded-panel">
-          {error ? (
-            <p className="px-3 pb-2 text-destructive">{error.message}</p>
-          ) : (
-            <SubPanel className="bg-sunken p-3">
-              <Leaderboard className="mx-0 w-full">
-                <LeaderboardHeader className="[&_th]:bg-transparent">
-                  <LeaderboardRow>
-                    <LeaderboardHead className="w-24 text-right">
-                      Rank
-                    </LeaderboardHead>
-                    <LeaderboardHead>Map</LeaderboardHead>
-                  </LeaderboardRow>
-                </LeaderboardHeader>
-
-                {loading || !ranks ? (
-                  <TableSkeleton columns={2} rows={6} />
-                ) : (
-                  <LeaderboardBody>
-                    {ranks.map((entry) => (
-                      <LeaderboardRow key={entry.map.gameId}>
-                        <RankCell>
-                          {entry.rank}
-                          <small>/{entry.lastRank}</small>
-                        </RankCell>
-                        <NameCell>
-                          <MPFormatLink path={`/map/${entry.map.gameId}`}>
-                            {entry.map.name}
-                          </MPFormatLink>
-                        </NameCell>
-                      </LeaderboardRow>
-                    ))}
-                  </LeaderboardBody>
-                )}
-              </Leaderboard>
-            </SubPanel>
-          )}
+          <MappackPlayerDetails mappackId={mappackId} login={login} />
         </ScrollArea>
       </DialogContent>
     </Dialog>
