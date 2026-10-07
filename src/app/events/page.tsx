@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 
 import { gql } from "@/app/__generated__";
 import { query } from "@/app/ApolloClient";
+import { bannerClassName, bannerStyle } from "@/lib/banner";
 import { parseApiDate } from "@/lib/date";
 import Link from "@/components/Link";
 import PageShell from "@/components/layout/PageShell";
@@ -12,6 +13,7 @@ import MPFormat from "@/components/MPFormat";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import catchGqlError from "@/lib/catchError";
+import { cn } from "@/lib/utils";
 
 // Re-render at most once a minute so the page never serves stale data.
 export const revalidate = 60;
@@ -88,17 +90,11 @@ export default async function EventsPage() {
                           without artwork reads as a plain card in the theme's
                           own tone rather than a dark slab. */}
                         <SubPanel
-                          // `bg-clip-padding` keeps the banner out from under the
-                          // border, which the vignette does not reach: left there
-                          // it draws a hard ring of raw image around the card.
-                          className="h-full justify-between gap-3 border border-transparent bg-(--banner-scrim) bg-cover bg-clip-padding bg-center p-5 shadow-[inset_0_0_7em_var(--banner-edge)] transition-colors hover:border-foreground/40"
-                          style={
-                            edition.bannerImgUrl
-                              ? {
-                                  backgroundImage: `url(${edition.bannerImgUrl})`,
-                                }
-                              : undefined
-                          }
+                          className={cn(
+                            "h-full justify-between gap-3 border border-transparent p-5 transition-colors hover:border-foreground/40",
+                            bannerClassName,
+                          )}
+                          style={bannerStyle(edition.bannerImgUrl)}
                         >
                           <div>
                             <h2 className="m-0 text-2xl font-bold drop-shadow-[2px_2px_10px_var(--banner-edge)]">

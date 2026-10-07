@@ -47,9 +47,14 @@
   /* Laid over an event's banner, and standing in for the banner where an
      edition has none — so it carries the theme's own tone rather than a fixed
      one, and the cards sit level with the panels beside them either way.
+     The scrim runs across the banner rather than sitting flat on it: the text
+     is all down the left edge, so `--banner-scrim` covers that side hard
+     enough to read on and `--banner-scrim-fade` lets the artwork through on
+     the right, where nothing is written.
      `--banner-edge` is the same tone at full strength, for the vignette that
      pulls the corners of the image in and the glow behind the title. */
-  --banner-scrim: rgb(255 255 255 / 0.72);
+  --banner-scrim: rgb(255 255 255 / 0.82);
+  --banner-scrim-fade: rgb(255 255 255 / 0.1);
   --banner-edge: #fff;
 
   --background: oklch(0.985 0 0);
@@ -100,7 +105,8 @@
   --sunken-opaque: rgb(0 0 0 / 0.7);
   --selected: oklch(1 0 0 / 20%);
   --backdrop-wash: rgb(0 0 0 / 0);
-  --banner-scrim: rgb(0 0 0 / 0.6);
+  --banner-scrim: rgb(0 0 0 / 0.7);
+  --banner-scrim-fade: rgb(0 0 0 / 0.1);
   --banner-edge: #000;
 
   --background: oklch(0.145 0 0);

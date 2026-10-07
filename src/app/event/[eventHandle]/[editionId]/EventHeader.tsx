@@ -4,7 +4,9 @@ import { Fragment } from "react";
 
 import type { GetCampaignLeaderboardQuery } from "@/app/__generated__/graphql";
 import Countdown from "@/components/Countdown";
+import { bannerClassName, bannerStyle } from "@/lib/banner";
 import { parseApiDate } from "@/lib/date";
+import { cn } from "@/lib/utils";
 import { Panel, SubPanel } from "@/components/layout/Panel";
 import MPFormat, { MPFormatLink } from "@/components/MPFormat";
 import { Badge } from "@/components/ui/badge";
@@ -70,12 +72,8 @@ export default function EventHeader({
       {/* Same scrim as the cards on /events, so the header an edition opens
           into carries on from the card that was clicked. */}
       <SubPanel
-        className="gap-3 border border-transparent bg-(--banner-scrim) bg-cover bg-clip-padding bg-center p-5 shadow-[inset_0_0_7em_var(--banner-edge)]"
-        style={
-          edition.bannerImgUrl
-            ? { backgroundImage: `url(${edition.bannerImgUrl})` }
-            : undefined
-        }
+        className={cn("gap-3 border border-transparent p-5", bannerClassName)}
+        style={bannerStyle(edition.bannerImgUrl)}
       >
         <div>
           <h2 className="m-0 text-2xl font-black drop-shadow-[2px_2px_10px_var(--banner-edge)]">
