@@ -33,7 +33,10 @@ export interface Article extends RawArticle {
  * Splits off the leading `# Title`. Only the very first line counts, so an
  * article that opens straight into prose keeps all of its content.
  */
-function splitDocument(content: string, fallbackTitle: string): ArticleDocument {
+function splitDocument(
+  content: string,
+  fallbackTitle: string,
+): ArticleDocument {
   const heading = content.match(/^\s*#[^\S\n]+(.+?)[^\S\n]*(?:\n|$)/);
 
   return heading
@@ -74,11 +77,16 @@ class ArticleImpl implements Article {
 }
 
 export async function fetchArticles(): Promise<{ [slug: string]: Article }> {
-  const file = await fs.readFile(
-    `${process.cwd()}/data/articles.json`,
-    "utf-8",
-  );
-  const articles: { [slug: string]: RawArticle } = JSON.parse(file);
+  let fileContent: string;
+  try {
+    fileContent = await fs.readFile(
+      `${process.cwd()}/data/articles.json`,
+      "utf-8",
+    );
+  } catch {
+    return {};
+  }
+  const articles: { [slug: string]: RawArticle } = JSON.parse(fileContent);
 
   return Object.fromEntries(
     Object.entries(articles).map(([slug, raw]) => [
