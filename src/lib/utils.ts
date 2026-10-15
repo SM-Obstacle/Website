@@ -22,7 +22,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function getApiHost() {
-  return process.env.RECORDS_API_HOST || "127.0.0.1:3001";
+  return process.env.NEXT_PUBLIC_RECORDS_API_HOST || "127.0.0.1:3001";
 }
 
 export function getGraphqlApiUrl() {
