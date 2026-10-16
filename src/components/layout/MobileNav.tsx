@@ -29,7 +29,7 @@ export default function MobileNav({ selected }: { selected?: NavKey }) {
         <Logo />
       </DrawerTrigger>
 
-      <DrawerContent className="rounded-r-block data-[swipe-direction=left]:rounded-r-block border-0 bg-card p-inset backdrop-blur-md">
+      <DrawerContent className="rounded-r-block data-[swipe-direction=left]:rounded-r-block border-0 bg-card p-inset backdrop-blur-sm">
         <DrawerHeader className="p-0">
           <DrawerTitle className="flex items-center gap-3">
             <Logo width={36} height={36} />
