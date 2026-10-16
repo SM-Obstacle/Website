@@ -22,7 +22,7 @@ export default function Home() {
       selectedMenu="home"
     >
       <ScrollArea className="mx-auto h-full w-full max-w-content">
-        <div className="flex grow flex-col gap-2 md:grid md:grid-cols-2 md:grid-rows-[min-content_auto_auto]">
+        <div className="flex grow flex-col gap-2 md:grid md:grid-cols-2 md:grid-rows-[min-content_auto_auto] h-full">
           <Panel
             className="col-span-full row-start-1 min-w-0"
             header={<SectionHeader title="Latest records" href="/records" />}
@@ -34,7 +34,9 @@ export default function Home() {
 
           <Panel
             className="col-start-1 row-start-2"
-            header={<SectionHeader title="Player of the week" href="/players" />}
+            header={
+              <SectionHeader title="Player of the week" href="/players" />
+            }
           >
             <SubPanel className="h-full">
               <Suspense fallback={<OfTheWeekSkeleton />}>
@@ -59,9 +61,7 @@ export default function Home() {
             header={<SectionHeader title="Current events" href="/events" />}
           >
             <Suspense
-              fallback={
-                <Skeleton className="h-40 w-full rounded-panel" />
-              }
+              fallback={<Skeleton className="h-40 w-full rounded-panel" />}
             >
               <CurrentEvents />
             </Suspense>

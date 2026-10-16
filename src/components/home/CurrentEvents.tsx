@@ -68,7 +68,8 @@ export default async function CurrentEvents() {
             <div className="m-auto grid grid-cols-3 grid-rows-4 gap-x-2 p-5">
               <Image
                 src={podiumImg}
-                alt=""
+                alt="Podium image"
+                loading="eager"
                 className="col-start-2 row-span-full row-start-2"
               />
 

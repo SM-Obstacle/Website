@@ -7,12 +7,11 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
 import Link from "next/link";
 
 export const btnVariants = buttonVariants({
   size: "icon",
-  className: "shrink-0 rounded-full! cursor-pointer p-2",
+  className: "shrink-0 rounded-full! cursor-pointer",
 });
 
 export function MxLogo() {
