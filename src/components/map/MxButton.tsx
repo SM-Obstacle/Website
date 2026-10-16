@@ -11,7 +11,7 @@ import Link from "next/link";
 
 export const btnVariants = buttonVariants({
   size: "icon",
-  className: "shrink-0 rounded-full! cursor-pointer",
+  className: "shrink-0 rounded-full! cursor-pointer p-0",
 });
 
 export function MxLogo() {

@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { Drawer as DrawerPrimitive } from "@base-ui/react/drawer"
-import { cn } from "@/lib/utils"
+import { cn } from "cn"
 
 type DrawerContextProps = {
   hasSnapPoints: boolean
@@ -28,13 +28,10 @@ function Drawer({
   showSwipeHandle = false,
   snapPoints,
   swipeDirection = "down",
-  direction,
   ...props
 }: DrawerPrimitive.Root.Props & {
   showSwipeHandle?: boolean
-  direction?: "up" | "down" | "left" | "right"
 }) {
-  swipeDirection = direction ?? swipeDirection
   const hasSnapPoints = snapPoints != null && snapPoints.length > 0
   const contextValue = React.useMemo(
     () => ({ hasSnapPoints, modal, showSwipeHandle, swipeDirection }),
