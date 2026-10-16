@@ -4,6 +4,7 @@ import {
   Footprints,
   Home,
   Map,
+  SportShoe,
   Users,
 } from "lucide-react";
 
@@ -15,7 +16,7 @@ export interface NavPage {
 
 export const NAV_PAGES = {
   home: { title: "Home", route: "/", icon: Home },
-  records: { title: "Records", route: "/records", icon: Footprints },
+  records: { title: "Records", route: "/records", icon: SportShoe },
   maps: { title: "Maps", route: "/maps", icon: Map },
   players: { title: "Players", route: "/players", icon: Users },
   events: { title: "Events", route: "/events", icon: CalendarDays },
