@@ -234,17 +234,4 @@
       ),
       url("/img/background.jpg");
   }
-
-  /* The tiny viewports the game browser reports need the whole UI scaled down. */
-  @media only screen and (max-width: 420px) {
-    html {
-      zoom: 0.8;
-    }
-  }
-
-  @media only screen and (max-width: 320px) {
-    html {
-      zoom: 0.6;
-    }
-  }
 }

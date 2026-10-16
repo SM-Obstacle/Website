@@ -6,6 +6,7 @@ import { ApolloWrapper } from "./ApolloWrapper";
 import { forkawesomeManiaicons, kenneyIcons, lato } from "./fonts";
 import "@/styles/globals.css";
 import { ThemeProvider } from "next-themes";
+import { cn } from "@/lib/utils";
 
 // Tints the browser's own chrome, so it follows the theme along with the page.
 export const viewport: Viewport = {
@@ -31,7 +32,12 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${lato.variable} ${kenneyIcons.variable} ${forkawesomeManiaicons.variable}`}
+      className={cn(
+        "zoom-[0.6] sm:zoom-[0.8] md:zoom-[1]",
+        lato.variable,
+        kenneyIcons.variable,
+        forkawesomeManiaicons.variable,
+      )}
       suppressHydrationWarning
     >
       <body>
