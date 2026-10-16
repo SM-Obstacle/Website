@@ -3,7 +3,7 @@
   "configurations": [
     {
       "name": "website-dev",
-      "runtimeExecutable": "yarn",
+      "runtimeExecutable": "bun",
       "runtimeArgs": ["dev"],
       "url": "http://localhost:3000",
       "port": 3000

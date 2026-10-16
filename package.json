@@ -2,9 +2,10 @@
   "name": "obs2",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "bun@1.4.3",
   "scripts": {
     "dev": "next dev",
-    "build": "next build && yarn copy-standalone-assets",
+    "build": "next build && bun run copy-standalone-assets",
     "copy-standalone-assets": "rm -rf .next/standalone/public .next/standalone/.next/static && cp -r public .next/standalone/public && cp -r .next/static .next/standalone/.next/static",
     "start": "node .next/standalone/server.js",
     "lint": "eslint .",
