@@ -177,7 +177,7 @@ export function PlayerMapsDialog({
         {/* The list scrolls inside the dialog rather than lengthening it, so
             the button under it stays put instead of sitting fifty rows down. */}
         <SubPanel className="min-h-0 bg-sunken">
-          <ScrollArea className="max-h-[55dvh]">
+          <ScrollArea className="min-h-0">
             <PlayerMapsTable login={player.login} />
           </ScrollArea>
         </SubPanel>
