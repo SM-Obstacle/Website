@@ -10,6 +10,8 @@ import { cn } from "@/lib/utils";
 
 // Tints the browser's own chrome, so it follows the theme along with the page.
 export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#f4f5f6" },
     { media: "(prefers-color-scheme: dark)", color: "#060503" },
@@ -33,7 +35,6 @@ export default function RootLayout({
     <html
       lang="en"
       className={cn(
-        "zoom-[0.6] sm:zoom-[0.8] md:zoom-[1]",
         lato.variable,
         kenneyIcons.variable,
         forkawesomeManiaicons.variable,

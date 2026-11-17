@@ -30,7 +30,7 @@ export default async function MapOfTheWeek() {
     <OfTheWeek
       path={`/map/${map.gameId}`}
       name={map.name}
-      icon={<MapIcon className="size-8 shrink-0" />}
+      icon={<MapIcon className="size-5 shrink-0 sm:size-8" />}
     />
   );
 }

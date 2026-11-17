@@ -25,15 +25,12 @@ export default function PageShell({
       {/* `min-h-0` so this column can shrink past its content: without it a
           short viewport pushes the page past the bottom of the window, where
           the shell's `overflow-hidden` clips it out of reach. */}
-      <div className="flex min-h-0 min-w-0 flex-1 flex-col md:ms-[calc(var(--logo-size)+1.5rem)]">
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-2 md:ms-[calc(var(--logo-size)+1.5rem)]">
+        {/* In the flow rather than fixed over the page: whatever height the
+            bar ends up at, the content starts below it instead of under it. */}
         <TitleBar segments={titleSegments} selected={selectedMenu} />
 
-        <main
-          className={cn(
-            "mt-[calc(var(--logo-size)+1.5rem)] flex min-h-0 flex-1 flex-col",
-            className,
-          )}
-        >
+        <main className={cn("flex min-h-0 flex-1 flex-col", className)}>
           {children}
         </main>
       </div>

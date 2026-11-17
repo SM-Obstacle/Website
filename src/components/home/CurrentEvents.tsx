@@ -45,19 +45,19 @@ export default async function CurrentEvents() {
 
   if (editions.length === 0) {
     return (
-      <SubPanel className="flex h-full items-center justify-center p-6 text-muted-foreground">
+      <SubPanel className="flex flex-1 items-center justify-center p-6 text-center text-muted-foreground">
         No event is running right now.
       </SubPanel>
     );
   }
 
   return (
-    <div className="flex h-full flex-1 flex-col gap-2 md:flex-row *:flex-1">
+    <div className="flex flex-1 flex-col gap-2 md:flex-row *:flex-1">
       {editions.map((edition, i) => (
         // The API can surface the same edition twice, so the index disambiguates.
         <SubPanel key={`${edition.event.handle}-${edition.id}-${i}`}>
           <div className="flex h-full flex-col items-center p-2">
-            <h3 className="m-0 truncate text-base font-bold">
+            <h3 className="m-0 max-w-full truncate text-base font-bold">
               <MPFormatLink
                 path={`/event/${edition.event.handle}/${edition.id}`}
               >
@@ -65,7 +65,7 @@ export default async function CurrentEvents() {
               </MPFormatLink>
             </h3>
 
-            <div className="m-auto grid grid-cols-3 grid-rows-4 gap-x-2 p-5">
+            <div className="m-auto grid grid-cols-3 grid-rows-4 gap-x-2 p-2 sm:p-5">
               <Image
                 src={podiumImg}
                 alt="Podium image"

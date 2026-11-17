@@ -6,12 +6,12 @@ import { cn } from "@/lib/utils";
  * the dark theme, ink on the light one, out of the one file.
  */
 export default function Logo({
-  width = 50,
-  height = 50,
+  width = "var(--logo-size)",
+  height = "var(--logo-size)",
   className,
 }: {
-  width?: number;
-  height?: number;
+  width?: number | string;
+  height?: number | string;
   className?: string;
 }) {
   return (

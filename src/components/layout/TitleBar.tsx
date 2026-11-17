@@ -12,20 +12,20 @@ export default function TitleBar({
   selected?: NavKey;
 }) {
   return (
-    <div className="fixed inset-s-2 top-2 z-50 w-[calc(100%-1rem)] md:inset-s-[calc(var(--logo-size)+2rem)] md:w-[calc(100%-var(--logo-size)-2.5rem)]">
-      <div className="flex min-h-[calc(var(--logo-size)+var(--panel-inset)*2)] w-full items-center gap-2 rounded-bar bg-card p-inset backdrop-blur-sm">
-        <MobileNav selected={selected} />
+    // A fixed height, one logo plus its inset: the title truncates rather than
+    // wrapping, so the logo keeps the same padding on every side.
+    <div className="z-40 flex h-[calc(var(--logo-size)+var(--panel-inset)*2)] w-full shrink-0 items-center gap-2 overflow-hidden rounded-bar bg-card p-inset backdrop-blur-sm">
+      <MobileNav selected={selected} />
 
-        <div className="flex min-w-0 items-center gap-1 px-3 font-black">
-          {segments.map((segment, i) => (
-            <Fragment key={`segment-${i}`}>
-              {i > 0 && (
-                <ChevronRight className="size-5 shrink-0" aria-hidden />
-              )}
-              <div className="min-w-0">{segment}</div>
-            </Fragment>
-          ))}
-        </div>
+      <div className="flex min-w-0 items-center gap-1 px-2 font-black sm:px-3">
+        {segments.map((segment, i) => (
+          <Fragment key={`segment-${i}`}>
+            {i > 0 && (
+              <ChevronRight className="size-4 shrink-0 sm:size-5" aria-hidden />
+            )}
+            <div className="min-w-0">{segment}</div>
+          </Fragment>
+        ))}
       </div>
     </div>
   );

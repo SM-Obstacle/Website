@@ -30,7 +30,7 @@ export default async function PlayerOfTheWeek() {
     <OfTheWeek
       path={`/player/${player.login}`}
       name={player.name}
-      icon={<User className="size-8 shrink-0" />}
+      icon={<User className="size-5 shrink-0 sm:size-8" />}
     />
   );
 }

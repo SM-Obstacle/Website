@@ -11,7 +11,7 @@ export default function OfTheWeek({
   icon?: React.ReactNode;
 }) {
   return (
-    <div className="flex h-full w-full items-center justify-center gap-2 p-6 text-center text-4xl font-bold">
+    <div className="flex h-full w-full items-center justify-center gap-2 p-3 text-center text-xl font-bold sm:p-6 sm:text-3xl lg:text-4xl">
       {icon}
       <MPFormatLink className="min-w-0 truncate" path={path}>
         {name}
@@ -22,7 +22,7 @@ export default function OfTheWeek({
 
 export function OfTheWeekSkeleton() {
   return (
-    <div className="flex h-full w-full items-center justify-center p-6">
+    <div className="flex h-full w-full items-center justify-center p-3 sm:p-6">
       <Skeleton className="h-10 w-2/3" />
     </div>
   );

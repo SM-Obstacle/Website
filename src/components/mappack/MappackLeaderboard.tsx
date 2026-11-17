@@ -106,10 +106,10 @@ export default function MappackLeaderboard({
                 #
               </LeaderboardHead>
               <LeaderboardHead>Player</LeaderboardHead>
-              <LeaderboardHead className="w-[15%] text-right">
+              <LeaderboardHead className="w-20 text-right md:w-[15%]">
                 <span className="hidden xl:inline">Rank </span>Average
               </LeaderboardHead>
-              <LeaderboardHead className="w-[15%] text-right">
+              <LeaderboardHead className="w-20 text-right md:w-[15%]">
                 <span className="hidden xl:inline">Maps </span>Finished
               </LeaderboardHead>
               <WideOnlyHead className="w-[15%] text-right">
@@ -119,7 +119,7 @@ export default function MappackLeaderboard({
           </LeaderboardHeader>
 
           {leaderboard.length === 0 ? (
-            <TableMessage columns={COLUMNS}>
+            <TableMessage columns={COLUMNS} wideOnly={1}>
               Nobody has played this mappack yet.
             </TableMessage>
           ) : (

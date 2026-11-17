@@ -102,11 +102,11 @@ export default function MapsTable() {
             </LeaderboardHeader>
 
             {error ? (
-              <TableError columns={COLUMNS} message={error.message} />
+              <TableError columns={COLUMNS} wideOnly={1} message={error.message} />
             ) : !maps ? (
-              <TableSkeleton columns={COLUMNS} />
+              <TableSkeleton columns={COLUMNS} wideOnly={1} />
             ) : maps.length === 0 ? (
-              <TableMessage columns={COLUMNS}>
+              <TableMessage columns={COLUMNS} wideOnly={1}>
                 No map matches these filters.
               </TableMessage>
             ) : (

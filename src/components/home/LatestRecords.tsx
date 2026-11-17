@@ -88,18 +88,18 @@ export default function LatestRecords() {
         <LeaderboardRow>
           <LeaderboardHead className="w-[35%]">Player</LeaderboardHead>
           <LeaderboardHead className="w-[35%]">Map</LeaderboardHead>
-          <LeaderboardHead className="w-[15%]">Time</LeaderboardHead>
+          <LeaderboardHead className="w-24 md:w-[15%]">Time</LeaderboardHead>
           <LeaderboardHead className="hidden w-[10%] sm:table-cell">
             Date
           </LeaderboardHead>
-          <LeaderboardHead className="w-[10%] text-right">#</LeaderboardHead>
+          <LeaderboardHead className="w-12 text-right md:w-[10%]">#</LeaderboardHead>
         </LeaderboardRow>
       </LeaderboardHeader>
 
       {error ? (
-        <TableError columns={COLUMNS} message={error.message} />
+        <TableError columns={COLUMNS} wideOnly={1} wideFrom="sm" message={error.message} />
       ) : loading || !records ? (
-        <TableSkeleton columns={COLUMNS} rows={5} />
+        <TableSkeleton columns={COLUMNS} wideOnly={1} wideFrom="sm" rows={5} />
       ) : (
         <LeaderboardBody>
           {records.map((record) => (

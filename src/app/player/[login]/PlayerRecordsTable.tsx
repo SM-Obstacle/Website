@@ -136,17 +136,17 @@ export default function PlayerRecordsTable({ login }: { login: string }) {
                   #
                 </LeaderboardHead>
                 <LeaderboardHead>Map</LeaderboardHead>
-                <LeaderboardHead className="w-[20%]">Time</LeaderboardHead>
+                <LeaderboardHead className="w-24 md:w-[20%]">Time</LeaderboardHead>
                 <WideOnlyHead className="w-[20%] text-right">Date</WideOnlyHead>
               </LeaderboardRow>
             </LeaderboardHeader>
 
             {error ? (
-              <TableError columns={COLUMNS} message={error.message} />
+              <TableError columns={COLUMNS} wideOnly={1} message={error.message} />
             ) : !records ? (
-              <TableSkeleton columns={COLUMNS} rows={8} />
+              <TableSkeleton columns={COLUMNS} wideOnly={1} rows={8} />
             ) : records.length === 0 ? (
-              <TableMessage columns={COLUMNS}>
+              <TableMessage columns={COLUMNS} wideOnly={1}>
                 This player has no record yet.
               </TableMessage>
             ) : (

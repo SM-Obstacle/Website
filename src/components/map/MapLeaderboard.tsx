@@ -274,7 +274,7 @@ export default function MapLeaderboard({
                   #
                 </LeaderboardHead>
                 <LeaderboardHead>Player</LeaderboardHead>
-                <LeaderboardHead className="w-[20%]">Time</LeaderboardHead>
+                <LeaderboardHead className="w-24 md:w-[20%]">Time</LeaderboardHead>
                 <WideOnlyHead className="w-[20%]">
                   <span className="flex items-center justify-end gap-1">
                     <DateSortButton oldestFirst={oldestFirst} />
@@ -285,11 +285,11 @@ export default function MapLeaderboard({
             </LeaderboardHeader>
 
             {error ? (
-              <TableError columns={COLUMNS} message={error.message} />
+              <TableError columns={COLUMNS} wideOnly={1} message={error.message} />
             ) : !rows ? (
-              <TableSkeleton columns={COLUMNS} rows={8} />
+              <TableSkeleton columns={COLUMNS} wideOnly={1} rows={8} />
             ) : rows.length === 0 ? (
-              <TableMessage columns={COLUMNS}>
+              <TableMessage columns={COLUMNS} wideOnly={1}>
                 No record has been set on this map yet.
               </TableMessage>
             ) : (

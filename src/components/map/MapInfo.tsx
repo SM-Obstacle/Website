@@ -53,19 +53,19 @@ export default function MapInfo({
   );
 
   return (
-    <Panel className="flex-row items-start">
+    <Panel className="flex-row items-center">
       {/* Placeholder thumbnail: the API has no map previews. Sitting one inset
           in from the panel, it takes the panel's radius so both corners curve
           together. */}
-      <div className="flex aspect-square h-full min-w-(--profile-picture-size) shrink-0 items-center justify-center rounded-panel bg-sunken">
+      <div className="flex size-(--profile-picture-size) shrink-0 items-center justify-center rounded-panel bg-sunken">
         <MapIcon className="size-1/3" />
       </div>
 
-      <SubPanel className="h-full w-full min-w-0 gap-3 px-5 py-2">
+      <SubPanel className="h-full w-full min-w-0 gap-2 px-3 py-2 sm:gap-3 sm:px-5">
         <div className="flex items-center justify-between gap-2">
           <div className="flex flex-col gap-inset">
             <div className="min-w-0">
-              <h2 className="m-0 truncate text-2xl font-bold">
+              <h2 className="m-0 truncate text-xl font-bold sm:text-2xl">
                 <MPFormat>{map.name}</MPFormat>
               </h2>
 

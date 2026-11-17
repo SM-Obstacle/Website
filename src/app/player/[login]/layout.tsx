@@ -75,7 +75,7 @@ export default async function PlayerLayout(
       selectedMenu="players"
     >
       <WithDetailAside aside={<PlayerAside player={data.player} />}>
-        <div className="mx-auto flex h-full min-h-0 w-full max-w-content flex-col gap-2 [--profile-picture-size:75px] lg:[--profile-picture-size:100px]">
+        <div className="mx-auto flex h-full min-h-0 w-full max-w-content flex-col gap-2 [--profile-picture-size:56px] sm:[--profile-picture-size:75px] lg:[--profile-picture-size:100px]">
           <PlayerInfo player={data.player} />
 
           <Panel

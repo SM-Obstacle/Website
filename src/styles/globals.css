@@ -153,6 +153,13 @@
   --ring: var(--primary);
 }
 
+/* Phones get a slimmer frame: the logo drives the bar heights and radii. */
+@media (max-width: 40rem) {
+  :root {
+    --logo-size: 40px;
+  }
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -221,7 +228,7 @@
      * panels scroll internally, so a minimum height would just push the page
      * below the fold on a short window, where `overflow-hidden` clips it.
      */
-    min-width: 390px;
+    min-width: 320px;
   }
 
   body {

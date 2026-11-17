@@ -97,11 +97,11 @@ export default function PlayersTable() {
             </LeaderboardHeader>
 
             {error ? (
-              <TableError columns={COLUMNS} message={error.message} />
+              <TableError columns={COLUMNS} wideOnly={1} message={error.message} />
             ) : !players ? (
-              <TableSkeleton columns={COLUMNS} />
+              <TableSkeleton columns={COLUMNS} wideOnly={1} />
             ) : players.length === 0 ? (
-              <TableMessage columns={COLUMNS}>
+              <TableMessage columns={COLUMNS} wideOnly={1}>
                 No player matches these filters.
               </TableMessage>
             ) : (

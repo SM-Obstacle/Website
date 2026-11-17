@@ -25,7 +25,7 @@ export function Leaderboard({
       // that would elide instead. Handing the head back to whatever scrolls the
       // table is what keeps it in place.
       containerClassName="overflow-x-visible"
-      className={cn("mx-5 my-2 w-[calc(100%-2.5rem)] table-fixed", className)}
+      className={cn("mx-2 my-2 w-[calc(100%-1rem)] table-fixed sm:mx-5 sm:w-[calc(100%-2.5rem)]", className)}
       {...props}
     />
   );
@@ -73,7 +73,7 @@ export function LeaderboardHead({
     <TableHead
       className={cn(
         "h-auto px-1 py-1 text-left font-bold text-foreground first:rounded-s-md last:rounded-e-md",
-        "max-md:[&:has(+.hidden)]:rounded-e-md",
+        "[&:has(+.hidden)]:rounded-e-md md:[&:has(+.hidden)]:rounded-e-none",
         className,
       )}
       {...props}

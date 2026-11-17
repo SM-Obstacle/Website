@@ -30,13 +30,13 @@ export default function PlayerInfo({
   return (
     <Panel className="flex-row items-center">
       {/* Placeholder avatar: the API has no profile pictures. */}
-      <div className="flex aspect-square h-full min-w-(--profile-picture-size) shrink-0 items-center justify-center rounded-full bg-sunken">
+      <div className="flex size-(--profile-picture-size) shrink-0 items-center justify-center rounded-full bg-sunken">
         <User className="size-1/3" />
       </div>
 
-      <SubPanel className="h-full w-full min-w-0 gap-3 px-5 py-2">
+      <SubPanel className="h-full w-full min-w-0 gap-2 px-3 py-2 sm:gap-3 sm:px-5">
         <div className="flex items-center gap-3">
-          <h2 className="m-0 min-w-0 flex-1 truncate text-2xl font-bold">
+          <h2 className="m-0 min-w-0 flex-1 truncate text-xl font-bold sm:text-2xl">
             <MPFormat>{player.name}</MPFormat>
           </h2>
 

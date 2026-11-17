@@ -161,7 +161,7 @@ export default function RecordsTable() {
                 </LeaderboardHead>
                 <LeaderboardHead className="w-[35%]">Player</LeaderboardHead>
                 <LeaderboardHead className="w-[35%]">Map</LeaderboardHead>
-                <LeaderboardHead className="w-[20%]">Time</LeaderboardHead>
+                <LeaderboardHead className="w-24 md:w-[20%]">Time</LeaderboardHead>
                 <WideOnlyHead className="w-[20%]">
                   <span className="flex items-center justify-end gap-1">
                     <DateSortButton
@@ -174,11 +174,11 @@ export default function RecordsTable() {
             </LeaderboardHeader>
 
             {error ? (
-              <TableError columns={COLUMNS} message={error.message} />
+              <TableError columns={COLUMNS} wideOnly={1} message={error.message} />
             ) : !records ? (
-              <TableSkeleton columns={COLUMNS} />
+              <TableSkeleton columns={COLUMNS} wideOnly={1} />
             ) : records.length === 0 ? (
-              <TableMessage columns={COLUMNS}>
+              <TableMessage columns={COLUMNS} wideOnly={1}>
                 No record matches these filters.
               </TableMessage>
             ) : (
