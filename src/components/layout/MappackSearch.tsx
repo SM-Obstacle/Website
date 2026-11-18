@@ -21,18 +21,25 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { searchMappack } from "@/lib/actions/mappack";
+import { cn } from "@/lib/utils";
 
 export default function MappackSearch({
   withLabel = false,
+  className,
 }: {
   withLabel?: boolean;
+  /** Overrides the labelled trigger's look, so it can match its siblings. */
+  className?: string;
 }) {
   const trigger = (
     <DialogTrigger asChild>
       <Button
         className={
           withLabel
-            ? "flex w-full items-center justify-start gap-3 rounded-full bg-inherit px-4 py-3 text-lg text-foreground transition-colors hover:bg-accent hover:text-foreground"
+            ? cn(
+                "flex w-full items-center justify-start gap-3 rounded-full bg-inherit px-4 py-3 text-lg text-foreground transition-colors hover:bg-accent hover:text-foreground",
+                className,
+              )
             : "cursor-pointer bg-inherit text-foreground transition-colors hover:bg-transparent hover:text-primary"
         }
         size={withLabel ? "default" : "icon"}
