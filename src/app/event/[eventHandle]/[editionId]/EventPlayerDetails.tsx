@@ -294,7 +294,7 @@ export default function EventPlayerDetails({
                           Rank
                         </LeaderboardHead>
                         <LeaderboardHead>Map</LeaderboardHead>
-                        <LeaderboardHead className="w-20 @md:w-32">
+                        <LeaderboardHead className="w-28 @md:w-32">
                           Time
                         </LeaderboardHead>
                         <LeaderboardHead className="w-10 text-right @md:w-16">

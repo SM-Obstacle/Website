@@ -57,6 +57,9 @@ export function LeaderboardRow({
       className={cn(
         "border-0 hover:bg-transparent",
         "[&>td]:transition-colors [&>td]:first:rounded-s-md [&>td]:last:rounded-e-md",
+        // Below `md` the trailing wide-only column is gone, so the cell before
+        // it is the one that ends the row and has to round it off.
+        "[&>:has(+[data-wide-only]:last-child)]:rounded-e-md md:[&>:has(+[data-wide-only]:last-child)]:rounded-e-none",
         "even:[&>td]:bg-muted hover:[&>td]:bg-accent",
         className,
       )}
@@ -73,7 +76,6 @@ export function LeaderboardHead({
     <TableHead
       className={cn(
         "h-auto px-1 py-1 text-left font-bold text-foreground first:rounded-s-md last:rounded-e-md",
-        "[&:has(+.hidden)]:rounded-e-md md:[&:has(+.hidden)]:rounded-e-none",
         className,
       )}
       {...props}
@@ -123,6 +125,13 @@ export function TimeCell({
   );
 }
 
+/**
+ * Width of a column holding a `Time`: `00:00:00.00` in the monospace face
+ * takes ~85px, and a percentage alone shrinks below that on narrow tables —
+ * the times then spill into the next column or lose their right padding.
+ */
+export const TIME_COLUMN = "w-28 md:w-[max(20%,7rem)]";
+
 /** Secondary column, dropped on the narrow layout. */
 export function WideOnlyCell({
   className,
@@ -130,6 +139,7 @@ export function WideOnlyCell({
 }: React.ComponentProps<typeof TableCell>) {
   return (
     <LeaderboardCell
+      data-wide-only
       className={cn("hidden md:table-cell", className)}
       {...props}
     />
@@ -142,6 +152,7 @@ export function WideOnlyHead({
 }: React.ComponentProps<typeof TableHead>) {
   return (
     <LeaderboardHead
+      data-wide-only
       className={cn("hidden md:table-cell", className)}
       {...props}
     />

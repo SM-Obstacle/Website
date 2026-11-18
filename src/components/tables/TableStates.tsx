@@ -41,6 +41,7 @@ export function TableSkeleton({
           {Array.from({ length: columns }, (_, column) => (
             <LeaderboardCell
               key={column}
+              data-wide-only={column >= columns - wideOnly || undefined}
               className={cn(
                 column >= columns - wideOnly && WIDE_ONLY[wideFrom].cell,
               )}

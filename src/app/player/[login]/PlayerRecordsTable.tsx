@@ -20,6 +20,7 @@ import {
   TimeCell,
   WideOnlyCell,
   WideOnlyHead,
+  TIME_COLUMN,
 } from "@/components/tables/Leaderboard";
 import PaginationControls from "@/components/tables/PaginationControls";
 import {
@@ -136,7 +137,7 @@ export default function PlayerRecordsTable({ login }: { login: string }) {
                   #
                 </LeaderboardHead>
                 <LeaderboardHead>Map</LeaderboardHead>
-                <LeaderboardHead className="w-24 md:w-[20%]">Time</LeaderboardHead>
+                <LeaderboardHead className={TIME_COLUMN}>Time</LeaderboardHead>
                 <WideOnlyHead className="w-[20%] text-right">Date</WideOnlyHead>
               </LeaderboardRow>
             </LeaderboardHeader>

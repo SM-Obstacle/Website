@@ -86,13 +86,13 @@ export default function LatestRecords() {
     <Leaderboard>
       <LeaderboardHeader className="text-base opacity-50">
         <LeaderboardRow>
-          <LeaderboardHead className="w-[35%]">Player</LeaderboardHead>
-          <LeaderboardHead className="w-[35%]">Map</LeaderboardHead>
-          <LeaderboardHead className="w-24 md:w-[15%]">Time</LeaderboardHead>
-          <LeaderboardHead className="hidden w-[10%] sm:table-cell">
+          <LeaderboardHead>Player</LeaderboardHead>
+          <LeaderboardHead>Map</LeaderboardHead>
+          <LeaderboardHead className="w-28">Time</LeaderboardHead>
+          <LeaderboardHead className="hidden w-20 text-right sm:table-cell">
             Date
           </LeaderboardHead>
-          <LeaderboardHead className="w-12 text-right md:w-[10%]">#</LeaderboardHead>
+          <LeaderboardHead className="w-14 text-right">#</LeaderboardHead>
         </LeaderboardRow>
       </LeaderboardHeader>
 
@@ -123,7 +123,7 @@ export default function LatestRecords() {
               <TimeCell className="not-italic">
                 <Time>{record.time}</Time>
               </TimeCell>
-              <LeaderboardCell className="hidden sm:table-cell">
+              <LeaderboardCell className="hidden text-right sm:table-cell">
                 <FormattedTimeAgo>{record.recordDate}</FormattedTimeAgo>
               </LeaderboardCell>
               <LeaderboardCell

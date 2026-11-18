@@ -26,6 +26,7 @@ import {
   TimeCell,
   WideOnlyCell,
   WideOnlyHead,
+  TIME_COLUMN,
 } from "@/components/tables/Leaderboard";
 import DateSortButton from "@/components/tables/DateSortButton";
 import PaginationControls from "@/components/tables/PaginationControls";
@@ -274,7 +275,7 @@ export default function MapLeaderboard({
                   #
                 </LeaderboardHead>
                 <LeaderboardHead>Player</LeaderboardHead>
-                <LeaderboardHead className="w-24 md:w-[20%]">Time</LeaderboardHead>
+                <LeaderboardHead className={TIME_COLUMN}>Time</LeaderboardHead>
                 <WideOnlyHead className="w-[20%]">
                   <span className="flex items-center justify-end gap-1">
                     <DateSortButton oldestFirst={oldestFirst} />
