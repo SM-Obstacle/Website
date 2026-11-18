@@ -97,7 +97,12 @@ export default function LatestRecords() {
       </LeaderboardHeader>
 
       {error ? (
-        <TableError columns={COLUMNS} wideOnly={1} wideFrom="sm" message={error.message} />
+        <TableError
+          columns={COLUMNS}
+          wideOnly={1}
+          wideFrom="sm"
+          message={error.message}
+        />
       ) : loading || !records ? (
         <TableSkeleton columns={COLUMNS} wideOnly={1} wideFrom="sm" rows={5} />
       ) : (

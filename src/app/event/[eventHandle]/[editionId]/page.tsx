@@ -107,6 +107,7 @@ export default async function EventEditionPage(
       selectedMenu="events"
     >
       <WithDetailAside
+        centered
         aside={
           <EventPlayerAside
             eventHandle={eventHandle}
@@ -115,7 +116,7 @@ export default async function EventEditionPage(
           />
         }
       >
-        <div className="mx-auto flex h-full min-h-0 w-full max-w-content flex-col gap-2">
+        <div className="flex h-full min-h-0 w-full flex-col gap-2">
           <EventHeader edition={edition} admins={admins} />
 
           <Panel

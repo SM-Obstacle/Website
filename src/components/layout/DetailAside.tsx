@@ -133,8 +133,10 @@ export function DetailColumn({
       inert={!open}
       className={cn(
         "flex min-h-0 shrink-0 flex-col overflow-visible",
-        "transition-[width] duration-300 ease-out motion-reduce:transition-none",
-        open ? "w-80 2xl:w-96" : "w-0",
+        // The margin is the gap to the page; it closes along with the width,
+        // so a closed column leaves nothing behind to offset the page by.
+        "transition-[width,margin] duration-300 ease-out motion-reduce:transition-none",
+        open ? "ms-inset w-80 2xl:w-96" : "ms-0 w-0",
       )}
     >
       {/* Its own width never changes, so anything measured inside it isn't

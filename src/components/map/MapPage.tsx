@@ -47,8 +47,8 @@ export default function MapPage({
       ]}
       selectedMenu={event ? "events" : "maps"}
     >
-      <WithRecordAside>
-        <div className="mx-auto flex h-full min-h-0 w-full max-w-content flex-col gap-2 [--profile-picture-size:56px] sm:[--profile-picture-size:75px] lg:[--profile-picture-size:100px]">
+      <WithRecordAside centered>
+        <div className="flex h-full min-h-0 w-full flex-col gap-2 [--profile-picture-size:56px] sm:[--profile-picture-size:75px] lg:[--profile-picture-size:100px]">
           <MapInfo map={map} event={event} />
 
           <Panel
