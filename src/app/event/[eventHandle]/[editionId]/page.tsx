@@ -83,7 +83,7 @@ export default async function EventEditionPage(
   if (error || !edition) {
     return (
       <PageShell
-        titleSegments={[<PageTitle key="title">Events</PageTitle>]}
+        titleSegments={[<PageTitle key="title">Event</PageTitle>]}
         selectedMenu="events"
       >
         <LoadErrorPanel title="Invalid edition">
@@ -100,9 +100,8 @@ export default async function EventEditionPage(
     <PageShell
       titleSegments={[
         <PageTitle key="title">
-          <Link href="/events">Events</Link>
+          <Link href="/events">Event</Link>
         </PageTitle>,
-        <PageTitle key="event">{eventName}</PageTitle>,
       ]}
       selectedMenu="events"
     >

@@ -1,6 +1,7 @@
 import { format } from "date-fns";
 import { CalendarDays, Map as MapIcon } from "lucide-react";
 import type { Metadata } from "next";
+import Link from "next/link";
 import { cache, Suspense } from "react";
 
 import { gql } from "@/app/__generated__";
@@ -52,7 +53,7 @@ export default async function MappackPage(props: PageProps<"/mappack/[mxId]">) {
   if (error || !mappack) {
     return (
       <PageShell
-        titleSegments={[<PageTitle key="title">Events</PageTitle>]}
+        titleSegments={[<PageTitle key="title">Event</PageTitle>]}
         selectedMenu="events"
       >
         <Panel className="m-auto p-8">
@@ -67,8 +68,9 @@ export default async function MappackPage(props: PageProps<"/mappack/[mxId]">) {
   return (
     <PageShell
       titleSegments={[
-        <PageTitle key="title">Events</PageTitle>,
-        <PageTitle key="mappack">{name}</PageTitle>,
+        <PageTitle key="title">
+          <Link href="/events">Event</Link>
+        </PageTitle>,
       ]}
       selectedMenu="events"
     >

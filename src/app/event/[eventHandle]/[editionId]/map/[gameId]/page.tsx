@@ -71,7 +71,7 @@ export default async function EventMapPage(
   if (error || !eventMap) {
     return (
       <PageShell
-        titleSegments={[<PageTitle key="title">Events</PageTitle>]}
+        titleSegments={[<PageTitle key="title">Map</PageTitle>]}
         selectedMenu="events"
       >
         <LoadErrorPanel title="Invalid event map">

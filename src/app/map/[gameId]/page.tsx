@@ -42,7 +42,7 @@ export default async function MapRecordsPage(
   if (error || !data) {
     return (
       <PageShell
-        titleSegments={[<PageTitle key="title">Maps</PageTitle>]}
+        titleSegments={[<PageTitle key="title">Map</PageTitle>]}
         selectedMenu="maps"
       >
         <LoadErrorPanel title="Invalid map">

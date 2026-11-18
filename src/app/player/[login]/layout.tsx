@@ -6,7 +6,6 @@ import PageShell from "@/components/layout/PageShell";
 import { Panel, SubPanel } from "@/components/layout/Panel";
 import PageTitle from "@/components/layout/PageTitle";
 import SectionHeader from "@/components/layout/SectionHeader";
-import MPFormat from "@/components/MPFormat";
 import WithDetailAside from "@/components/layout/WithDetailAside";
 import { parse, toPlainText } from "@/lib/mpformat/mpformat";
 import PlayerAside from "./PlayerAside";
@@ -52,7 +51,7 @@ export default async function PlayerLayout(
   if (error || !data) {
     return (
       <PageShell
-        titleSegments={[<PageTitle key="title">Players</PageTitle>]}
+        titleSegments={[<PageTitle key="title">Player</PageTitle>]}
         selectedMenu="players"
       >
         <LoadErrorPanel title="Invalid player">
@@ -66,10 +65,7 @@ export default async function PlayerLayout(
     <PageShell
       titleSegments={[
         <PageTitle key="title">
-          <Link href="/players">Players</Link>
-        </PageTitle>,
-        <PageTitle key="player">
-          <MPFormat>{data.player.name}</MPFormat>
+          <Link href="/players">Player</Link>
         </PageTitle>,
       ]}
       selectedMenu="players"

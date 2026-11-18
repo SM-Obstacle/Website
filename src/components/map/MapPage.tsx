@@ -6,7 +6,6 @@ import { Panel } from "@/components/layout/Panel";
 import PageShell from "@/components/layout/PageShell";
 import PageTitle from "@/components/layout/PageTitle";
 import SectionHeader from "@/components/layout/SectionHeader";
-import MPFormat from "@/components/MPFormat";
 import WithRecordAside from "@/components/records/WithRecordAside";
 import MapInfo, { type MapEventContext } from "./MapInfo";
 import MapLeaderboard from "./MapLeaderboard";
@@ -37,12 +36,7 @@ export default function MapPage({
     <PageShell
       titleSegments={[
         <PageTitle key="title">
-          <Link href={event ? "/events" : "/maps"}>
-            {event ? "Events" : "Maps"}
-          </Link>
-        </PageTitle>,
-        <PageTitle key="map">
-          <MPFormat>{map.name}</MPFormat>
+          <Link href={event ? "/events" : "/maps"}>Map</Link>
         </PageTitle>,
       ]}
       selectedMenu={event ? "events" : "maps"}
