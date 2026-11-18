@@ -84,7 +84,7 @@ export default function LatestRecords() {
 
   return (
     <Leaderboard>
-      <LeaderboardHeader className="text-base opacity-50">
+      <LeaderboardHeader className="text-base">
         <LeaderboardRow>
           <LeaderboardHead>Player</LeaderboardHead>
           <LeaderboardHead>Map</LeaderboardHead>
