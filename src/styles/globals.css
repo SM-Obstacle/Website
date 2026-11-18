@@ -44,10 +44,9 @@
   /* Laid over the background photo, which is a daylight scene: dark panels
      stand out on it unaided, light ones need it washed out first. */
   --backdrop-wash: rgb(255 255 255 / 0.5);
-  /* The photo's bottom edge, averaged (with the wash over it here). iOS
-     Safari 26 fills the strip behind its toolbar with the root's flat colour,
-     never the photo, so this is what makes that strip blend in. */
-  --backdrop-fallback: #a0a393;
+  /* Under the photo, wherever it does not reach. Matches the browser chrome
+     (`themeColor` in layout.tsx). */
+  --backdrop-fallback: #f4f5f6;
   /* Laid over an event's banner, and standing in for the banner where an
      edition has none — so it carries the theme's own tone rather than a fixed
      one, and the cards sit level with the panels beside them either way.
@@ -109,7 +108,7 @@
   --sunken-opaque: rgb(0 0 0 / 0.7);
   --selected: oklch(1 0 0 / 20%);
   --backdrop-wash: rgb(0 0 0 / 0);
-  --backdrop-fallback: #414627;
+  --backdrop-fallback: #1c1c1e;
   --banner-scrim: rgb(0 0 0 / 0.7);
   --banner-scrim-fade: rgb(0 0 0 / 0.1);
   --banner-edge: #000;
