@@ -26,6 +26,7 @@ import {
   TimeCell,
   WideOnlyCell,
   WideOnlyHead,
+  DATE_COLUMN,
   TIME_COLUMN,
 } from "@/components/tables/Leaderboard";
 import DateSortButton from "@/components/tables/DateSortButton";
@@ -276,7 +277,7 @@ export default function MapLeaderboard({
                 </LeaderboardHead>
                 <LeaderboardHead>Player</LeaderboardHead>
                 <LeaderboardHead className={TIME_COLUMN}>Time</LeaderboardHead>
-                <WideOnlyHead className="w-[20%]">
+                <WideOnlyHead className={DATE_COLUMN}>
                   <span className="flex items-center justify-end gap-1">
                     <DateSortButton oldestFirst={oldestFirst} />
                     Date

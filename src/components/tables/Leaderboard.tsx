@@ -126,11 +126,16 @@ export function TimeCell({
 }
 
 /**
- * Width of a column holding a `Time`: `00:00:00.00` in the monospace face
- * takes ~85px, and a percentage alone shrinks below that on narrow tables —
- * the times then spill into the next column or lose their right padding.
+ * Widths of the columns whose content has a fixed size: a `Time` takes ~85px
+ * in the monospace face, a date about as much, plus the sort button in its
+ * head. Fixed rather than a share of the table, which shrinks below that on a
+ * narrow one and spills them over each other — and no `max(%, rem)` either:
+ * a table column treats a width mixing in a percentage as `auto`, and an auto
+ * column is left with nothing once the percentages add up to the full width.
+ * The name columns take no width and split whatever is left between them.
  */
-export const TIME_COLUMN = "w-28 md:w-[max(20%,7rem)]";
+export const TIME_COLUMN = "w-28 xl:w-36";
+export const DATE_COLUMN = "w-28 xl:w-36";
 
 /** Secondary column, dropped on the narrow layout. */
 export function WideOnlyCell({

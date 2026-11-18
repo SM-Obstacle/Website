@@ -23,6 +23,7 @@ import {
   TimeCell,
   WideOnlyCell,
   WideOnlyHead,
+  DATE_COLUMN,
   TIME_COLUMN,
 } from "@/components/tables/Leaderboard";
 import PaginationControls from "@/components/tables/PaginationControls";
@@ -160,10 +161,10 @@ export default function RecordsTable() {
                 <LeaderboardHead className="w-[10%] text-center">
                   #
                 </LeaderboardHead>
-                <LeaderboardHead className="w-[35%]">Player</LeaderboardHead>
-                <LeaderboardHead className="w-[35%]">Map</LeaderboardHead>
+                <LeaderboardHead>Player</LeaderboardHead>
+                <LeaderboardHead>Map</LeaderboardHead>
                 <LeaderboardHead className={TIME_COLUMN}>Time</LeaderboardHead>
-                <WideOnlyHead className="w-[20%]">
+                <WideOnlyHead className={DATE_COLUMN}>
                   <span className="flex items-center justify-end gap-1">
                     <DateSortButton
                       oldestFirst={sort.sort?.order === SortOrder.Descending}

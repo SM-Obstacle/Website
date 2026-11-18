@@ -1,5 +1,6 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import { useQuery } from "@apollo/client/react";
 import { memo } from "react";
 
@@ -20,6 +21,7 @@ import {
   TimeCell,
   WideOnlyCell,
   WideOnlyHead,
+  DATE_COLUMN,
   TIME_COLUMN,
 } from "@/components/tables/Leaderboard";
 import PaginationControls from "@/components/tables/PaginationControls";
@@ -138,7 +140,9 @@ export default function PlayerRecordsTable({ login }: { login: string }) {
                 </LeaderboardHead>
                 <LeaderboardHead>Map</LeaderboardHead>
                 <LeaderboardHead className={TIME_COLUMN}>Time</LeaderboardHead>
-                <WideOnlyHead className="w-[20%] text-right">Date</WideOnlyHead>
+                <WideOnlyHead className={cn(DATE_COLUMN, "text-right")}>
+                  Date
+                </WideOnlyHead>
               </LeaderboardRow>
             </LeaderboardHeader>
 
