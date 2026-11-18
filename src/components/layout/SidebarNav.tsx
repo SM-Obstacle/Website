@@ -17,7 +17,7 @@ export default function SidebarNav({ selected }: { selected?: NavKey }) {
   return (
     <nav
       aria-label="Main"
-      className="fixed inset-s-2 top-2 z-50 hidden h-[calc(100%-1rem)] w-[calc(var(--logo-size)+var(--panel-inset)*2)] flex-col items-center gap-5 rounded-bar bg-card p-inset backdrop-blur-sm md:flex"
+      className="fixed inset-s-2 top-2 z-50 hidden pointer-coarse:inset-s-[max(0.5rem,env(safe-area-inset-left))] pointer-coarse:top-[max(0.5rem,env(safe-area-inset-top))] pointer-coarse:h-[calc(100%-max(0.5rem,env(safe-area-inset-top))-max(0.5rem,env(safe-area-inset-bottom)))] w-[calc(var(--logo-size)+var(--panel-inset)*2)] flex-col items-center gap-5 rounded-bar bg-card p-inset backdrop-blur-sm md:flex"
     >
       <Link href="/" aria-label="Home">
         <Logo />

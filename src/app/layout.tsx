@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import NextTopLoader from "nextjs-toploader";
 
+import ToolbarBleed from "@/components/layout/ToolbarBleed";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ApolloWrapper } from "./ApolloWrapper";
 import { forkawesomeManiaicons, kenneyIcons, lato } from "./fonts";
@@ -12,6 +13,10 @@ import { cn } from "@/lib/utils";
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  // Lets the page (and so the background photo) run under iOS Safari's
+  // floating toolbar instead of stopping above it on a solid bar. The shell
+  // pads itself by the safe-area insets to keep its content clear.
+  viewportFit: "cover",
   themeColor: [
     { media: "(prefers-color-scheme: light)", color: "#f4f5f6" },
     { media: "(prefers-color-scheme: dark)", color: "#060503" },
@@ -46,6 +51,7 @@ export default function RootLayout({
           <ApolloWrapper>
             <TooltipProvider delayDuration={300}>
               <NextTopLoader height={2} showSpinner={false} color="#346ab4" />
+              <ToolbarBleed />
               {children}
             </TooltipProvider>
           </ApolloWrapper>

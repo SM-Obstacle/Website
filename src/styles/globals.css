@@ -44,6 +44,10 @@
   /* Laid over the background photo, which is a daylight scene: dark panels
      stand out on it unaided, light ones need it washed out first. */
   --backdrop-wash: rgb(255 255 255 / 0.5);
+  /* The photo's bottom edge, averaged (with the wash over it here). iOS
+     Safari 26 fills the strip behind its toolbar with the root's flat colour,
+     never the photo, so this is what makes that strip blend in. */
+  --backdrop-fallback: #a0a393;
   /* Laid over an event's banner, and standing in for the banner where an
      edition has none — so it carries the theme's own tone rather than a fixed
      one, and the cards sit level with the panels beside them either way.
@@ -105,6 +109,7 @@
   --sunken-opaque: rgb(0 0 0 / 0.7);
   --selected: oklch(1 0 0 / 20%);
   --backdrop-wash: rgb(0 0 0 / 0);
+  --backdrop-fallback: #414627;
   --banner-scrim: rgb(0 0 0 / 0.7);
   --banner-scrim-fade: rgb(0 0 0 / 0.1);
   --banner-edge: #000;
@@ -229,16 +234,97 @@
      * below the fold on a short window, where `overflow-hidden` clips it.
      */
     min-width: 320px;
-  }
 
-  body {
-    @apply flex h-full flex-col bg-cover bg-fixed bg-center bg-no-repeat font-sans font-normal text-foreground;
-    /* The wash is a layer of its own rather than part of the photo, so the two
-       themes can share one image. `--backdrop-wash` is transparent on dark. */
+    /*
+     * The backdrop is the root's background, so it covers the whole canvas.
+     * On touch devices the root box is also taller than the screen (see the
+     * toolbar bleed below), so `cover` reaches under iOS Safari's toolbar.
+     *
+     * The wash is a layer of its own rather than part of the photo, so the two
+     * themes can share one image. `--backdrop-wash` is transparent on dark; it
+     * repeats so it covers the whole canvas too.
+     */
+    background-color: var(--backdrop-fallback);
     background-image: linear-gradient(
         var(--backdrop-wash),
         var(--backdrop-wash)
       ),
       url("/img/background.jpg");
+    background-repeat: repeat, no-repeat;
+    background-size: auto, cover;
+    background-position: 0 0, center;
+  }
+
+  /*
+   * iOS Safari 26 fills the strip behind its floating toolbar with a flat
+   * colour unless page content is actually scrolled under it. So on touch
+   * devices the document is made taller than the screen by a bleed and
+   * scrolled into it on load (`ToolbarBleed`), which puts the photo under the
+   * toolbar. The shell is sticky, and the user cannot scroll the document
+   * itself, so the page still looks fixed and only the panels scroll.
+   * Scoped to pages with the shell, which is what pads itself clear of the
+   * toolbar.
+   */
+  @media (pointer: coarse) {
+    html:has([data-page-shell]) {
+      /* How tall the document runs past the screen, and how far into that
+         it is scrolled. The offset must stay below the bleed minus the
+         toolbar's height, or the photo runs out above the screen's bottom. */
+      --toolbar-bleed: 200px;
+      --toolbar-scroll: 62px;
+      height: auto;
+      overflow: hidden;
+      overscroll-behavior: none;
+    }
+
+    html:has([data-page-shell]) body {
+      height: calc(100dvh + var(--toolbar-bleed));
+    }
+  }
+
+  body {
+    @apply flex h-full flex-col font-sans font-normal text-foreground;
+  }
+}
+
+/*
+ * Safari 26 also tints its toolbar and status bar from any fixed element
+ * touching those edges, so anything fixed against them brought the flat
+ * colour back: the page loader's bar on every navigation, and the backdrop
+ * and panel of the drawer and of dialogs while open. On the scrolled pages
+ * above, these are positioned on the document instead, offset by the scroll
+ * so they land where they would have; backdrops cover the whole document,
+ * bleed included. Unlayered so it wins over their own utilities.
+ */
+@media (pointer: coarse) {
+  html:has([data-page-shell]) #nprogress .bar {
+    position: absolute;
+    top: var(--toolbar-scroll);
+  }
+
+  html:has([data-page-shell]) :is(
+      [data-slot="drawer-overlay"],
+      [data-slot="dialog-overlay"]
+    ) {
+    position: absolute;
+    inset: 0 0 auto;
+    min-height: 0;
+    height: calc(100dvh + var(--toolbar-bleed));
+  }
+
+  html:has([data-page-shell]) [data-slot="drawer-viewport"] {
+    position: absolute;
+    inset: var(--toolbar-scroll) 0 auto;
+    height: 100svh;
+  }
+
+  html:has([data-page-shell]) [data-slot="drawer-popup"] {
+    position: absolute;
+  }
+
+  /* Centred on the screen, as `top-1/2` and its translate had it. */
+  html:has([data-page-shell]) [data-slot="dialog-content"] {
+    position: absolute;
+    top: calc(var(--toolbar-scroll) + 50svh);
   }
 }
