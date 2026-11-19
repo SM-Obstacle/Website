@@ -1,4 +1,4 @@
-import { getApiHost } from "@/lib/utils";
+import { getApiUrl } from "@/lib/utils";
 
 const INVALID_MP_CODE_TYPE = 207;
 
@@ -7,12 +7,11 @@ export default async function GiveTokenPage(
 ) {
   const searchParams = await props.searchParams;
 
-  const res = await fetch(`${getApiHost()}/player/give_token`, {
+  const res = await fetch(`${getApiUrl()}/player/give_token`, {
     method: "post",
     headers: {
       "Content-Type": "application/json",
     },
-    credentials: "include",
     body: JSON.stringify(searchParams),
   });
 

@@ -21,16 +21,45 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function getApiHost() {
-  return process.env.NEXT_PUBLIC_RECORDS_API_HOST || "127.0.0.1:3001";
+const DEFAULT_API_URL = "http://127.0.0.1:3001";
+
+function trimTrailingSlash(url: string) {
+  return url.replace(/\/+$/, "");
+}
+
+/**
+ * Base URL of the API as seen from the browser, e.g. `https://example.com/api`.
+ *
+ * `NEXT_PUBLIC_*` variables are inlined by `next build`, so this one must be set
+ * at build time.
+ */
+export function getPublicApiUrl() {
+  return trimTrailingSlash(
+    process.env.NEXT_PUBLIC_RECORDS_API_URL || DEFAULT_API_URL,
+  );
+}
+
+/**
+ * Base URL of the API, depending on where the code runs.
+ *
+ * On the Next.js server, `RECORDS_API_URL` is used (read at runtime), so SSR can
+ * reach the API through an internal address. It falls back to the public URL.
+ */
+export function getApiUrl() {
+  if (typeof window === "undefined") {
+    const serverUrl = process.env.RECORDS_API_URL;
+    if (serverUrl) return trimTrailingSlash(serverUrl);
+  }
+  return getPublicApiUrl();
 }
 
 export function getGraphqlApiUrl() {
-  return `http://${getApiHost()}/graphql`;
+  return `${getApiUrl()}/graphql`;
 }
 
+/** Subscriptions only run in the browser, so this always uses the public URL. */
 export function getGraphqlApiWsUrl() {
-  return `ws://${getApiHost()}/graphql/subscriptions`;
+  return `${getPublicApiUrl().replace(/^http/, "ws")}/graphql/subscriptions`;
 }
 
 type NumericMedal = {
