@@ -92,12 +92,18 @@ export default function PlayersTable() {
                   #
                 </LeaderboardHead>
                 <LeaderboardHead>Player</LeaderboardHead>
-                <WideOnlyHead className="w-[25%] text-right">Score</WideOnlyHead>
+                <WideOnlyHead className="w-[25%] text-right">
+                  Score
+                </WideOnlyHead>
               </LeaderboardRow>
             </LeaderboardHeader>
 
             {error ? (
-              <TableError columns={COLUMNS} wideOnly={1} message={error.message} />
+              <TableError
+                columns={COLUMNS}
+                wideOnly={1}
+                message={error.message}
+              />
             ) : !players ? (
               <TableSkeleton columns={COLUMNS} wideOnly={1} />
             ) : players.length === 0 ? (
@@ -117,7 +123,8 @@ export default function PlayersTable() {
                     <WideOnlyCell className="text-right">
                       <code>
                         {player.score.toLocaleString(undefined, {
-                          maximumFractionDigits: 2,
+                          minimumFractionDigits: 3,
+                          maximumFractionDigits: 3,
                         })}
                       </code>
                     </WideOnlyCell>

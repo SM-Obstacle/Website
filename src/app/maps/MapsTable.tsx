@@ -97,12 +97,18 @@ export default function MapsTable() {
                 </LeaderboardHead>
                 <LeaderboardHead className="w-[40%]">Map</LeaderboardHead>
                 <LeaderboardHead className="w-[35%]">Author</LeaderboardHead>
-                <WideOnlyHead className="w-[20%] text-right">Score</WideOnlyHead>
+                <WideOnlyHead className="w-[20%] text-right">
+                  Score
+                </WideOnlyHead>
               </LeaderboardRow>
             </LeaderboardHeader>
 
             {error ? (
-              <TableError columns={COLUMNS} wideOnly={1} message={error.message} />
+              <TableError
+                columns={COLUMNS}
+                wideOnly={1}
+                message={error.message}
+              />
             ) : !maps ? (
               <TableSkeleton columns={COLUMNS} wideOnly={1} />
             ) : maps.length === 0 ? (
@@ -127,7 +133,8 @@ export default function MapsTable() {
                     <WideOnlyCell className="text-right">
                       <code>
                         {map.score.toLocaleString(undefined, {
-                          maximumFractionDigits: 2,
+                          minimumFractionDigits: 3,
+                          maximumFractionDigits: 3,
                         })}
                       </code>
                     </WideOnlyCell>
