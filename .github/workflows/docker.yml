@@ -34,15 +34,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      # The image is named after "name" in package.json: ghcr.io/<owner>/<name>
-      # (ghcr.io requires lowercase names)
-      - name: Read name and version from package.json
+      # The image is named after the repository: ghcr.io/<owner>/<repo>
+      # (ghcr.io requires lowercase names). The version comes from package.json.
+      - name: Read image name and version
         id: pkg
         run: |
-          name=$(jq -r '.name // empty' package.json)
           version=$(jq -r '.version // empty' package.json)
-          if [ -z "$name" ] || [ -z "$version" ]; then
-            echo "::error::package.json must have a \"name\" and a \"version\""
+          if [ -z "$version" ]; then
+            echo "::error::package.json must have a \"version\""
             exit 1
           fi
           # Docker tags only allow [A-Za-z0-9_.-] (no "+" build metadata)
@@ -68,7 +67,7 @@ jobs:
               echo "::notice::v$version is not the highest release (v$highest), latest is left unchanged"
             fi
           fi
-          image=$(echo "${REGISTRY}/${GITHUB_REPOSITORY_OWNER}/${name}" | tr '[:upper:]' '[:lower:]')
+          image=$(echo "${REGISTRY}/${GITHUB_REPOSITORY}" | tr '[:upper:]' '[:lower:]')
           {
             echo "image=$image"
             echo "latest=$latest"
