@@ -5,7 +5,7 @@
     "": {
       "name": "obs2",
       "dependencies": {
-        "@apollo/client": "^4.0.6",
+        "@apollo/client": "^4.3.8",
         "@apollo/client-integration-nextjs": "^0.14.4",
         "@base-ui/react": "^1.9.0",
         "@tailwindcss/postcss": "^4",
@@ -47,7 +47,7 @@
   "packages": {
     "@alloc/quick-lru": ["@alloc/quick-lru@5.2.0", "", {}, "sha512-UrcABB+4bUrFABwbluTIBErXwvbsU/V7TZWfmbgJfbkwiBuziS9gxdODUyuiecfdGQ85jglMW6juS3+z5TsKLw=="],
 
-    "@apollo/client": ["@apollo/client@4.2.3", "", { "dependencies": { "@graphql-typed-document-node/core": "^3.1.1", "@wry/caches": "^1.0.0", "@wry/equality": "^0.5.6", "@wry/trie": "^0.5.0", "graphql-tag": "^2.12.6", "optimism": "^0.18.0", "tslib": "^2.3.0" } }, "sha512-+auRYBXow2v7cT+wKzvjyMyyEojq+G7Sf80vIR57rtEPcxRFuMXuU9IKjwxZ3muclUgdGKwZXNeuki+g0GabgQ=="],
+    "@apollo/client": ["@apollo/client@4.3.8", "", { "dependencies": { "@graphql-typed-document-node/core": "^3.1.1", "@wry/caches": "^1.0.0", "@wry/equality": "^0.5.6", "@wry/trie": "^0.5.0", "graphql-tag": "^2.12.6", "optimism": "^0.18.0", "tslib": "^2.3.0" }, "peerDependencies": { "graphql": "^16.0.0 || ^17.0.0", "graphql-ws": "^5.5.5 || ^6.0.3", "react": "^17.0.0 || ^18.0.0 || >=19.0.0-rc", "react-dom": "^17.0.0 || ^18.0.0 || >=19.0.0-rc", "rxjs": "^7.3.0", "subscriptions-transport-ws": "^0.9.0 || ^0.11.0" }, "optionalPeers": ["graphql-ws", "react", "react-dom", "subscriptions-transport-ws"] }, "sha512-g04oCNYjbbjpecZmcUOE0fZLt3vMFwoZJ+o4iu0N3bDDhMR95/ZVzWL9v3mM7WDSPxI0++P2348yAbSWceLoZA=="],
 
     "@apollo/client-integration-nextjs": ["@apollo/client-integration-nextjs@0.14.5", "", { "dependencies": { "@apollo/client-react-streaming": "0.14.5" } }, "sha512-aNh16zlx5rrGtP946jW+O/J7OUyoSC0dxjicFIztiw/S5tQjNqZgqmlgtOXMn7zAR8qV9VOAiKjK5UROaN8iJg=="],
 
@@ -909,7 +909,7 @@
 
     "graphql-config": ["graphql-config@5.1.6", "", { "dependencies": { "@graphql-tools/graphql-file-loader": "^8.0.0", "@graphql-tools/json-file-loader": "^8.0.0", "@graphql-tools/load": "^8.1.0", "@graphql-tools/merge": "^9.0.0", "@graphql-tools/url-loader": "^9.0.0", "@graphql-tools/utils": "^11.0.0", "cosmiconfig": "^8.1.0", "jiti": "^2.0.0", "minimatch": "^10.0.0", "string-env-interpolation": "^1.0.1", "tslib": "^2.4.0" } }, "sha512-fCkYnm4Kdq3un0YIM4BCZHVR5xl0UeLP6syxxO7KAstdY7QVyVvTHP0kRPDYEP1v08uwtJVgis5sj3IOTLOniQ=="],
 
-    "graphql-tag": ["graphql-tag@2.12.6", "", { "dependencies": { "tslib": "^2.1.0" } }, "sha512-FdSNcu2QQcWnM2VNvSCCDCVS5PpPqpzgFT8+GXzqJuoDd0CBncxCY278u4mhRO7tMgo2JjgJA5aZ+nWSQ/Z+xg=="],
+    "graphql-tag": ["graphql-tag@2.12.7", "", { "dependencies": { "tslib": "^2.1.0" }, "peerDependencies": { "graphql": "^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0" } }, "sha512-xnE/NFzy+0eIesvAsREJZ284zTl/wYuBAvpsFSDhRGRdRHdnE90M21Q3xAWyYInb0J756c6x0pIQ62+vtvOs1Q=="],
 
     "graphql-ws": ["graphql-ws@6.0.8", "", {}, "sha512-m3EOaNsUBXwAnkBWbzPfe0Nq8pXUfxsWnolC54sru3FzHvhTZL0Ouf/BoQsaGAXqM+YPerXOJ47BUnmgmoupCw=="],
 
@@ -1597,6 +1597,8 @@
 
     "zwitch": ["zwitch@2.0.4", "", {}, "sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A=="],
 
+    "@apollo/client/tslib": ["tslib@2.9.1", "", {}, "sha512-a4Ux9VKuIMHsOS7ENbEq6hK2ZGYIT27Rtl0E4eD9KqwxhKiQeMZE/9xb3IdYwWaSOyIBQLExhQgXDTYoiCxnWA=="],
+
     "@ardatan/relay-compiler/@babel/runtime": ["@babel/runtime@8.1.3", "", {}, "sha512-tno/enifiFAE77kbJadRE5wKfmzxlYvdB5Dj8yqmWoT49mDJE+wvLgvJY/EKt/jQllv369GMxyyJ9tKfTL33Nw=="],
 
     "@babel/core/json5": ["json5@2.2.3", "", { "bin": { "json5": "lib/cli.js" } }, "sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg=="],
@@ -1634,8 +1636,6 @@
     "@graphql-codegen/visitor-plugin-common/@graphql-tools/utils": ["@graphql-tools/utils@13.2.2", "", { "dependencies": { "@graphql-typed-document-node/core": "^3.2.0", "@whatwg-node/promise-helpers": "^2.0.1", "tslib": "^2.4.0" }, "peerDependencies": { "graphql": "^16.0.0 || ^17.0.0" } }, "sha512-2KAzOQvG5bggH9A02xPGG9/40k+hpIfikR0TLa9r7okjUPqYv+B9FYpEXJBqxlRtrMStMbel0KczLPyNiu7vtg=="],
 
     "@graphql-codegen/visitor-plugin-common/change-case-all": ["change-case-all@2.2.0", "", { "dependencies": { "change-case": "^5.4.4", "sponge-case": "^2.0.3", "swap-case": "^3.0.3", "title-case": "^3.0.3" } }, "sha512-/BSm9RoX2fl1bcfZI5dHLOGPqsH0Yf5igEPs76SUGZs52EryPcNrSyJUCNcYNrH5VTThnHDmDs0vjPasNeBOLg=="],
-
-    "@graphql-codegen/visitor-plugin-common/graphql-tag": ["graphql-tag@2.12.7", "", { "dependencies": { "tslib": "^2.1.0" }, "peerDependencies": { "graphql": "^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0 || ^17.0.0" } }, "sha512-xnE/NFzy+0eIesvAsREJZ284zTl/wYuBAvpsFSDhRGRdRHdnE90M21Q3xAWyYInb0J756c6x0pIQ62+vtvOs1Q=="],
 
     "@graphql-tools/relay-operation-optimizer/@graphql-tools/utils": ["@graphql-tools/utils@13.2.2", "", { "dependencies": { "@graphql-typed-document-node/core": "^3.2.0", "@whatwg-node/promise-helpers": "^2.0.1", "tslib": "^2.4.0" }, "peerDependencies": { "graphql": "^16.0.0 || ^17.0.0" } }, "sha512-2KAzOQvG5bggH9A02xPGG9/40k+hpIfikR0TLa9r7okjUPqYv+B9FYpEXJBqxlRtrMStMbel0KczLPyNiu7vtg=="],
 
@@ -1910,6 +1910,8 @@
     "@graphql-codegen/cli/@graphql-codegen/client-preset/@graphql-codegen/visitor-plugin-common/@graphql-tools/relay-operation-optimizer": ["@graphql-tools/relay-operation-optimizer@7.1.4", "", { "dependencies": { "@ardatan/relay-compiler": "^13.0.1", "@graphql-tools/utils": "^11.1.0", "tslib": "^2.4.0" } }, "sha512-cwOD/GEo/R//1uGCP0/urIxsMFoUgzkJVyMt9BDM2HhQhU6rSgH5l6lFukAFTJyPJVdyeOdYm2i0Jj5vYWbHTw=="],
 
     "@graphql-codegen/cli/@graphql-codegen/client-preset/@graphql-codegen/visitor-plugin-common/auto-bind": ["auto-bind@4.0.0", "", {}, "sha512-Hdw8qdNiqdJ8LqT0iK0sVzkFbzg6fhnQqqfWhBDxcHZvU75+B+ayzTy8x+k5Ix0Y92XOhOUlx74ps+bA6BeYMQ=="],
+
+    "@graphql-codegen/cli/@graphql-codegen/client-preset/@graphql-codegen/visitor-plugin-common/graphql-tag": ["graphql-tag@2.12.6", "", { "dependencies": { "tslib": "^2.1.0" } }, "sha512-FdSNcu2QQcWnM2VNvSCCDCVS5PpPqpzgFT8+GXzqJuoDd0CBncxCY278u4mhRO7tMgo2JjgJA5aZ+nWSQ/Z+xg=="],
 
     "@graphql-codegen/client-preset/@graphql-codegen/plugin-helpers/@graphql-tools/apollo-engine-loader/@whatwg-node/fetch": ["@whatwg-node/fetch@0.12.1", "", { "dependencies": { "@whatwg-node/node-fetch": "^0.9.1", "urlpattern-polyfill": "^10.0.0" } }, "sha512-MjSXerFVxhWwPXZMNp4b4Q3WZMEIqzinHVWuH5tF2LNGy4hHypqPJCNpaR6bEZbaGdlH+r5dRAmQ8bxowcetjQ=="],
 
