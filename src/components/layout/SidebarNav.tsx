@@ -33,19 +33,22 @@ export default function SidebarNav({ selected }: { selected?: NavKey }) {
           return (
             <li key={key}>
               <Tooltip>
-                <TooltipTrigger asChild>
-                  <Link
-                    href={page.route}
-                    aria-current={isSelected ? "page" : undefined}
-                    className={cn(
-                      "flex items-center justify-center transition-colors hover:text-primary",
-                      isSelected ? "text-primary" : "text-foreground",
-                    )}
-                  >
-                    <Icon className="size-[calc(var(--logo-size)-1rem)]" />
-                    <span className="sr-only">{page.title}</span>
-                  </Link>
-                </TooltipTrigger>
+                {/* `render`, not `asChild`: the Link comes from a server component. */}
+                <TooltipTrigger
+                  render={
+                    <Link
+                      href={page.route}
+                      aria-current={isSelected ? "page" : undefined}
+                      className={cn(
+                        "flex items-center justify-center transition-colors hover:text-primary",
+                        isSelected ? "text-primary" : "text-foreground",
+                      )}
+                    >
+                      <Icon className="size-[calc(var(--logo-size)-1rem)]" />
+                      <span className="sr-only">{page.title}</span>
+                    </Link>
+                  }
+                />
                 <TooltipContent side="right">{page.title}</TooltipContent>
               </Tooltip>
             </li>
