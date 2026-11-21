@@ -1,6 +1,6 @@
 FROM node:26-alpine AS base
 # Keep in sync with "packageManager" in package.json
-RUN npm install -g bun@1.4.3
+RUN npm install -g bun@1.4.5
 
 # Install dependencies only when needed
 FROM base AS deps

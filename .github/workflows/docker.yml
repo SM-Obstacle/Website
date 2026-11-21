@@ -11,8 +11,6 @@ concurrency:
 
 env:
   REGISTRY: ghcr.io
-  # ghcr.io requires a lowercase name: metadata-action lowercases it (sm-obstacle/website)
-  IMAGE_NAME: ${{ github.repository }}
 
 jobs:
   build-and-push:
@@ -24,6 +22,19 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
+
+      # The image is named after "name" in package.json: ghcr.io/<owner>/<name>
+      # (ghcr.io requires lowercase names)
+      - name: Read image name from package.json
+        id: pkg
+        run: |
+          name=$(jq -r '.name' package.json)
+          if [ -z "$name" ] || [ "$name" = "null" ]; then
+            echo "::error::No \"name\" field in package.json"
+            exit 1
+          fi
+          image=$(echo "${REGISTRY}/${GITHUB_REPOSITORY_OWNER}/${name}" | tr '[:upper:]' '[:lower:]')
+          echo "image=$image" >> "$GITHUB_OUTPUT"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -39,7 +50,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: ${{ steps.pkg.outputs.image }}
           tags: |
             type=raw,value=latest,enable={{is_default_branch}}
             type=sha,format=short
