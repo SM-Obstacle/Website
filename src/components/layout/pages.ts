@@ -1,0 +1,26 @@
+import {
+  BookOpen,
+  CalendarDays,
+  Footprints,
+  Home,
+  Map,
+  SportShoe,
+  Users,
+} from "lucide-react";
+
+export interface NavPage {
+  title: string;
+  route: string;
+  icon: React.ElementType;
+}
+
+export const NAV_PAGES = {
+  home: { title: "Home", route: "/", icon: Home },
+  records: { title: "Records", route: "/records", icon: SportShoe },
+  maps: { title: "Maps", route: "/maps", icon: Map },
+  players: { title: "Players", route: "/players", icon: Users },
+  events: { title: "Events", route: "/events", icon: CalendarDays },
+  articles: { title: "Blog", route: "/links", icon: BookOpen },
+} satisfies Record<string, NavPage>;
+
+export type NavKey = keyof typeof NAV_PAGES;

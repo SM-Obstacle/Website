@@ -1,53 +1,54 @@
-import Markdown from "react-markdown";
-import rehypeRaw from "rehype-raw";
-import {
-  Article,
-  LastUpdate,
-  MdIframe,
-  MdImg,
-  MdLink,
-} from "@/components/Article";
+import type { Metadata } from "next";
+
+import { ArticlePanel } from "@/components/Article";
 import FormattedDate from "@/components/FormattedDate";
-import { type Article as ArticleType, fetchArticles } from "@/lib/article";
+import PageShell from "@/components/layout/PageShell";
+import { Panel } from "@/components/layout/Panel";
+import PageTitle from "@/components/layout/PageTitle";
+import { fetchArticleFeed, fetchArticles } from "@/lib/article";
+
+export const revalidate = 300;
+
+export const metadata: Metadata = {
+  title: "Latest news",
+};
 
 export default async function LatestNews() {
-  const articles = await fetchArticles();
-  const lastArticle = Object.entries(articles)
-    .filter(([key, _]) => key !== "__resources__")
-    .map(([_, article]) => article)
-    .reduce<ArticleType | null>((previous, current) => {
-      if (previous === null) {
-        return current;
-      } else {
-        return current.date > previous.date ? current : previous;
-      }
-    }, null);
+  const [newest] = await fetchArticleFeed();
+  const article = newest && (await fetchArticles())[newest.slug];
 
-  const content = await lastArticle?.fetchContent();
+  if (!article) {
+    return (
+      <PageShell
+        titleSegments={[<PageTitle key="title">Latest news</PageTitle>]}
+        selectedMenu="articles"
+      >
+        <Panel className="m-auto p-8 text-muted-foreground">
+          No article has been published yet.
+        </Panel>
+      </PageShell>
+    );
+  }
+
+  const { title, body } = await article.fetchDocument();
 
   return (
-    <Article>
-      {lastArticle ? (
-        <>
-          <div>
-            <Markdown
-              rehypePlugins={[rehypeRaw]}
-              components={{
-                iframe: MdIframe,
-                img: MdImg,
-                a: MdLink,
-              }}
-            >
-              {content}
-            </Markdown>
-          </div>
-          <LastUpdate>
-            Date: <FormattedDate onlyDate>{lastArticle.date}</FormattedDate>
-          </LastUpdate>
-        </>
-      ) : (
-        <h1>No article found!</h1>
-      )}
-    </Article>
+    <PageShell
+      titleSegments={[<PageTitle key="title">Latest news</PageTitle>]}
+      selectedMenu="articles"
+    >
+      <ArticlePanel
+        title={title}
+        body={body}
+        meta={
+          <>
+            <FormattedDate onlyDate>{article.date}</FormattedDate>
+            {article.authors.length > 0 && (
+              <> — by {article.authors.join(", ")}</>
+            )}
+          </>
+        }
+      />
+    </PageShell>
   );
 }

@@ -1,16 +1,31 @@
 "use client";
 
 import { useEffect, useState } from "react";
+
 import { formatTime } from "@/components/Time";
 
+/**
+ * Counts `start` seconds down to zero.
+ *
+ * The remaining time is derived from the wall clock rather than a decrementing
+ * counter, so it stays accurate when the tab is throttled in the background.
+ */
 export default function Countdown({ start }: { start: number }) {
-  const [time, setTime] = useState(start);
+  const [elapsed, setElapsed] = useState(0);
 
   useEffect(() => {
-    if (time > 0) {
-      setTimeout(() => setTime(time - 1), 1000);
-    }
-  }, [time]);
+    const startedAt = Date.now();
 
-  return <code>{formatTime(time * 1000, false)}</code>;
+    const timer = setInterval(
+      () => setElapsed(Math.round((Date.now() - startedAt) / 1000)),
+      1000,
+    );
+    return () => clearInterval(timer);
+  }, [start]);
+
+  const remaining = Math.max(0, start - elapsed);
+
+  return (
+    <code suppressHydrationWarning>{formatTime(remaining * 1000, false)}</code>
+  );
 }

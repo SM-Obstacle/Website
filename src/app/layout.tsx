@@ -1,14 +1,26 @@
 import type { Metadata, Viewport } from "next";
 import NextTopLoader from "nextjs-toploader";
-import Navigation from "@/components/navigation/Navigation";
-import { styled } from "../../styled-system/jsx";
+
+import ToolbarBleed from "@/components/layout/ToolbarBleed";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { ApolloWrapper } from "./ApolloWrapper";
 import { forkawesomeManiaicons, kenneyIcons, lato } from "./fonts";
 import "@/styles/globals.css";
-import { css } from "../../styled-system/css";
+import { ThemeProvider } from "next-themes";
+import { cn } from "@/lib/utils";
 
+// Tints the browser's own chrome, so it follows the theme along with the page.
 export const viewport: Viewport = {
-  themeColor: "#060503",
+  width: "device-width",
+  initialScale: 1,
+  // Lets the page (and so the background photo) run under iOS Safari's
+  // floating toolbar instead of stopping above it on a solid bar. The shell
+  // pads itself by the safe-area insets to keep its content clear.
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f4f5f6" },
+    { media: "(prefers-color-scheme: dark)", color: "#1c1c1e" },
+  ],
 };
 
 export const metadata: Metadata = {
@@ -19,82 +31,7 @@ export const metadata: Metadata = {
   icons: "/img/favicon.ico",
 };
 
-const MainWrapper = styled("div", {
-  base: {
-    maxHeight: "calc(100% - 51px)",
-    flexGrow: 1,
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});
-
-const Main = styled("main", {
-  base: {
-    height: "85%",
-    width: "80%",
-    maxHeight: "85%",
-    maxWidth: "70em",
-    position: "relative",
-
-    display: "flex",
-    flexDirection: "column",
-
-    borderRadius: "10px",
-    backgroundColor: "#000000dd",
-
-    overflowY: "auto",
-
-    "@media only screen and (max-width: 870px)": {
-      height: "calc(100% - 14px)",
-      width: "calc(100% - 4px)",
-      maxHeight: "100%",
-      maxWidth: "100%",
-    },
-  },
-});
-
-const bodyHtmlCommonStyles = css.raw({
-  margin: 0,
-  height: "100%",
-  minWidth: "390px",
-  minHeight: "390px",
-
-  fontWeight: 400,
-  fontFamily:
-    'var(--lato), "Trebuchet MS", sans-serif, var(--forkAwesome), var(--kenneyIcons)',
-  color: "white",
-  overflow: "overlay",
-});
-
-const bodyStyles = css(
-  bodyHtmlCommonStyles,
-  css.raw({
-    backgroundImage: 'url("/img/background.jpg")',
-    backgroundAttachment: "fixed",
-    backgroundSize: "cover",
-    backgroundPosition: "center center",
-    backgroundRepeat: "no-repeat",
-
-    display: "flex",
-    flexDir: "column",
-    overflow: "hidden",
-  }),
-);
-
-const htmlStyles = css(
-  bodyHtmlCommonStyles,
-  css.raw({
-    "@media only screen and (max-width: 420px)": {
-      zoom: 0.8,
-    },
-    "@media only screen and (max-width: 320px)": {
-      zoom: 0.6,
-    },
-  }),
-);
-
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
@@ -102,17 +39,23 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${lato.variable} ${kenneyIcons.variable} ${forkawesomeManiaicons.variable} ${htmlStyles}`}
+      className={cn(
+        lato.variable,
+        kenneyIcons.variable,
+        forkawesomeManiaicons.variable,
+      )}
+      suppressHydrationWarning
     >
-      <body className={bodyStyles}>
-        <ApolloWrapper>
-          <NextTopLoader height={2} showSpinner={false} color="#346ab4" />
-          <Navigation />
-
-          <MainWrapper>
-            <Main>{children}</Main>
-          </MainWrapper>
-        </ApolloWrapper>
+      <body>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+          <ApolloWrapper>
+            <TooltipProvider delayDuration={300}>
+              <NextTopLoader height={2} showSpinner={false} color="#346ab4" />
+              <ToolbarBleed />
+              {children}
+            </TooltipProvider>
+          </ApolloWrapper>
+        </ThemeProvider>
       </body>
     </html>
   );

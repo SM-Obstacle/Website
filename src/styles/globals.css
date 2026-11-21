@@ -1,1 +1,329 @@
-@layer reset, base, tokens, recipes, utilities;
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Two palettes. `:root` holds the light one and `.dark` overrides the colours
+ * that differ — `.dark` being the class next-themes puts on <html> once it has
+ * resolved the theme, from the system preference unless the visitor picked one.
+ *
+ * Only colours are themed. Everything below down to `--surface` is the layout
+ * scale, which both themes share.
+ */
+:root {
+  color-scheme: light;
+
+  --radius: 0.625rem;
+
+  /* Layout scale. The logo drives the sidebar width, bar heights and radii. */
+  --logo-size: 50px;
+  --content-max: 1300px;
+
+  /*
+   * Containers nest: a bar or a block holds panels, a panel holds insets.
+   * Each level sits `--panel-inset` inside its parent and drops that much
+   * radius, so nested corners stay concentric with the ones around them.
+   * Always pair a radius with the matching padding (`p-inset`).
+   */
+  --panel-inset: 0.5rem;
+  --bar-radius: calc(var(--logo-size) + var(--panel-inset));
+  --block-radius: calc(var(--logo-size) / 2 + var(--panel-inset));
+  --panel-radius: calc(var(--block-radius) - var(--panel-inset));
+  --inset-radius: calc(var(--panel-radius) - var(--panel-inset));
+
+  /* Surfaces are translucent so the background image stays visible. */
+  --surface: rgb(255 255 255 / 0.78);
+  /* A recessed area inside a panel: the stat strips, the charts, the rows a
+     leaderboard marks out. */
+  --sunken: rgb(0 0 0 / 0.05);
+  /* The same, for a sticky leaderboard head */
+  --sunken-opaque: rgb(237 237 239 / 0.88);
+  /* The row a list has selected. Has to read above the hover tint. */
+  --selected: oklch(0 0 0 / 14%);
+  /* Laid over the background photo, which is a daylight scene: dark panels
+     stand out on it unaided, light ones need it washed out first. */
+  --backdrop-wash: rgb(255 255 255 / 0.5);
+  /* Under the photo, wherever it does not reach. Matches the browser chrome
+     (`themeColor` in layout.tsx). */
+  --backdrop-fallback: #f4f5f6;
+  /* Laid over an event's banner, and standing in for the banner where an
+     edition has none — so it carries the theme's own tone rather than a fixed
+     one, and the cards sit level with the panels beside them either way.
+     The scrim runs across the banner rather than sitting flat on it: the text
+     is all down the left edge, so `--banner-scrim` covers that side hard
+     enough to read on and `--banner-scrim-fade` lets the artwork through on
+     the right, where nothing is written.
+     `--banner-edge` is the same tone at full strength, for the vignette that
+     pulls the corners of the image in and the glow behind the title. */
+  --banner-scrim: rgb(255 255 255 / 0.82);
+  --banner-scrim-fade: rgb(255 255 255 / 0.1);
+  --banner-edge: #fff;
+
+  --background: oklch(0.985 0 0);
+  --foreground: oklch(0.19 0 0);
+  --popover: oklch(0.99 0 0);
+  --primary: oklch(0.48 0.13 258);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0 0 0 / 6%);
+  --muted: oklch(0 0 0 / 4%);
+  --muted-foreground: oklch(0.44 0 0);
+  --accent: oklch(0 0 0 / 9%);
+  --destructive: oklch(0.52 0.21 27.325);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(0 0 0 / 12%);
+  --input: oklch(0 0 0 / 20%);
+
+  /* Domain accents. The brand blue clears 4.5:1 on either surface, so it is
+     the one colour both themes share. */
+  --time: #346ab4;
+  /* The plotted series: the subject in a lighter --time, its reference in a
+     warm counterpart. The two stay apart under colour blindness and hold 3:1
+     against the panels they sit on. */
+  --chart-1: #2f6db8;
+  --chart-2: #9c6410;
+  /* Backdrop of the chart panels, for ringing a mark that overlaps another. */
+  --chart-surface: #ededee;
+  --link: #1f5fb0;
+  /* The gradient on a call-to-action button, deeper stop to paler stop, with
+     `--cta-foreground` as its label. The two themes run opposite ends of the
+     same blue ramp — a fill dark enough to carry white ink reads as a hole
+     punched in a light page — so the ink flips with them. */
+  --cta-from: #9cc3ee;
+  --cta-to: #d3e4f9;
+  --cta-foreground: #14345e;
+  /* Worn as ink — a rank, a label — so these are the medals darkened until
+     they read on a light panel rather than the metallic tones themselves. */
+  --medal-champion: #8f7207;
+  --medal-gold: #8f7207;
+  --medal-silver: #6b6b6b;
+  --medal-bronze: #96601f;
+}
+
+.dark {
+  color-scheme: dark;
+
+  --surface: rgb(11 11 11 / 0.77);
+  --sunken: rgb(0 0 0 / 0.4);
+  --sunken-opaque: rgb(0 0 0 / 0.7);
+  --selected: oklch(1 0 0 / 20%);
+  --backdrop-wash: rgb(0 0 0 / 0);
+  --backdrop-fallback: #1c1c1e;
+  --banner-scrim: rgb(0 0 0 / 0.7);
+  --banner-scrim-fade: rgb(0 0 0 / 0.1);
+  --banner-edge: #000;
+
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --popover: oklch(0.16 0 0);
+  --primary: oklch(0.53 0.115 258);
+  --secondary: oklch(1 0 0 / 8%);
+  --muted: oklch(1 0 0 / 6%);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(1 0 0 / 12%);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 15%);
+
+  /* The reference line sits lighter than a fill of it should — it is only ever
+     drawn thin, and has to read where it crosses the subject's bars. */
+  --chart-1: #4f8fd9;
+  --chart-2: #e0a458;
+  --chart-surface: #0e0e0e;
+  --link: #87b0e9;
+  --cta-from: #152a48;
+  --cta-to: #275087;
+  --cta-foreground: oklch(0.985 0 0);
+  --medal-champion: #e6c043;
+  --medal-gold: #e6c043;
+  --medal-silver: #c4c4c4;
+  --medal-bronze: #ce8946;
+}
+
+/*
+ * The tokens that are only ever another one under a name a shadcn component
+ * knows. Both palettes have to declare them rather than `:root` alone, because
+ * `var()` in a custom property is substituted where it is declared: derived on
+ * `:root` only, they would resolve against the light palette and inherit that
+ * value into any subtree that carries `dark` on its own.
+ */
+:root,
+.dark {
+  --card: var(--surface);
+  --card-foreground: var(--foreground);
+  --popover-foreground: var(--foreground);
+  --secondary-foreground: var(--foreground);
+  --accent-foreground: var(--foreground);
+  --ring: var(--primary);
+}
+
+/* Phones get a slimmer frame: the logo drives the bar heights and radii. */
+@media (max-width: 40rem) {
+  :root {
+    --logo-size: 40px;
+  }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-surface: var(--surface);
+  --color-sunken: var(--sunken);
+  --color-sunken-opaque: var(--sunken-opaque);
+  --color-selected: var(--selected);
+  --color-time: var(--time);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-link: var(--link);
+  --color-cta-from: var(--cta-from);
+  --color-cta-to: var(--cta-to);
+  --color-cta-foreground: var(--cta-foreground);
+  --color-medal-champion: var(--medal-champion);
+  --color-medal-gold: var(--medal-gold);
+  --color-medal-silver: var(--medal-silver);
+  --color-medal-bronze: var(--medal-bronze);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  /* Nesting order: bar/block → panel → inset. See `--panel-inset` above. */
+  --radius-bar: var(--bar-radius);
+  --radius-block: var(--block-radius);
+  --radius-panel: var(--panel-radius);
+  --radius-inset: var(--inset-radius);
+
+  --spacing-logo: var(--logo-size);
+  --spacing-inset: var(--panel-inset);
+  --container-content: var(--content-max);
+
+  --font-sans:
+    var(--lato), "Trebuchet MS", sans-serif, var(--forkAwesome),
+    var(--kenneyIcons);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    height: 100%;
+    /*
+     * A floor on the width only. The shell fills the window exactly and its
+     * panels scroll internally, so a minimum height would just push the page
+     * below the fold on a short window, where `overflow-hidden` clips it.
+     */
+    min-width: 320px;
+
+    /*
+     * The backdrop is the root's background, so it covers the whole canvas.
+     * On touch devices the root box is also taller than the screen (see the
+     * toolbar bleed below), so `cover` reaches under iOS Safari's toolbar.
+     *
+     * The wash is a layer of its own rather than part of the photo, so the two
+     * themes can share one image. `--backdrop-wash` is transparent on dark; it
+     * repeats so it covers the whole canvas too.
+     */
+    background-color: var(--backdrop-fallback);
+    background-image: linear-gradient(
+        var(--backdrop-wash),
+        var(--backdrop-wash)
+      ),
+      url("/img/background.jpg");
+    background-repeat: repeat, no-repeat;
+    background-size: auto, cover;
+    background-position: 0 0, center;
+  }
+
+  /*
+   * iOS Safari 26 fills the strip behind its floating toolbar with a flat
+   * colour unless page content is actually scrolled under it. So on touch
+   * devices the document is made taller than the screen by a bleed and
+   * scrolled into it on load (`ToolbarBleed`), which puts the photo under the
+   * toolbar. The shell is sticky, and the user cannot scroll the document
+   * itself, so the page still looks fixed and only the panels scroll.
+   * Scoped to pages with the shell, which is what pads itself clear of the
+   * toolbar.
+   */
+  @media (pointer: coarse) {
+    html:has([data-page-shell]) {
+      /* How tall the document runs past the screen, and how far into that
+         it is scrolled. The offset must stay below the bleed minus the
+         toolbar's height, or the photo runs out above the screen's bottom. */
+      --toolbar-bleed: 200px;
+      --toolbar-scroll: 62px;
+      height: auto;
+      overflow: hidden;
+      overscroll-behavior: none;
+    }
+
+    html:has([data-page-shell]) body {
+      height: calc(100dvh + var(--toolbar-bleed));
+    }
+  }
+
+  body {
+    @apply flex h-full flex-col font-sans font-normal text-foreground;
+  }
+}
+
+/*
+ * Safari 26 also tints its toolbar and status bar from any fixed element
+ * touching those edges, so anything fixed against them brought the flat
+ * colour back: the page loader's bar on every navigation, and the backdrop
+ * and panel of the drawer and of dialogs while open. On the scrolled pages
+ * above, these are positioned on the document instead, offset by the scroll
+ * so they land where they would have; backdrops cover the whole document,
+ * bleed included. Unlayered so it wins over their own utilities.
+ */
+@media (pointer: coarse) {
+  html:has([data-page-shell]) #nprogress .bar {
+    position: absolute;
+    top: var(--toolbar-scroll);
+  }
+
+  html:has([data-page-shell]) :is(
+      [data-slot="drawer-overlay"],
+      [data-slot="dialog-overlay"]
+    ) {
+    position: absolute;
+    inset: 0 0 auto;
+    min-height: 0;
+    height: calc(100dvh + var(--toolbar-bleed));
+  }
+
+  html:has([data-page-shell]) [data-slot="drawer-viewport"] {
+    position: absolute;
+    inset: var(--toolbar-scroll) 0 auto;
+    height: 100svh;
+  }
+
+  html:has([data-page-shell]) [data-slot="drawer-popup"] {
+    position: absolute;
+  }
+
+  /* Centred on the screen, as `top-1/2` and its translate had it. */
+  html:has([data-page-shell]) [data-slot="dialog-content"] {
+    position: absolute;
+    top: calc(var(--toolbar-scroll) + 50svh);
+  }
+}

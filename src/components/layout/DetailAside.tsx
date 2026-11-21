@@ -1,0 +1,156 @@
+"use client";
+
+import { X } from "lucide-react";
+import { useEffect, useState } from "react";
+
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+
+import { Panel } from "@/components/layout/Panel";
+import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
+
+/** Tailwind's `xl`: below it the panel would leave the list nothing to live on. */
+export const WIDE_ENOUGH_FOR_A_PANEL = "(min-width: 80rem)";
+
+/**
+ * How long the panel and the dialog take to come in. Matches the `duration-300`
+ * both animate with; there is nothing to read a Tailwind class back from.
+ */
+const OPENING_MS = 300;
+
+const NO_MOTION = "(prefers-reduced-motion: reduce)";
+
+/**
+ * Whether the panel has finished coming in.
+ *
+ * What a panel holds — a chart, a table of fifty maps — costs more to build
+ * than one frame of the movement has to spare, and building it halfway through
+ * is what the movement stutters on. Anything that heavy waits its turn behind
+ * the placeholder that was standing in for it while it loaded.
+ *
+ * Swapping what an open panel holds leaves this mounted: nothing moves then, so
+ * nothing waits.
+ */
+export function useOpenedPanel() {
+  const still = useMediaQuery(NO_MOTION);
+  const [opened, setOpened] = useState(false);
+
+  useEffect(() => {
+    // Nothing moved when motion is off, so there is nothing to wait out.
+    const timer = setTimeout(() => setOpened(true), still ? 0 : OPENING_MS);
+    return () => clearTimeout(timer);
+  }, [still]);
+
+  return opened;
+}
+
+/**
+ * What a selected row opens beside the page: its name and whatever it belongs
+ * to in the header, everything else scrolling underneath, and an optional
+ * footer the scrolling never pushes out of sight.
+ */
+export function DetailPanel({
+  title,
+  subtitle,
+  closeLabel,
+  onClose,
+  footer,
+  children,
+}: React.PropsWithChildren<{
+  title: React.ReactNode;
+  subtitle: React.ReactNode;
+  closeLabel: string;
+  onClose: () => void;
+  footer?: React.ReactNode;
+}>) {
+  return (
+    <Panel
+      // Only as tall as its contents need, and never taller than the column it
+      // has: `min-h-0` lets the flex column above shrink it past that content,
+      // and the details then scroll inside.
+      className="min-h-0 overflow-hidden"
+      header={
+        <div className="flex items-start gap-2">
+          <div className="min-w-0 flex-1">
+            <h2 className="m-0 truncate text-xl font-bold">{title}</h2>
+            {/* A div, not a p: the placeholder it holds while loading is a
+                block, which a paragraph may not contain. */}
+            <div className="truncate text-sm text-muted-foreground">
+              {subtitle}
+            </div>
+          </div>
+
+          <Button
+            variant="outline"
+            size="icon-sm"
+            onClick={onClose}
+            aria-label={closeLabel}
+            className="-me-1 shrink-0 rounded-full cursor-pointer"
+          >
+            <X />
+          </Button>
+        </div>
+      }
+    >
+      {/* Rounded like a sub-panel so what scrolls is clipped along the same
+          curve as the panel around it. */}
+      <ScrollArea className="min-h-0 flex-1 rounded-panel">
+        <div className="flex flex-col gap-inset">{children}</div>
+      </ScrollArea>
+
+      {footer && <div className="w-full shrink-0 px-3">{footer}</div>}
+    </Panel>
+  );
+}
+
+/**
+ * The column the panel lives in. It stays mounted so both its width and the
+ * panel's own offset can be transitioned: the width is what pushes the page
+ * over, the offset is what slides the panel in from the edge of the screen.
+ *
+ * `children` is called with the selection to draw, which lags the real one
+ * while the column slides back out.
+ */
+export function DetailColumn({
+  selected,
+  children,
+}: {
+  selected: string | null;
+  children: (selected: string | null) => React.ReactNode;
+}) {
+  const open = selected !== null;
+
+  // Keeps the selection on screen while the column slides back out, instead of
+  // emptying it to skeletons halfway through.
+  const [sliding, setSliding] = useState(selected);
+  if (selected !== null && selected !== sliding) {
+    setSliding(selected);
+  }
+
+  return (
+    <aside
+      inert={!open}
+      className={cn(
+        "flex min-h-0 shrink-0 flex-col overflow-visible",
+        // The margin is the gap to the page; it closes along with the width,
+        // so a closed column leaves nothing behind to offset the page by.
+        "transition-[width,margin] duration-300 ease-out motion-reduce:transition-none",
+        open ? "ms-inset w-80 2xl:w-96" : "ms-0 w-0",
+      )}
+    >
+      {/* Its own width never changes, so anything measured inside it isn't
+          re-measured on every frame of the slide — only the clipping around it
+          moves. */}
+      <div
+        className={cn(
+          "flex min-h-0 w-80 flex-col 2xl:w-96",
+          "transition-transform duration-300 ease-out motion-reduce:transition-none",
+          !open && "translate-x-full",
+        )}
+      >
+        {children(sliding)}
+      </div>
+    </aside>
+  );
+}

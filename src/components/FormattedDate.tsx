@@ -1,22 +1,41 @@
 "use client";
 
-import moment from "moment";
-import { useEffect, useState } from "react";
+import {
+  formatDate,
+  formatFull,
+  formatTimeOfDay,
+  parseApiDate,
+} from "@/lib/date";
 
-function formatDateImpl(date: string, f: string) {
-  return moment.utc(date).local().format(f);
+function timeAgo(date: Date): string {
+  const diffMs = Date.now() - date.valueOf();
+
+  if (diffMs < 0) return "in the future";
+
+  const seconds = Math.floor(diffMs / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+  const weeks = Math.floor(days / 7);
+  const months = Math.floor(days / 30);
+  const years = Math.floor(days / 365);
+
+  if (seconds < 60) return `${seconds}s ago`;
+  if (minutes < 60) return `${minutes}mn ago`;
+  if (hours < 24) return `${hours}h ago`;
+  if (days < 7) return `${days}d ago`;
+  if (weeks < 4) return `${weeks}w ago`;
+  if (months < 12) return `${months}mo ago`;
+  return `${years}y ago`;
 }
 
-export function formatDate(date: string) {
-  return formatDateImpl(date, "DD/MM/YYYY");
+export function FormattedTimeAgo({ children }: { children: string }) {
+  return (
+    <span suppressHydrationWarning title={formatFull(children)}>
+      {timeAgo(parseApiDate(children))}
+    </span>
+  );
 }
-
-export function formatDateTime(date: string) {
-  return formatDateImpl(date, "HH:mm:ss");
-}
-
-export const formatFull = (date: string) =>
-  `${formatDate(date)} ${formatDateTime(date)}`;
 
 export default function FormattedDate({
   children,
@@ -25,18 +44,9 @@ export default function FormattedDate({
   children: string;
   onlyDate?: boolean;
 }) {
-  const [localDate, setLocalDate] = useState({
-    full: "",
-    small: "",
-  });
-
-  useEffect(() => {
-    const d = moment.utc(children).local();
-    setLocalDate({
-      full: d.format("DD/MM/YYYY HH:mm:ss"),
-      small: d.format(onlyDate ? "DD/MM/YYYY" : "HH:mm:ss"),
-    });
-  }, [children, onlyDate]);
-
-  return <span title={localDate.full}>{localDate.small}</span>;
+  return (
+    <span suppressHydrationWarning title={formatFull(children)}>
+      {onlyDate ? formatDate(children) : formatTimeOfDay(children)}
+    </span>
+  );
 }

@@ -101,6 +101,12 @@ type EventEditionPlayerRank {
 
 type Map {
 	id: ID!
+	mxId: Int
+	"""
+	What we know about the MX ID of this map, to tell apart a map ManiaExchange doesn't have
+	from one we haven't got an answer for yet.
+	"""
+	mxIdStatus: MxIdStatus!
 	gameId: String!
 	playerId: ID!
 	cpsNumber: Int
@@ -108,6 +114,7 @@ type Map {
 	name: String!
 	score: Float!
 	relatedEventEditions: [RelatedEdition!]!
+	averageCpsTimes: [CheckpointTime!]!
 	averageRating: [PlayerRating!]!
 	records(rankSortBy: SortState, dateSortBy: SortState): [RankedRecord!]!
 	recordsConnection(
@@ -206,11 +213,11 @@ input MapsFilter {
 	"""
 	Filter by map UID
 	"""
-	mapUid: String
+	mapUid: StringFilter
 	"""
 	Filter by map name
 	"""
-	mapName: String
+	mapName: StringFilter
 	"""
 	Filter on the map author
 	"""
@@ -222,6 +229,50 @@ type MedalTimes {
 	silverTime: Int!
 	goldTime: Int!
 	championTime: Int!
+}
+
+type MutationRoot {
+	"""
+	Asks the ManiaExchange API for the MX ID of a map right now, instead of leaving it to be
+	fetched in the background, and saves it in our database.
+	
+	This is what a "look for this map on ManiaExchange" button calls: it ignores what we may
+	have cached about this map being absent from ManiaExchange, which is the whole point, since
+	whoever presses that button knows better than our cache does.
+	
+	It costs a request to the ManiaExchange API, so **it can only be used once per mutation**.
+	A map whose MX ID we already have doesn't count, since it needs no request.
+	
+	Returns the map, whose `mxId` is null when ManiaExchange doesn't have it.
+	"""
+	forceFetchMxId(
+		"""
+		The UID of the map, as the game knows it.
+		"""
+		mapUid: String!
+	): Map!
+}
+
+"""
+What the API knows about the MX ID of a map.
+
+This tells apart a map ManiaExchange doesn't have from one we simply haven't got an answer for
+yet, which both leave `mxId` null.
+"""
+enum MxIdStatus {
+	"""
+	We have the MX ID of this map: the `mxId` field holds it.
+	"""
+	KNOWN
+	"""
+	ManiaExchange doesn't have this map. It's worth asking again in a while, but not now.
+	"""
+	NOT_ON_MX
+	"""
+	We have no answer for this map yet. It's being fetched, so `mxId` may be filled in a few
+	seconds; asking again later, or asking for it explicitly, is what tells.
+	"""
+	UNKNOWN
 }
 
 """
@@ -345,11 +396,11 @@ input PlayersFilter {
 	"""
 	Filter by player login
 	"""
-	playerLogin: String
+	playerLogin: StringFilter
 	"""
 	Filter by player name
 	"""
-	playerName: String
+	playerName: StringFilter
 }
 
 type QueryRoot {
@@ -389,7 +440,6 @@ type RankedRecord {
 	rank: Int!
 	map: Map!
 	player: Player!
-	averageCpsTimes: [CheckpointTime!]!
 	cpsTimes: [CheckpointTime!]!
 	time: Int!
 	respawnCount: Int!
@@ -512,6 +562,34 @@ enum UnorderedRecordSortableField {
 }
 
 """
+How a filter compares a string column against the text it is given
+"""
+input StringFilter {
+	"""
+	The text to compare the column against
+	"""
+	value: String!
+	"""
+	Match the whole column exactly and case-sensitively, instead of looking
+	for `value` anywhere in it
+	"""
+	exact: Boolean! = false
+}
+
+type SubscriptionRoot {
+	latestRecords: RankedRecord!
+}
+
+input UnorderedRecordSort {
+	field: UnorderedRecordSortableField!
+	order: SortOrder
+}
+
+enum UnorderedRecordSortableField {
+	DATE
+}
+
+"""
 Directs the executor to include this field or fragment only when the `if` argument is true.
 """
 directive @include(if: Boolean!) on FIELD | FRAGMENT_SPREAD | INLINE_FRAGMENT
@@ -525,5 +603,7 @@ Provides a scalar specification URL for specifying the behavior of custom scalar
 directive @specifiedBy(url: String!) on SCALAR
 schema {
 	query: QueryRoot
+	mutation: MutationRoot
+	subscription: SubscriptionRoot
 }
 

@@ -1,0 +1,157 @@
+"use client";
+
+import { useQuery } from "@apollo/client/react";
+
+import { gql } from "@/app/__generated__";
+import { SubPanel } from "@/components/layout/Panel";
+import { MPFormatLink } from "@/components/MPFormat";
+import {
+  Leaderboard,
+  LeaderboardBody,
+  LeaderboardHead,
+  LeaderboardHeader,
+  LeaderboardRow,
+  NameCell,
+  RankCell,
+  WideOnlyCell,
+  WideOnlyHead,
+} from "@/components/tables/Leaderboard";
+import PaginationControls from "@/components/tables/PaginationControls";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  TableError,
+  TableMessage,
+  TableSkeleton,
+} from "@/components/tables/TableStates";
+import { useUrlParams } from "@/hooks/useUrlParams";
+import { buildMapsFilter } from "@/lib/filters";
+import { readPagination } from "@/lib/pagination";
+import { readSort } from "@/lib/sort";
+
+const GET_MAPS = gql(/* GraphQL */ `
+  query GetMaps(
+    $first: Int
+    $last: Int
+    $before: String
+    $after: String
+    $filter: MapsFilter
+    $sort: PlayerMapRankingSort
+  ) {
+    maps(
+      first: $first
+      last: $last
+      before: $before
+      after: $after
+      filter: $filter
+      sort: $sort
+    ) {
+      pageInfo {
+        hasPreviousPage
+        hasNextPage
+        startCursor
+        endCursor
+      }
+      nodes {
+        rank
+        map {
+          id
+          gameId
+          name
+          score
+          player {
+            login
+            name
+          }
+        }
+      }
+    }
+  }
+`);
+
+const COLUMNS = 4;
+
+export default function MapsTable() {
+  const { searchParams } = useUrlParams();
+
+  const { data, previousData, loading, error } = useQuery(GET_MAPS, {
+    variables: {
+      filter: buildMapsFilter(searchParams),
+      ...readPagination(searchParams),
+      ...readSort(searchParams, "playerMapRanking"),
+    },
+    notifyOnNetworkStatusChange: true,
+  });
+
+  const connection = (data ?? previousData)?.maps;
+  const maps = connection?.nodes;
+
+  return (
+    <>
+      <SubPanel className="min-h-0 flex-1">
+        <ScrollArea className="min-h-0 flex-1">
+          <Leaderboard>
+            <LeaderboardHeader>
+              <LeaderboardRow>
+                <LeaderboardHead className="w-[10%] text-center">
+                  #
+                </LeaderboardHead>
+                <LeaderboardHead className="w-[40%]">Map</LeaderboardHead>
+                <LeaderboardHead className="w-[35%]">Author</LeaderboardHead>
+                <WideOnlyHead className="w-[20%] text-right">
+                  Score
+                </WideOnlyHead>
+              </LeaderboardRow>
+            </LeaderboardHeader>
+
+            {error ? (
+              <TableError
+                columns={COLUMNS}
+                wideOnly={1}
+                message={error.message}
+              />
+            ) : !maps ? (
+              <TableSkeleton columns={COLUMNS} wideOnly={1} />
+            ) : maps.length === 0 ? (
+              <TableMessage columns={COLUMNS} wideOnly={1}>
+                No map matches these filters.
+              </TableMessage>
+            ) : (
+              <LeaderboardBody className={loading ? "opacity-60" : undefined}>
+                {maps.map(({ rank, map }) => (
+                  <LeaderboardRow key={map.id}>
+                    <RankCell>{rank}</RankCell>
+                    <NameCell>
+                      <MPFormatLink path={`/map/${map.gameId}`}>
+                        {map.name}
+                      </MPFormatLink>
+                    </NameCell>
+                    <NameCell>
+                      <MPFormatLink path={`/player/${map.player.login}`}>
+                        {map.player.name}
+                      </MPFormatLink>
+                    </NameCell>
+                    <WideOnlyCell className="text-right">
+                      <code>
+                        {map.score.toLocaleString(undefined, {
+                          minimumFractionDigits: 3,
+                          maximumFractionDigits: 3,
+                        })}
+                      </code>
+                    </WideOnlyCell>
+                  </LeaderboardRow>
+                ))}
+              </LeaderboardBody>
+            )}
+          </Leaderboard>
+        </ScrollArea>
+      </SubPanel>
+
+      <SubPanel className="shrink-0">
+        <PaginationControls
+          pageInfo={connection?.pageInfo}
+          disabled={loading}
+        />
+      </SubPanel>
+    </>
+  );
+}

@@ -1,228 +1,65 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import React, { cache } from "react";
-import { gql } from "@/app/__generated__";
-import type {
-  GetMapInfoQuery,
-  MapRecordSort,
-  MapRecordSortableField,
-  RecordsFilter,
-} from "@/app/__generated__/graphql";
-import { query } from "@/app/ApolloClient";
-import Link from "@/components/Link";
-import MPFormat from "@/components/MPFormat";
-import {
-  ToolbarTitle as RawToolbarTitle,
-  ToolbarTitleWrapper,
-} from "@/components/ToolbarWrapper";
-import {
-  type PaginationInput,
-  parsePaginationInput,
-  type RawPaginationInput,
-} from "@/lib/cursor-pagination";
-import { type MapContent, RankedRecordLine } from "@/lib/map-page-types";
-import { parse, toPlainText } from "@/lib/mpformat/mpformat";
-import {
-  parseRecordsFilter,
-  type RawRecordsFilter,
-} from "@/lib/records-filter";
-import type { ServerProps } from "@/lib/server-props";
-import { parseMapSort } from "@/lib/sort-field";
-import { MapRecordsContent } from "./MapRecordsContent";
+import { cache } from "react";
 
-const _MAP_RECORDS_FRAGMENT = gql(/* GraphQL */ `
-  fragment MapRecords on Map {
-    recordsConnection(
-      after: $after
-      before: $before
-      first: $first
-      last: $last
-      sort: $sort
-      filter: $filter
-    ) {
-      nodes {
-        player {
-          login
-          name
-        }
-        ...RecordBase
-      }
-    }
-  }
-`);
+import { gql } from "@/app/__generated__";
+import { query } from "@/app/ApolloClient";
+import LoadErrorPanel from "@/components/layout/LoadErrorPanel";
+import PageShell from "@/components/layout/PageShell";
+import PageTitle from "@/components/layout/PageTitle";
+import MapPage from "@/components/map/MapPage";
+import catchGqlError from "@/lib/catchError";
+import { parse, toPlainText } from "@/lib/mpformat/mpformat";
 
 const GET_MAP_INFO = gql(/* GraphQL */ `
-  query GetMapInfo(
-    $gameId: String!
-    $sort: MapRecordSort
-    $first: Int
-    $last: Int
-    $after: String
-    $before: String
-    $filter: RecordsFilter
-  ) {
+  query GetMap($gameId: String!) {
     map(gameId: $gameId) {
-      relatedEventEditions {
-        map {
-          gameId
-        }
-        redirectToEvent
-        edition {
-          name
-          subtitle
-          event {
-            handle
-          }
-          id
-        }
-      }
-      gameId
-      name
-      cpsNumber
-      player {
-        login
-        name
-      }
-      ...MapRecords
+      ...MapInfo
     }
   }
 `);
 
-export type SP = ServerProps<
-  { gameId: string },
-  { sortBy?: string; order?: string } & RawPaginationInput & RawRecordsFilter
->;
-
-type Item<Array> = Array extends (infer T)[] ? T : never;
-type RelatedEventEdition = Item<GetMapInfoQuery["map"]["relatedEventEditions"]>;
-export type MapRecordsProperty = {
-  map: Omit<GetMapInfoQuery["map"], "relatedEventEditions" | "__typename">;
-};
-
-const fetchMapInfo = cache(
-  async (
-    gameId: string,
-    paginationInput: PaginationInput,
-    filter: RecordsFilter,
-    sort?: MapRecordSort,
-  ) => {
-    return query({
-      query: GET_MAP_INFO,
-      variables: { gameId, sort, filter, ...paginationInput },
-      errorPolicy: "all",
-    });
-  },
+const fetchMap = cache(async (gameId: string) =>
+  query({ query: GET_MAP_INFO, variables: { gameId } }).catch(catchGqlError),
 );
 
-export async function generateMetadata(props: SP): Promise<Metadata> {
-  const params = await props.params;
-  const searchParams = await props.searchParams;
-  const mapInfo = (
-    await fetchMapInfo(
-      params.gameId,
-      parsePaginationInput(searchParams),
-      parseRecordsFilter(searchParams),
-      parseMapSort(searchParams.sortBy, searchParams.order),
-    )
-  ).data?.map;
+export async function generateMetadata(
+  props: PageProps<"/map/[gameId]">,
+): Promise<Metadata> {
+  const { gameId } = await props.params;
+  const { data } = await fetchMap(gameId);
 
-  return {
-    title: toPlainText(parse(mapInfo?.name ?? "")),
-  };
+  return { title: data ? toPlainText(parse(data.map.name)) : gameId };
 }
 
-function ToolbarTitle({
-  data,
-  relatedEvents,
-}: {
-  data: GetMapInfoQuery;
-  relatedEvents: RelatedEventEdition[];
-}) {
-  return relatedEvents.length > 0 ? (
-    <ToolbarTitleWrapper>
-      <RawToolbarTitle>
-        <MPFormat>{data.map.name}</MPFormat>
-      </RawToolbarTitle>
-      <span>
-        Related to{" "}
-        {relatedEvents.map((relatedEvent, i) => (
-          <React.Fragment
-            key={`${relatedEvent.edition.event.handle}_${relatedEvent.edition.id}`}
-          >
-            <Link
-              explicit
-              href={`/event/${relatedEvent.edition.event.handle}/${relatedEvent.edition.id}/map/${relatedEvent.map.gameId}`}
-            >
-              {relatedEvent.edition.name +
-                (relatedEvent.edition.subtitle
-                  ? ` ${relatedEvent.edition.subtitle}`
-                  : "")}
-            </Link>
-            {i < relatedEvents.length - 1 ? ", " : null}
-          </React.Fragment>
-        ))}
-      </span>
-    </ToolbarTitleWrapper>
-  ) : (
-    <RawToolbarTitle>
-      <MPFormat>{data.map.name}</MPFormat>
-    </RawToolbarTitle>
-  );
-}
+export default async function MapRecordsPage(
+  props: PageProps<"/map/[gameId]">,
+) {
+  const { gameId } = await props.params;
 
-export default async function MapRecords(sp: SP) {
-  const params = await sp.params;
-  const searchParams = await sp.searchParams;
+  const { data, error } = await fetchMap(gameId);
 
-  const data = await fetchMapInfo(
-    params.gameId,
-    parsePaginationInput(searchParams),
-    parseRecordsFilter(searchParams),
-    parseMapSort(searchParams.sortBy, searchParams.order),
-  );
-
-  // If there is only one related event edition and it has a redirect, we redirect to the event map page.
-  if (
-    data.data?.map.relatedEventEditions?.length === 1 &&
-    data.data?.map.relatedEventEditions[0].redirectToEvent
-  ) {
-    const relatedEvent = data.data?.map.relatedEventEditions[0];
-    return redirect(
-      `/event/${relatedEvent.edition.event.handle}/${relatedEvent.edition.id}/map/${params.gameId}`,
+  if (error || !data) {
+    return (
+      <PageShell
+        titleSegments={[<PageTitle key="title">Map</PageTitle>]}
+        selectedMenu="maps"
+      >
+        <LoadErrorPanel title="Invalid map">
+          Could not load this map: {error?.message ?? "unknown error"}
+        </LoadErrorPanel>
+      </PageShell>
     );
   }
 
-  const content = {
-    map: {
-      gameId: data.data?.map.gameId ?? "",
-      player: data.data?.map.player ?? { login: "", name: "" },
-      cpsNumber: data.data?.map.cpsNumber ?? undefined,
-      records: (data.data?.map.recordsConnection.nodes ?? []).map(
-        (record) =>
-          new RankedRecordLine(
-            record.id,
-            record.rank,
-            record.player,
-            record.time,
-            record.recordDate,
-          ),
-      ),
-    },
-  } satisfies MapContent;
+  // A map that only exists inside an event has no records of its own, so it
+  // belongs on the event's own map page.
+  const [related] = data.map.relatedEventEditions;
+  if (data.map.relatedEventEditions.length === 1 && related.redirectToEvent) {
+    redirect(
+      `/event/${related.edition.event.handle}/${related.edition.id}/map/${gameId}`,
+    );
+  }
 
-  return data.error ? (
-    data.error.message
-  ) : data.data ? (
-    <MapRecordsContent
-      data={content}
-      toolbarTitle={
-        <ToolbarTitle
-          data={data.data}
-          relatedEvents={data.data?.map.relatedEventEditions ?? []}
-        />
-      }
-    />
-  ) : (
-    "Something went wrong."
-  );
+  return <MapPage map={data.map} />;
 }

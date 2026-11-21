@@ -1,43 +1,66 @@
-import Markdown from "react-markdown";
-import rehypeRaw from "rehype-raw";
-import {
-  Article,
-  LastUpdate,
-  MdIframe,
-  MdImg,
-  MdLink,
-} from "@/components/Article";
-import FormattedDate from "@/components/FormattedDate";
-import { fetchArticles } from "@/lib/article";
-import type { ServerProps } from "@/lib/server-props";
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 
-export default async function ArticlePage(sp: ServerProps<{ slug: string }>) {
-  const params = await sp.params;
-  const articles = await fetchArticles();
-  const article = articles[params.slug];
-  if (!article || article.hide || params.slug === "__resources__") {
-    return "Article not found.";
+import { ArticlePanel } from "@/components/Article";
+import FormattedDate from "@/components/FormattedDate";
+import PageShell from "@/components/layout/PageShell";
+import PageTitle from "@/components/layout/PageTitle";
+import { fetchArticles, RESOURCES_SLUG } from "@/lib/article";
+import Link from "next/link";
+
+export const revalidate = 300;
+
+/** The resources page isn't a dated post; it lives under /links/resources. */
+async function findArticle(slug: string) {
+  const article = (await fetchArticles())[slug];
+  return article && !article.hide && article.slug !== RESOURCES_SLUG
+    ? article
+    : undefined;
+}
+
+export async function generateMetadata(
+  props: PageProps<"/articles/[slug]">,
+): Promise<Metadata> {
+  const { slug } = await props.params;
+  const article = await findArticle(slug);
+
+  return { title: article ? await article.fetchTitle() : slug };
+}
+
+export default async function ArticlePage(
+  props: PageProps<"/articles/[slug]">,
+) {
+  const { slug } = await props.params;
+  const article = await findArticle(slug);
+
+  if (!article) {
+    notFound();
   }
 
-  const content = await article.fetchContent();
+  const { title, body } = await article.fetchDocument();
 
   return (
-    <Article>
-      <div>
-        <Markdown
-          rehypePlugins={[rehypeRaw]}
-          components={{
-            iframe: MdIframe,
-            img: MdImg,
-            a: MdLink,
-          }}
-        >
-          {content}
-        </Markdown>
-      </div>
-      <LastUpdate>
-        Date: <FormattedDate onlyDate>{article.date}</FormattedDate>
-      </LastUpdate>
-    </Article>
+    <PageShell
+      titleSegments={[
+        <PageTitle key="title">
+          <Link href="/links">Blog</Link>
+        </PageTitle>,
+        <PageTitle key="article">{title}</PageTitle>,
+      ]}
+      selectedMenu="articles"
+    >
+      <ArticlePanel
+        title={title}
+        body={body}
+        meta={
+          <>
+            <FormattedDate onlyDate>{article.date}</FormattedDate>
+            {article.authors.length > 0 && (
+              <> — by {article.authors.join(", ")}</>
+            )}
+          </>
+        }
+      />
+    </PageShell>
   );
 }

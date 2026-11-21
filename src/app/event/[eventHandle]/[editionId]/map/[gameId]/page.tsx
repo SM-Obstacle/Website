@@ -1,47 +1,20 @@
+import type { Metadata } from "next";
 import { cache } from "react";
-import { gql } from "@/app/__generated__";
-import {
-  MapRecordSort,
-  MapRecordSortableField,
-  type RecordsFilter,
-} from "@/app/__generated__/graphql";
-import { query } from "@/app/ApolloClient";
-import * as MapRecordsContent from "@/app/map/[gameId]/MapRecordsContent";
-import * as MapPage from "@/app/map/[gameId]/page";
-import Link from "@/components/Link";
-import MPFormat from "@/components/MPFormat";
-import {
-  ToolbarTitle as RawToolbarTitle,
-  ToolbarTitleWrapper,
-} from "@/components/ToolbarWrapper";
-import {
-  type PaginationInput,
-  parsePaginationInput,
-} from "@/lib/cursor-pagination";
-import {
-  type MapContent,
-  MedalRecord,
-  RankedRecordLine,
-  type RecordLine,
-} from "@/lib/map-page-types";
-import { Medal } from "@/lib/ranked-record";
-import { parseRecordsFilter } from "@/lib/records-filter";
-import type { ServerProps } from "@/lib/server-props";
-import { parseMapSort } from "@/lib/sort-field";
 
-export const generateMetadata = MapPage.generateMetadata;
+import { gql } from "@/app/__generated__";
+import { query } from "@/app/ApolloClient";
+import LoadErrorPanel from "@/components/layout/LoadErrorPanel";
+import PageShell from "@/components/layout/PageShell";
+import PageTitle from "@/components/layout/PageTitle";
+import MapPage from "@/components/map/MapPage";
+import catchGqlError from "@/lib/catchError";
+import { parse, toPlainText } from "@/lib/mpformat/mpformat";
 
 const GET_EVENT_MAP_INFO = gql(/* GraphQL */ `
   query GetEventMapInfo(
     $eventHandle: String!
     $editionId: Int!
     $gameId: String!
-    $sort: MapRecordSort
-    $first: Int
-    $last: Int
-    $after: String
-    $before: String
-    $filter: RecordsFilter
   ) {
     event(handle: $eventHandle) {
       edition(editionId: $editionId) {
@@ -49,39 +22,11 @@ const GET_EVENT_MAP_INFO = gql(/* GraphQL */ `
         subtitle
         map(gameId: $gameId) {
           map {
-            gameId
-            name
-            cpsNumber
-            player {
-              login
-              name
-            }
+            ...MapInfo
           }
           linkToOriginal
           originalMap {
             gameId
-          }
-          medalTimes {
-            bronzeTime
-            silverTime
-            goldTime
-            championTime
-          }
-          recordsConnection(
-            sort: $sort
-            first: $first
-            last: $last
-            after: $after
-            before: $before
-            filter: $filter
-          ) {
-            nodes {
-              player {
-                login
-                name
-              }
-              ...RecordBase
-            }
           }
         }
       }
@@ -89,181 +34,66 @@ const GET_EVENT_MAP_INFO = gql(/* GraphQL */ `
   }
 `);
 
-const fetchMapInfo = cache(
-  async (
-    eventHandle: string,
-    editionId: number,
-    gameId: string,
-    paginationInput: PaginationInput,
-    filter: RecordsFilter,
-    sort?: MapRecordSort,
-  ) => {
-    return query({
+const fetchMap = cache(
+  async (eventHandle: string, editionId: number, gameId: string) =>
+    query({
       query: GET_EVENT_MAP_INFO,
-      variables: {
-        eventHandle,
-        editionId,
-        gameId,
-        sort,
-        filter,
-        ...paginationInput,
-      },
-      errorPolicy: "all",
-    });
-  },
+      variables: { eventHandle, editionId, gameId },
+    }).catch(catchGqlError),
 );
 
-function ToolbarTitle({
-  mapName,
-  mapUid,
-  eventHandle,
-  editionId,
-  eventName,
-}: {
-  mapName: string;
-  mapUid?: string;
-  eventHandle: string;
-  editionId: number;
-  eventName: string;
-}) {
-  return (
-    <ToolbarTitleWrapper>
-      <RawToolbarTitle>
-        <MPFormat>{mapName}</MPFormat>
-      </RawToolbarTitle>
-      {
-        <span>
-          on{" "}
-          <Link explicit href={`/event/${eventHandle}/${editionId}`}>
-            {eventName}
-          </Link>{" "}
-          {mapUid && (
-            <>
-              (see{" "}
-              <Link explicit href={`/map/${mapUid}`}>
-                original
-              </Link>
-              )
-            </>
-          )}{" "}
-        </span>
-      }
-    </ToolbarTitleWrapper>
+export async function generateMetadata(
+  props: PageProps<"/event/[eventHandle]/[editionId]/map/[gameId]">,
+): Promise<Metadata> {
+  const { eventHandle, editionId, gameId } = await props.params;
+  const { data } = await fetchMap(
+    eventHandle,
+    Number.parseInt(editionId, 10),
+    gameId,
   );
+
+  const name = data?.event.edition?.map.map.name;
+  return { title: name ? toPlainText(parse(name)) : gameId };
 }
 
-export default async function EventMapRecords(
-  sp: ServerProps<
-    Awaited<MapPage.SP["params"]> & { eventHandle: string; editionId: string },
-    Awaited<MapPage.SP["searchParams"]>
-  >,
+export default async function EventMapPage(
+  props: PageProps<"/event/[eventHandle]/[editionId]/map/[gameId]">,
 ) {
-  const params = await sp.params;
-  const searchParams = await sp.searchParams;
+  const params = await props.params;
+  const eventHandle = params.eventHandle;
+  const editionId = Number.parseInt(params.editionId, 10);
+  const gameId = params.gameId;
 
-  const parsedSort = parseMapSort(searchParams.sortBy, searchParams.order);
+  const { data, error } = await fetchMap(eventHandle, editionId, gameId);
+  const edition = data?.event.edition;
+  const eventMap = edition?.map;
 
-  const editionId = parseInt(params.editionId, 10);
-  const dataRaw = await fetchMapInfo(
-    params.eventHandle,
-    editionId,
-    params.gameId,
-    parsePaginationInput(searchParams),
-    parseRecordsFilter(searchParams),
-    parsedSort,
-  );
-  // : )
-  const data = {
-    ...dataRaw,
-    event: {
-      ...dataRaw.data?.event,
-      edition: {
-        ...dataRaw.data?.event.edition,
-        map: {
-          ...dataRaw.data?.event.edition?.map.map,
-          medalTimes: dataRaw.data?.event.edition?.map.medalTimes,
-          records: dataRaw.data?.event.edition?.map.recordsConnection.nodes,
-        },
-      },
-    },
-  };
-
-  const eventName =
-    data.event.edition?.name +
-    (data.event.edition?.subtitle ? ` ${data.event.edition?.subtitle}` : "");
-
-  const records = (
-    data.data?.event.edition?.map.recordsConnection.nodes ?? []
-  ).map(
-    (record) =>
-      new RankedRecordLine(
-        record.id,
-        record.rank,
-        record.player,
-        record.time,
-        record.recordDate,
-      ) as RecordLine,
-  );
-
-  // Insert the medal times in the LB, if they're available,
-  // and if we're not already ordering the map LB by record date
-  if (
-    data.event.edition.map.medalTimes &&
-    parsedSort?.field !== MapRecordSortableField.Date
-  ) {
-    records.push(
-      new MedalRecord(
-        data.event.edition.map.medalTimes.bronzeTime,
-        Medal.Bronze,
-      ),
-      new MedalRecord(
-        data.event.edition.map.medalTimes.silverTime,
-        Medal.Silver,
-      ),
-      new MedalRecord(data.event.edition.map.medalTimes.goldTime, Medal.Gold),
-      new MedalRecord(
-        data.event.edition.map.medalTimes.championTime,
-        Medal.Champion,
-      ),
-    );
-    records.sort(
-      searchParams.last !== undefined
-        ? (a, b) => b.time - a.time || -(b.sortPriority - a.sortPriority)
-        : (a, b) => a.time - b.time || -(a.sortPriority - b.sortPriority),
+  if (error || !eventMap) {
+    return (
+      <PageShell
+        titleSegments={[<PageTitle key="title">Map</PageTitle>]}
+        selectedMenu="events"
+      >
+        <LoadErrorPanel title="Invalid event map">
+          <p>Could not load this map: {error?.message ?? "unknown map"}</p>
+        </LoadErrorPanel>
+      </PageShell>
     );
   }
 
-  const content = {
-    map: {
-      gameId: data.data?.event.edition?.map.map.gameId ?? "",
-      player: data.data?.event.edition?.map.map.player ?? {
-        login: "",
-        name: "",
-      },
-      cpsNumber: data.event.edition.map.cpsNumber ?? undefined,
-      records: records,
-    },
-  } satisfies MapContent;
-
-  return data.error ? (
-    data.error.message
-  ) : (
-    <MapRecordsContent.MapRecordsContent
-      data={content}
-      toolbarTitle={
-        <ToolbarTitle
-          mapName={data.data?.event.edition?.map.map.name ?? ""}
-          mapUid={
-            dataRaw.data?.event.edition?.map.originalMap?.gameId ||
-            (dataRaw.data?.event.edition?.map.linkToOriginal &&
-              data.event.edition.map.gameId) ||
-            undefined
-          }
-          eventHandle={params.eventHandle}
-          editionId={editionId}
-          eventName={eventName}
-        />
-      }
+  return (
+    <MapPage
+      map={eventMap.map}
+      event={{
+        handle: eventHandle,
+        editionId,
+        name: edition.name + (edition.subtitle ? ` ${edition.subtitle}` : ""),
+        // An edition either copies a map under a name of its own, or runs the
+        // original one as it is.
+        originalGameId:
+          eventMap.originalMap?.gameId ??
+          (eventMap.linkToOriginal ? eventMap.map.gameId : undefined),
+      }}
     />
   );
 }
