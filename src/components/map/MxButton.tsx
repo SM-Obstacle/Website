@@ -45,7 +45,7 @@ export default function MxButton({ mxId }: { mxId: number | null }) {
           <Link
             href={`https://sm.mania-exchange.com/maps/${mxId}`}
             target="_blank"
-            rel="noopeneer,noreferrer"
+            rel="noopener noreferrer"
             className={btnVariants}
             aria-label="Open on ManiaExchange"
           >
