@@ -7,6 +7,15 @@ const config: CodegenConfig = {
     './src/app/__generated__/': {
       preset: 'client',
       plugins: [],
+      config: {
+        // client-preset v7 defaults to string-literal unions; the app uses enums as runtime values.
+        enumType: 'native',
+        // Custom scalars now default to `unknown`; both are serialized as ISO date strings.
+        scalars: {
+          DateTime: 'string',
+          NaiveDateTime: 'string',
+        },
+      },
       presetConfig: {
         fragmentMasking: false,
         gqlTagName: 'gql',

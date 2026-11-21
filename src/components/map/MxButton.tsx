@@ -23,32 +23,36 @@ export function MxLogo() {
 export default function MxButton({ mxId }: { mxId: number | null }) {
   return mxId === null ? (
     <Tooltip>
-      <TooltipTrigger asChild>
-        <span className="inline-block w-fit">
-          <Button
-            className={btnVariants}
-            disabled
-            aria-label="Map not available in ManiaExchange"
-          >
-            <MxLogo />
-          </Button>
-        </span>
-      </TooltipTrigger>
+      <TooltipTrigger
+        render={
+          <span className="inline-block w-fit">
+            <Button
+              className={btnVariants}
+              disabled
+              aria-label="Map not available in ManiaExchange"
+            >
+              <MxLogo />
+            </Button>
+          </span>
+        }
+      />
       <TooltipContent>Map not available in ManiaExchange</TooltipContent>
     </Tooltip>
   ) : (
     <Tooltip>
-      <TooltipTrigger asChild>
-        <Link
-          href={`https://sm.mania-exchange.com/maps/${mxId}`}
-          target="_blank"
-          rel="noopeneer,noreferrer"
-          className={btnVariants}
-          aria-label="Open on ManiaExchange"
-        >
-          <MxLogo />
-        </Link>
-      </TooltipTrigger>
+      <TooltipTrigger
+        render={
+          <Link
+            href={`https://sm.mania-exchange.com/maps/${mxId}`}
+            target="_blank"
+            rel="noopeneer,noreferrer"
+            className={btnVariants}
+            aria-label="Open on ManiaExchange"
+          >
+            <MxLogo />
+          </Link>
+        }
+      />
       <TooltipContent>Open on ManiaExchange</TooltipContent>
     </Tooltip>
   );
