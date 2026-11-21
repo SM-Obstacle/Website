@@ -1,0 +1,28 @@
+# VCS / CI
+.git
+.github
+
+# Dependencies and build output (rebuilt inside the image)
+node_modules
+.next
+out
+build
+coverage
+*.tsbuildinfo
+src/app/__generated__
+
+# Local env files (NEXT_PUBLIC_* values are passed as build args)
+.env
+.env.*
+
+# Editor / tooling / OS
+.idea
+.vscode
+.claude
+.docker
+.DS_Store
+/data
+
+# Docker files themselves
+Dockerfile
+.dockerignore

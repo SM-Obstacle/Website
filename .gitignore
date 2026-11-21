@@ -43,3 +43,6 @@ __generated__
 
 /data
 /.idea
+
+# local docker config
+/.docker
