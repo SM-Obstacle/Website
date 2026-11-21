@@ -1,8 +1,19 @@
 name: Docker image
 
+# Image tags:
+# - push on master        -> <version>-<sha7>   (e.g. 1.0.0-abc1234)
+# - push of a tag vX.Y.Z  -> X.Y.Z              (X.Y.Z must match "version" in package.json)
+#                            + latest, only if it's the highest vX.Y.Z tag of the repo
+#                              (tagging an older version later doesn't move latest back;
+#                              pre-releases like v1.1.0-rc1 never get latest)
+#
+# For a release tag, the image already built from master for that commit is re-tagged
+# (same bits as what was deployed/tested). It is only rebuilt if that image doesn't exist.
+
 on:
   push:
     branches: [master]
+    tags: ["v*"]
   workflow_dispatch:
 
 concurrency:
@@ -25,16 +36,45 @@ jobs:
 
       # The image is named after "name" in package.json: ghcr.io/<owner>/<name>
       # (ghcr.io requires lowercase names)
-      - name: Read image name from package.json
+      - name: Read name and version from package.json
         id: pkg
         run: |
-          name=$(jq -r '.name' package.json)
-          if [ -z "$name" ] || [ "$name" = "null" ]; then
-            echo "::error::No \"name\" field in package.json"
+          name=$(jq -r '.name // empty' package.json)
+          version=$(jq -r '.version // empty' package.json)
+          if [ -z "$name" ] || [ -z "$version" ]; then
+            echo "::error::package.json must have a \"name\" and a \"version\""
             exit 1
           fi
+          # Docker tags only allow [A-Za-z0-9_.-] (no "+" build metadata)
+          if ! [[ "$version" =~ ^[0-9A-Za-z_.-]+$ ]]; then
+            echo "::error::Version \"$version\" can't be used as a Docker tag"
+            exit 1
+          fi
+          if [ "$GITHUB_REF_TYPE" = "tag" ] && [ "$GITHUB_REF_NAME" != "v$version" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME doesn't match package.json version ($version). Expected v$version."
+            exit 1
+          fi
+          # latest only goes to the highest final release (X.Y.Z, no pre-release suffix)
+          latest=false
+          if [ "$GITHUB_REF_TYPE" = "tag" ] && [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            highest=$(git ls-remote --tags --refs origin 'v*' \
+              | sed 's#.*refs/tags/v##' \
+              | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' \
+              | sort -t. -k1,1n -k2,2n -k3,3n \
+              | tail -n 1)
+            if [ "$highest" = "$version" ]; then
+              latest=true
+            else
+              echo "::notice::v$version is not the highest release (v$highest), latest is left unchanged"
+            fi
+          fi
           image=$(echo "${REGISTRY}/${GITHUB_REPOSITORY_OWNER}/${name}" | tr '[:upper:]' '[:lower:]')
-          echo "image=$image" >> "$GITHUB_OUTPUT"
+          {
+            echo "image=$image"
+            echo "latest=$latest"
+            echo "version=$version"
+            echo "sha=${GITHUB_SHA::7}"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -51,11 +91,32 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ${{ steps.pkg.outputs.image }}
+          flavor: latest=false
           tags: |
-            type=raw,value=latest,enable={{is_default_branch}}
-            type=sha,format=short
+            type=raw,value=${{ steps.pkg.outputs.version }}-${{ steps.pkg.outputs.sha }},enable=${{ github.ref_type == 'branch' }}
+            type=raw,value=${{ steps.pkg.outputs.version }},enable=${{ github.ref_type == 'tag' }}
+            type=raw,value=latest,enable=${{ steps.pkg.outputs.latest == 'true' }}
+
+      - name: Re-tag the image built from master
+        id: retag
+        if: github.ref_type == 'tag'
+        env:
+          SOURCE: ${{ steps.pkg.outputs.image }}:${{ steps.pkg.outputs.version }}-${{ steps.pkg.outputs.sha }}
+          TAGS: ${{ steps.meta.outputs.tags }}
+        run: |
+          if ! docker buildx imagetools inspect "$SOURCE" > /dev/null 2>&1; then
+            echo "::notice::$SOURCE not found, building the image instead"
+            exit 0
+          fi
+          args=()
+          while IFS= read -r tag; do
+            [ -n "$tag" ] && args+=(-t "$tag")
+          done <<< "$TAGS"
+          docker buildx imagetools create "${args[@]}" "$SOURCE"
+          echo "done=true" >> "$GITHUB_OUTPUT"
 
       - name: Build and push
+        if: steps.retag.outputs.done != 'true'
         uses: docker/build-push-action@v6
         with:
           context: .
