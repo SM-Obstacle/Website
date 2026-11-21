@@ -43,7 +43,7 @@
     "@graphql-codegen/cli": "^6.0.0",
     "@graphql-codegen/client-preset": "^7.0.0",
     "@graphql-typed-document-node/core": "^3.2.0",
-    "@types/node": "^25.0.9",
+    "@types/node": "^26.6.6",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^10.15.0",
