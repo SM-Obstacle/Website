@@ -27,16 +27,31 @@ function trimTrailingSlash(url: string) {
   return url.replace(/\/+$/, "");
 }
 
+/** Public runtime configuration, served by `/env.js` as `window.__ENV__`. */
+export type PublicEnv = {
+  RECORDS_API_URL: string;
+};
+
+declare global {
+  interface Window {
+    __ENV__?: PublicEnv;
+  }
+}
+
 /**
  * Base URL of the API as seen from the browser, e.g. `https://example.com/api`.
  *
- * `NEXT_PUBLIC_*` variables are inlined by `next build`, so this one must be set
- * at build time.
+ * It comes from `PUBLIC_RECORDS_API_URL`, read at runtime (it is deliberately not
+ * a `NEXT_PUBLIC_*` variable, which `next build` would inline). On the server it's
+ * read from the environment; in the browser, from `window.__ENV__`, which
+ * `/env.js` sets before hydration.
  */
 export function getPublicApiUrl() {
-  return trimTrailingSlash(
-    process.env.NEXT_PUBLIC_RECORDS_API_URL || DEFAULT_API_URL,
-  );
+  const url =
+    typeof window === "undefined"
+      ? process.env.PUBLIC_RECORDS_API_URL
+      : window.__ENV__?.RECORDS_API_URL;
+  return trimTrailingSlash(url || DEFAULT_API_URL);
 }
 
 /**

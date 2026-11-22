@@ -11,7 +11,7 @@ coverage
 *.tsbuildinfo
 src/app/__generated__
 
-# Local env files (NEXT_PUBLIC_* values are passed as build args)
+# Local env files (the API URLs are runtime environment variables)
 .env
 .env.*
 

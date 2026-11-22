@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import NextTopLoader from "nextjs-toploader";
 
 import ToolbarBleed from "@/components/layout/ToolbarBleed";
@@ -47,6 +48,8 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body>
+        {/* Runtime config (API URL) for the browser, see src/app/env.js/route.ts */}
+        <Script src="/env.js" strategy="beforeInteractive" />
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <ApolloWrapper>
             <TooltipProvider delayDuration={300}>

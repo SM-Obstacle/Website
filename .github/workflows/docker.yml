@@ -177,7 +177,6 @@ jobs:
           platforms: ${{ matrix.platform }}
           labels: ${{ needs.prepare.outputs.labels }}
           build-args: |
-            NEXT_PUBLIC_RECORDS_API_URL=${{ vars.NEXT_PUBLIC_RECORDS_API_URL }}
             WEBSITE_PORT=${{ vars.WEBSITE_PORT || '8000' }}
           outputs: type=image,name=${{ needs.prepare.outputs.image }},push-by-digest=true,name-canonical=true,push=${{ github.event_name != 'pull_request' }}
           cache-from: type=gha,scope=${{ matrix.pair }}

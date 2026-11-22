@@ -22,9 +22,6 @@ RUN \
 # Rebuild the source code only when needed
 FROM base AS builder
 
-ARG NEXT_PUBLIC_RECORDS_API_URL
-ENV NEXT_PUBLIC_RECORDS_API_URL=$NEXT_PUBLIC_RECORDS_API_URL
-
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
@@ -65,6 +62,10 @@ ARG WEBSITE_PORT=8000
 # The standalone server listens on $PORT
 ENV PORT=$WEBSITE_PORT
 EXPOSE $WEBSITE_PORT
+
+# Runtime configuration (nothing API-related is baked into the image):
+# - PUBLIC_RECORDS_API_URL: API URL used by the browser, e.g. https://example.com/api
+# - RECORDS_API_URL (optional): API URL used by the server, e.g. an internal address
 
 # Listen on all interfaces so the container is reachable from outside
 ENV HOSTNAME="0.0.0.0"
