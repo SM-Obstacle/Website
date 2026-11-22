@@ -61,7 +61,7 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone/ ./
 
 USER nextjs
 # Port of the website, set at build time with --build-arg WEBSITE_PORT=...
-ARG WEBSITE_PORT=3000
+ARG WEBSITE_PORT=8000
 # The standalone server listens on $PORT
 ENV PORT=$WEBSITE_PORT
 EXPOSE $WEBSITE_PORT

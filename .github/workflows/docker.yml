@@ -9,6 +9,9 @@ name: Docker image
 #
 # - pull request on master -> build only, nothing is pushed
 #
+# The image is multi-arch (linux/amd64 + linux/arm64). Each platform is built natively on
+# its own runner, then both are merged into a single manifest that carries the tags.
+#
 # For a release tag, the image already built from master for that commit is re-tagged
 # (same bits as what was deployed/tested). It is only rebuilt if that image doesn't exist.
 
@@ -30,15 +33,22 @@ concurrency:
   group: docker-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+  packages: write
+
 env:
   REGISTRY: ghcr.io
 
 jobs:
-  build-and-push:
+  # Computes the image name and tags, and handles the re-tag of a release
+  prepare:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
+    outputs:
+      image: ${{ steps.pkg.outputs.image }}
+      tags: ${{ steps.meta.outputs.tags }}
+      labels: ${{ steps.meta.outputs.labels }}
+      retagged: ${{ steps.retag.outputs.done }}
 
     steps:
       - name: Checkout
@@ -85,16 +95,6 @@ jobs:
             echo "sha=${GITHUB_SHA::7}"
           } >> "$GITHUB_OUTPUT"
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Log in to GHCR
-        if: github.event_name != 'pull_request'
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Docker metadata
         id: meta
@@ -107,6 +107,19 @@ jobs:
             type=raw,value=${{ steps.pkg.outputs.version }},enable=${{ github.ref_type == 'tag' }}
             type=raw,value=latest,enable=${{ steps.pkg.outputs.latest == 'true' }}
 
+      - name: Set up Docker Buildx
+        if: github.ref_type == 'tag'
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        if: github.ref_type == 'tag'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Copies the whole multi-arch manifest built from master for this commit
       - name: Re-tag the image built from master
         id: retag
         if: github.ref_type == 'tag'
@@ -125,16 +138,110 @@ jobs:
           docker buildx imagetools create "${args[@]}" "$SOURCE"
           echo "done=true" >> "$GITHUB_OUTPUT"
 
-      - name: Build and push
-        if: steps.retag.outputs.done != 'true'
+  # Builds each platform natively and pushes it by digest (no tag yet)
+  build:
+    needs: prepare
+    if: needs.prepare.outputs.retagged != 'true'
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - platform: linux/amd64
+            runner: ubuntu-24.04
+            pair: linux-amd64
+          - platform: linux/arm64
+            runner: ubuntu-24.04-arm
+            pair: linux-arm64
+    runs-on: ${{ matrix.runner }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push by digest
+        id: build
         uses: docker/build-push-action@v6
         with:
           context: .
-          push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          platforms: ${{ matrix.platform }}
+          labels: ${{ needs.prepare.outputs.labels }}
           build-args: |
             NEXT_PUBLIC_RECORDS_API_URL=${{ vars.NEXT_PUBLIC_RECORDS_API_URL }}
             WEBSITE_PORT=${{ vars.WEBSITE_PORT || '8000' }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          outputs: type=image,name=${{ needs.prepare.outputs.image }},push-by-digest=true,name-canonical=true,push=${{ github.event_name != 'pull_request' }}
+          cache-from: type=gha,scope=${{ matrix.pair }}
+          cache-to: type=gha,scope=${{ matrix.pair }},mode=max
+
+      - name: Export digest
+        if: github.event_name != 'pull_request'
+        env:
+          DIGEST: ${{ steps.build.outputs.digest }}
+        run: |
+          mkdir -p "${{ runner.temp }}/digests"
+          touch "${{ runner.temp }}/digests/${DIGEST#sha256:}"
+
+      - name: Upload digest
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: digests-${{ matrix.pair }}
+          path: ${{ runner.temp }}/digests/*
+          if-no-files-found: error
+          retention-days: 1
+
+  # Creates the multi-arch manifest from both digests and applies the tags
+  merge:
+    needs: [prepare, build]
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Download digests
+        uses: actions/download-artifact@v4
+        with:
+          path: ${{ runner.temp }}/digests
+          pattern: digests-*
+          merge-multiple: true
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create and push the manifest
+        working-directory: ${{ runner.temp }}/digests
+        env:
+          IMAGE: ${{ needs.prepare.outputs.image }}
+          TAGS: ${{ needs.prepare.outputs.tags }}
+        run: |
+          args=()
+          while IFS= read -r tag; do
+            [ -n "$tag" ] && args+=(-t "$tag")
+          done <<< "$TAGS"
+          sources=()
+          for digest in *; do
+            sources+=("$IMAGE@sha256:$digest")
+          done
+          docker buildx imagetools create "${args[@]}" "${sources[@]}"
+
+      - name: Inspect the image
+        env:
+          IMAGE: ${{ needs.prepare.outputs.image }}
+          TAGS: ${{ needs.prepare.outputs.tags }}
+        run: docker buildx imagetools inspect "$(head -n 1 <<< "$TAGS")"
