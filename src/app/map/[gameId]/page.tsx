@@ -15,6 +15,7 @@ const GET_MAP_INFO = gql(/* GraphQL */ `
   query GetMap($gameId: String!) {
     map(gameId: $gameId) {
       ...MapInfo
+      recordsAmount
     }
   }
 `);
@@ -61,5 +62,5 @@ export default async function MapRecordsPage(
     );
   }
 
-  return <MapPage map={data.map} />;
+  return <MapPage map={data.map} recordsAmount={data.map.recordsAmount} />;
 }

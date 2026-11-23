@@ -1,4 +1,4 @@
-import { Flag, Map as MapIcon } from "lucide-react";
+import { Flag, ListOrdered, Map as MapIcon } from "lucide-react";
 
 import { type MapInfoFragment, MxIdStatus } from "@/app/__generated__/graphql";
 import Link from "@/components/Link";
@@ -38,9 +38,15 @@ function MapBadge({
 
 export default function MapInfo({
   map,
+  recordsAmount,
   event,
 }: {
   map: MapInfoFragment;
+  /**
+   * How many records the map has where it is being looked at: an edition's
+   * copy counts its own records, not those of the map it was taken from.
+   */
+  recordsAmount: number;
   event?: MapEventContext;
 }) {
   // The edition being looked at gets a badge of its own below, pointing at the
@@ -63,7 +69,7 @@ export default function MapInfo({
 
       <SubPanel className="h-full w-full min-w-0 gap-2 px-3 py-2 sm:gap-3 sm:px-5">
         <div className="flex items-center justify-between gap-2">
-          <div className="flex flex-col gap-inset">
+          <div className="flex min-w-0 flex-col gap-inset">
             <div className="min-w-0">
               <h2 className="m-0 truncate text-xl font-bold sm:text-2xl">
                 <MPFormat>{map.name}</MPFormat>
@@ -77,7 +83,18 @@ export default function MapInfo({
               </h3>
             </div>
 
-            <div className="flex flex-wrap gap-2">
+            {/* One line on phones, scrolling sideways, so a long list of
+                badges never makes the header taller and squeezes the
+                leaderboard below. */}
+            <div className="-mx-1 flex gap-2 overflow-x-auto px-1 [mask-image:linear-gradient(to_right,black_85%,transparent)] [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:px-0 sm:[mask-image:none]">
+              <Badge variant="secondary" title="Records">
+                <ListOrdered />
+                {recordsAmount.toLocaleString()}
+                <span className="hidden sm:inline">
+                  record{recordsAmount === 1 ? "" : "s"}
+                </span>
+              </Badge>
+
               {!!map.cpsNumber && (
                 <Badge variant="secondary">
                   <Flag />
