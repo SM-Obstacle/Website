@@ -136,6 +136,8 @@ export function TimeCell({
  */
 export const TIME_COLUMN = "w-28 xl:w-36";
 export const DATE_COLUMN = "w-28 xl:w-36";
+/** A rank of up to four digits beside its sort button. */
+export const RANK_COLUMN = "w-20";
 
 /** Secondary column, dropped on the narrow layout. */
 export function WideOnlyCell({

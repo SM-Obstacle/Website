@@ -27,10 +27,11 @@ import {
   WideOnlyCell,
   WideOnlyHead,
   DATE_COLUMN,
+  RANK_COLUMN,
   TIME_COLUMN,
 } from "@/components/tables/Leaderboard";
-import DateSortButton from "@/components/tables/DateSortButton";
 import PaginationControls from "@/components/tables/PaginationControls";
+import SortButton from "@/components/tables/SortButton";
 import {
   TableError,
   TableMessage,
@@ -127,7 +128,9 @@ const MEDAL_LABELS: Record<Medal, string> = {
 
 /**
  * Slots the medal times into the leaderboard so a player can see which medal
- * each record earned. A record that ties a medal time comes first.
+ * each record earned. A record that ties a medal time sits on the side of the
+ * marker that earned it: before it, or after it when the slowest times come
+ * first (`descending`, as the records already are).
  *
  * Only an event edition sets medal times; anywhere else this just walks the
  * records through.
@@ -135,6 +138,7 @@ const MEDAL_LABELS: Record<Medal, string> = {
 function withMedalRows(
   records: readonly RecordNode[],
   medalTimes: MedalTimes | null | undefined,
+  descending = false,
 ): Row[] {
   const rows: Row[] = records.map((record) => ({
     kind: "record",
@@ -151,10 +155,12 @@ function withMedalRows(
     { kind: "medal", medal: Medal.Champion, time: medalTimes.championTime },
   ];
 
+  const sign = descending ? -1 : 1;
   return [...rows, ...medals].sort(
     (a, b) =>
-      a.time - b.time ||
-      (a.kind === "medal" ? 1 : 0) - (b.kind === "medal" ? 1 : 0),
+      sign *
+      (a.time - b.time ||
+        (a.kind === "medal" ? 1 : 0) - (b.kind === "medal" ? 1 : 0)),
   );
 }
 
@@ -214,19 +220,22 @@ export default function MapLeaderboard({
   const { searchParams } = useUrlParams();
   const selection = useRowSelection("record");
 
-  const order = searchParams.get("order");
-  // The API's DESCENDING order walks dates upwards: oldest records first.
-  const oldestFirst = order === "desc";
+  // Left alone, the leaderboard comes back best time first, which is what the
+  // bare URL shows. Unlike the site-wide records list, a map's records take
+  // the API's order as it reads: DESCENDING is the slowest times, or the
+  // newest records, first.
+  const byDate = searchParams.get("sort") === "date";
+  const descending = searchParams.get("order") === "desc";
 
   const variables = {
     gameId,
     ...readPagination(searchParams, PAGE_SIZE),
-    // Left alone, the leaderboard comes back in rank order — the only
-    // ordering worth showing until someone asks for dates.
-    ...(order && {
+    ...((byDate || descending) && {
       sort: {
-        field: MapRecordSortableField.Date,
-        order: oldestFirst ? SortOrder.Descending : SortOrder.Ascending,
+        field: byDate
+          ? MapRecordSortableField.Date
+          : MapRecordSortableField.Rank,
+        order: descending ? SortOrder.Descending : SortOrder.Ascending,
       },
     }),
   };
@@ -263,7 +272,11 @@ export default function MapLeaderboard({
   // Sorting by date would scatter the medal markers through the list.
   const rows =
     connection &&
-    withMedalRows(connection.nodes, order ? null : eventMap?.medalTimes);
+    withMedalRows(
+      connection.nodes,
+      byDate ? null : eventMap?.medalTimes,
+      descending,
+    );
 
   return (
     <>
@@ -272,14 +285,47 @@ export default function MapLeaderboard({
           <Leaderboard>
             <LeaderboardHeader>
               <LeaderboardRow>
-                <LeaderboardHead className="w-[10%] text-center">
-                  #
+                <LeaderboardHead className={RANK_COLUMN}>
+                  <span className="flex items-center justify-center gap-1">
+                    #
+                    {byDate ? (
+                      <SortButton
+                        label="Sort by rank"
+                        params={{ sort: null, order: null }}
+                      />
+                    ) : descending ? (
+                      <SortButton
+                        direction="desc"
+                        label="Show the best times first"
+                        params={{ sort: null, order: null }}
+                      />
+                    ) : (
+                      <SortButton
+                        direction="asc"
+                        label="Show the slowest times first"
+                        params={{ sort: null, order: "desc" }}
+                      />
+                    )}
+                  </span>
                 </LeaderboardHead>
                 <LeaderboardHead>Player</LeaderboardHead>
                 <LeaderboardHead className={TIME_COLUMN}>Time</LeaderboardHead>
                 <WideOnlyHead className={DATE_COLUMN}>
                   <span className="flex items-center justify-end gap-1">
-                    <DateSortButton oldestFirst={oldestFirst} />
+                    {byDate ? (
+                      <SortButton
+                        direction={descending ? "desc" : "asc"}
+                        label={
+                          descending ? "Show oldest first" : "Show newest first"
+                        }
+                        params={{ order: descending ? "asc" : "desc" }}
+                      />
+                    ) : (
+                      <SortButton
+                        label="Sort by date, newest first"
+                        params={{ sort: "date", order: "desc" }}
+                      />
+                    )}
                     Date
                   </span>
                 </WideOnlyHead>
