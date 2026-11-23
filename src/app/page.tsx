@@ -26,9 +26,12 @@ export default function Home() {
        * (`minmax(0, auto)`), and while the window is short the grid hands the
        * height out evenly up to what each block needs — so a block that fits
        * keeps its full size and only the taller ones give way, scrolling
-       * inside their own body under a header that stays put.
+       * inside their own body under a header that stays put. When the window
+       * is tall the grid stretches its `auto` rows to fill it; the records row
+       * is capped at `max-content` instead, so it stays the height of its
+       * rows and the spare height goes to the blocks below.
        */}
-      <div className="mx-auto grid min-h-0 w-full flex-1 max-w-content grid-cols-2 grid-rows-[minmax(0,auto)_minmax(0,auto)_minmax(0,auto)] gap-2">
+      <div className="mx-auto grid min-h-0 w-full flex-1 max-w-content grid-cols-2 grid-rows-[minmax(0,max-content)_minmax(0,auto)_minmax(0,auto)] gap-2">
         <Panel
           className="col-span-full min-h-0"
           header={<SectionHeader title="Latest records" href="/records" />}

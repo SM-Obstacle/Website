@@ -1,5 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Hosts other than localhost allowed to load the dev server's scripts, e.g.
+  // a phone on the LAN opening http://192.168.1.x:3000. Without this the page
+  // renders but never hydrates there. Comma-separated; dev only.
+  allowedDevOrigins: process.env.ALLOWED_DEV_ORIGINS?.split(",")
+    .map((origin) => origin.trim())
+    .filter(Boolean),
   images: {
     remotePatterns: [
       {

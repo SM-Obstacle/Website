@@ -5,6 +5,10 @@
       "name": "website-dev",
       "runtimeExecutable": "bun",
       "runtimeArgs": ["dev"],
+      "env": {
+        "PUBLIC_RECORDS_API_URL": "http://192.168.1.42:3001",
+        "ALLOWED_DEV_ORIGINS": "192.168.1.42"
+      },
       "url": "http://localhost:3000",
       "port": 3000
     }
