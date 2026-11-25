@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
-import NextTopLoader from "nextjs-toploader";
 
+import { NavigationProgressProvider } from "@/components/layout/NavigationProgress";
 import ToolbarBleed from "@/components/layout/ToolbarBleed";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ApolloWrapper } from "./ApolloWrapper";
@@ -53,9 +53,10 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <ApolloWrapper>
             <TooltipProvider delayDuration={300}>
-              <NextTopLoader height={2} showSpinner={false} color="#346ab4" />
-              <ToolbarBleed />
-              {children}
+              <NavigationProgressProvider>
+                <ToolbarBleed />
+                {children}
+              </NavigationProgressProvider>
             </TooltipProvider>
           </ApolloWrapper>
         </ThemeProvider>
