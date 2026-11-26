@@ -15,8 +15,8 @@ import {
  * Whether a page navigation is under way, and how far along it seems to be.
  *
  * The App Router has no navigation events, so a navigation is taken to start
- * when an internal link is clicked and to end once the URL the router renders
- * (`usePathname` + `useSearchParams`) changes. `progress` is simulated — the
+ * when an internal link is clicked, or on Back/Forward, and to end once the
+ * URL the router renders (`usePathname` + `useSearchParams`) changes. `progress` is simulated — the
  * server gives no real figure — and creeps towards 90% until the page lands.
  */
 type NavigationState = { pending: boolean; progress: number };
@@ -32,9 +32,29 @@ export const useNavigationProgress = () => useContext(NavigationContext);
 const GIVE_UP_MS = 30_000;
 /** How long the full ring stays on screen once the page has landed. */
 const FINISH_MS = 350;
+/**
+ * How long Back/Forward waits before showing anything. Next usually restores
+ * those pages from its cache within a frame or two, and only fetches them when
+ * that's gone (after a reload, say), so the logo shouldn't flicker for the
+ * instant ones.
+ */
+const HISTORY_DELAY_MS = 150;
 
 function currentUrl() {
   return window.location.pathname + window.location.search;
+}
+
+/**
+ * One spelling for a URL, whether it comes from the router or from `location`:
+ * the router hands the path back decoded and the query re-encoded.
+ */
+function urlKey(pathname: string, search: string) {
+  let path = pathname;
+  try {
+    path = decodeURI(pathname);
+  } catch {}
+  const query = new URLSearchParams(search).toString();
+  return query ? `${path}?${query}` : path;
 }
 
 /** Whether a click on this anchor is one the Next router will handle. */
@@ -71,7 +91,7 @@ function internalTarget(event: MouseEvent): URL | null {
 function UrlWatcher({ onChange }: { onChange: (url: string) => void }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const url = `${pathname}?${searchParams.toString()}`;
+  const url = urlKey(pathname, searchParams.toString());
 
   useEffect(() => {
     onChange(url);
@@ -88,21 +108,32 @@ export function NavigationProgressProvider({
     progress: 0,
   });
   const startedAt = useRef<number | null>(null);
-  const timers = useRef<{ tick?: number; giveUp?: number; finish?: number }>(
-    {},
-  );
+  /** Whether the current navigation has been put on screen yet. */
+  const shown = useRef(false);
+  /** The URL the router last rendered, as `urlKey` spells it. */
+  const renderedUrl = useRef<string | null>(null);
+  const timers = useRef<{
+    reveal?: number;
+    tick?: number;
+    giveUp?: number;
+    finish?: number;
+  }>({});
 
   const clearTimers = useCallback(() => {
+    window.clearTimeout(timers.current.reveal);
     window.clearInterval(timers.current.tick);
     window.clearTimeout(timers.current.giveUp);
     window.clearTimeout(timers.current.finish);
   }, []);
 
   // Stable across renders, so `UrlWatcher`'s effect only fires on URL changes.
-  const onUrlChange = useCallback(() => {
+  const onUrlChange = useCallback((url: string) => {
+    renderedUrl.current = url;
     if (startedAt.current === null) return;
     startedAt.current = null;
     clearTimers();
+    // Landed before it was ever shown: nothing to finish.
+    if (!shown.current) return;
     setState({ pending: true, progress: 1 });
     timers.current.finish = window.setTimeout(
       // The ring stays full while it fades out; the next start empties it.
@@ -112,16 +143,26 @@ export function NavigationProgressProvider({
   }, [clearTimers]);
 
   useEffect(() => {
-    const start = () => {
+    const start = (delay = 0) => {
       clearTimers();
       startedAt.current = performance.now();
-      // From empty, and without a transition (see `LoadingLogo`): the ring is
-      // still fading in, so the jump back from the last navigation's full ring
-      // isn't seen. The first tick then sweeps it forward.
-      setState({ pending: true, progress: 0 });
+      shown.current = false;
+
+      const reveal = () => {
+        shown.current = true;
+        // From empty, and without a transition (see `LoadingLogo`): the ring
+        // is still fading in, so the jump back from the last navigation's
+        // full ring isn't seen. The first tick then sweeps it forward.
+        setState({ pending: true, progress: 0 });
+      };
+      if (delay > 0) {
+        timers.current.reveal = window.setTimeout(reveal, delay);
+      } else {
+        reveal();
+      }
 
       timers.current.tick = window.setInterval(() => {
-        if (startedAt.current === null) return;
+        if (startedAt.current === null || !shown.current) return;
         const elapsed = performance.now() - startedAt.current;
         // Fast at first, then ever slower: 50% after ~1s, 80% after ~3.5s.
         setState({
@@ -141,12 +182,22 @@ export function NavigationProgressProvider({
       if (internalTarget(event)) start();
     };
 
+    // Back/Forward. By now `location` already holds the entry being restored,
+    // so it's compared with what the router last rendered: equal means a
+    // hash-only change, or a page the router has already put up.
+    const onPopState = () => {
+      const target = urlKey(window.location.pathname, window.location.search);
+      if (target !== renderedUrl.current) start(HISTORY_DELAY_MS);
+    };
+
     // Capture phase: by the bubble phase Next's `<Link>` has already called
     // `preventDefault` (it takes the navigation over from the browser), and
     // `NoPropagationLink` stops the event before it gets back up here.
     document.addEventListener("click", onClick, { capture: true });
+    window.addEventListener("popstate", onPopState);
     return () => {
       document.removeEventListener("click", onClick, { capture: true });
+      window.removeEventListener("popstate", onPopState);
       clearTimers();
     };
   }, [clearTimers]);
