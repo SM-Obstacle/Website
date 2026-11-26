@@ -22,6 +22,8 @@ const GET_PLAYER_INFO = gql(/* GraphQL */ `
       score
       zonePath
       role
+      joinDate
+      recordsAmount
     }
   }
 `);

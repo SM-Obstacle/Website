@@ -20,9 +20,12 @@ import MapLeaderboard from "./MapLeaderboard";
  */
 export default function MapPage({
   map,
+  recordsAmount,
   event,
 }: {
   map: MapInfoFragment;
+  /** Read by each route on its own, since an edition counts its own records. */
+  recordsAmount: number;
   event?: MapEventContext;
 }) {
   // An edition's records are its own, and the records page knows nothing
@@ -43,7 +46,7 @@ export default function MapPage({
     >
       <WithRecordAside centered>
         <div className="flex h-full min-h-0 w-full flex-col gap-2 [--profile-picture-size:56px] sm:[--profile-picture-size:75px] lg:[--profile-picture-size:100px]">
-          <MapInfo map={map} event={event} />
+          <MapInfo map={map} recordsAmount={recordsAmount} event={event} />
 
           <Panel
             className="flex min-h-0 flex-1 flex-col"

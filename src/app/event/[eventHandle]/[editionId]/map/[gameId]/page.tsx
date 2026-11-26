@@ -24,6 +24,9 @@ const GET_EVENT_MAP_INFO = gql(/* GraphQL */ `
           map {
             ...MapInfo
           }
+          # The edition's own count, not the original map's: an edition keeps
+          # records of its own.
+          recordsAmount
           linkToOriginal
           originalMap {
             gameId
@@ -84,6 +87,7 @@ export default async function EventMapPage(
   return (
     <MapPage
       map={eventMap.map}
+      recordsAmount={eventMap.recordsAmount}
       event={{
         handle: eventHandle,
         editionId,

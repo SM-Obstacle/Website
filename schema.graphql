@@ -45,6 +45,7 @@ type EventEdition {
 type EventEditionMap {
 	edition: EventEdition!
 	map: Map!
+	recordsAmount: Int!
 	linkToOriginal: Boolean!
 	originalMap: Map
 	records(rankSortBy: SortState, dateSortBy: SortState): [RankedRecord!]!
@@ -112,6 +113,7 @@ type Map {
 	cpsNumber: Int
 	player: Player!
 	name: String!
+	recordsAmount: Int!
 	score: Float!
 	relatedEventEditions: [RelatedEdition!]!
 	averageCpsTimes: [CheckpointTime!]!
@@ -310,6 +312,8 @@ type Player {
 	id: ID!
 	login: String!
 	name: String!
+	joinDate: NaiveDateTime
+	recordsAmount: Int!
 	zonePath: String
 	score: Float!
 	role: PlayerRole!
@@ -550,15 +554,6 @@ enum SortOrder {
 enum SortState {
 	SORT
 	REVERSE
-}
-
-input UnorderedRecordSort {
-	field: UnorderedRecordSortableField!
-	order: SortOrder
-}
-
-enum UnorderedRecordSortableField {
-	DATE
 }
 
 """

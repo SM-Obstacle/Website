@@ -1,8 +1,16 @@
-import { AtSign, Flag, Gauge, User } from "lucide-react";
+import {
+  AtSign,
+  CalendarDays,
+  Flag,
+  Gauge,
+  ListOrdered,
+  User,
+} from "lucide-react";
 import { Suspense } from "react";
 
 import type { GetPlayerQuery } from "@/app/__generated__/graphql";
 import { PlayerRole } from "@/app/__generated__/graphql";
+import FormattedDate from "@/components/FormattedDate";
 import { Panel, SubPanel } from "@/components/layout/Panel";
 import MPFormat from "@/components/MPFormat";
 import { Badge } from "@/components/ui/badge";
@@ -45,19 +53,37 @@ export default function PlayerInfo({
           </Suspense>
         </div>
 
-        <div className="flex flex-wrap gap-2">
+        {/* One line on phones, scrolling sideways, so a long list of badges
+            never makes the header taller and squeezes the records below. */}
+        <div className="-mx-1 flex gap-2 overflow-x-auto px-1 [mask-image:linear-gradient(to_right,black_85%,transparent)] [scrollbar-width:none] sm:mx-0 sm:flex-wrap sm:px-0 sm:[mask-image:none]">
           <Badge variant="secondary">
             <AtSign />
             <code>{player.login}</code>
           </Badge>
 
-          <Badge variant="secondary">
+          <Badge variant="secondary" title="Score">
             <Gauge />
-            Score:{" "}
+            <span className="hidden sm:inline">Score:</span>
             {player.score.toLocaleString(undefined, {
               maximumFractionDigits: 2,
             })}
           </Badge>
+
+          <Badge variant="secondary" title="Records">
+            <ListOrdered />
+            {player.recordsAmount.toLocaleString()}
+            <span className="hidden sm:inline">
+              record{player.recordsAmount === 1 ? "" : "s"}
+            </span>
+          </Badge>
+
+          {player.joinDate && (
+            <Badge variant="secondary" title="Join date">
+              <CalendarDays />
+              <span className="hidden sm:inline">Joined</span>
+              <FormattedDate onlyDate>{player.joinDate}</FormattedDate>
+            </Badge>
+          )}
 
           {player.zonePath && (
             <Badge variant="secondary">
