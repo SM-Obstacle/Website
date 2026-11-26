@@ -12,9 +12,9 @@
  */
 const MAP_VALUE = String.raw`$$
 \begin{aligned}
-M_v = {} & \Bigl[ \log_{10}\!\left(1000 \cdot R_n^2\right) \\
-& \quad + \log_{10}\!\left(\max\left(0,\ t - \Delta t\right)^2 + 1\right) \Bigr] \\
-& \cdot \left[ \log_{10}\!\left(\frac{R_n}{R} + 1\right) \right]^3
+M_v = {} & \Bigl[ \log_{10}\!\left(1000 \cdot n^2\right) \\
+& \quad + \log_{10}\!\left(\max\left(0,\ \bar{t} - t\right)^2 + 1\right) \Bigr] \\
+& \cdot \left[ \log_{10}\!\left(\frac{n}{r} + 1\right) \right]^3
 \end{aligned}
 $$`;
 
@@ -28,7 +28,7 @@ $$`;
 
 const PLAYERS = String.raw`The player ranking is updated every week, and it's based on the records set during that week.
 
-Each time you set a record on a map, you earn points. Two things decide how many points a record earns: how high you placed on that map, and how many people played it. Placing near the top is worth much more than placing in the middle, and doing well on a popular map, where you beat lots of players, is worth more than winning a map only a few people tried. Your weekly score is all the points from your records that week added up. Even a last-place finish earns a few points, so every map you play helps.
+Each time you set a record on a map, you earn points. Three things decide how many points a record earns: how high you placed on that map, how many people played it, and how much faster than the average your time is. Placing near the top is worth much more than placing in the middle, and doing well on a popular map, where you beat lots of players, is worth more than winning a map only a few people tried. Beating the map's average time earns bonus points, and the further below the average you are, the more you get. Your weekly score is all the points from your records that week added up. Even a last-place finish earns a few points, so every map you play helps.
 
 Everyone who set a record during the week is ranked first, in order of their weekly score. Players who didn't play that week still appear in the ranking, below all the active players, in order of their all-time score. The all-time score is calculated the same way but counts every record you've ever set, and it's updated from time to time. If you play this week, you'll be ranked above everyone who didn't. If you take a break, your past results decide where you stand.
 
@@ -41,16 +41,16 @@ ${MAP_VALUE}
 where:
 
 - $t$ is your record time on the map, in seconds
-- $R_n$ is the total number of records set on the map this week
-- $R$ is your position on the map's leaderboard this week (1 for the best time)
-- $\Delta t$ is the average record time on the map this week
+- $n$ is the total number of records set on the map this week
+- $r$ is your position on the map's leaderboard this week (1 for the best time)
+- $\bar{t}$ is the average record time on the map this week
 - $M_v$ is the map value for you
 
 In plain words:
 
-- $\log_{10}(1000 \cdot R_n^2)$ is the **popularity part**: the more people played the map, the bigger it gets.
-- $\log_{10}(\max(0, t - \Delta t)^2 + 1)$ is the **time part**. $\max(0, t - \Delta t)$ is how many seconds slower than the average your time is, or 0 if you're at or faster than the average. So this part is 0 for any time at or below the average, since $\log_{10}(0 + 1) = 0$, and only grows for times slower than the average.
-- $\left[\log_{10}(R_n / R + 1)\right]^3$ is the **placement part**: it's largest for 1st place and shrinks quickly as you go down the leaderboard. Because it's cubed, top spots are worth far more than the rest.
+- $\log_{10}(1000 \cdot n^2)$ is the **popularity part**: the more people played the map, the bigger it gets.
+- $\log_{10}(\max(0, \bar{t} - t)^2 + 1)$ is the **time part**. $\max(0, \bar{t} - t)$ is how many seconds faster than the average your time is, or 0 if you're at or slower than the average. So this part is 0 for any time at or above the average, since $\log_{10}(0 + 1) = 0$, and grows the further your time is below the average.
+- $\left[\log_{10}(n / r + 1)\right]^3$ is the **placement part**: it's largest for 1st place and shrinks quickly as you go down the leaderboard. Because it's cubed, top spots are worth far more than the rest.
 
 Your weekly score is the sum of your map values:
 
@@ -67,7 +67,7 @@ where $S_{\text{global}}$ is your all-time score, calculated with the same formu
 
 const MAPS = String.raw`The map ranking is updated every week, and it's based on the records set during that week.
 
-Every record set on a map earns points, and a map's weekly score is all the points earned on it that week added up. Records earn more points when more people play the map, so maps that draw lots of players get a much higher score. Top placements earn the most points, so maps where players fight for the best times stand out the most.
+Every record set on a map earns points, and a map's weekly score is all the points earned on it that week added up. Records earn more points when more people play the map, so maps that draw lots of players get a much higher score. Top placements earn the most points, and so do times well below the map's average, so maps where players fight for the best times stand out the most.
 
 Every map that got a record during the week is ranked first, in order of its weekly score. Maps that nobody played that week still appear in the ranking, below all the active maps, in order of their all-time score. The all-time score is calculated the same way but counts every record ever set on the map, and it's updated from time to time. The ranking shows which maps are popular right now, and past popularity decides the order of the rest.
 
@@ -80,16 +80,16 @@ ${MAP_VALUE}
 where:
 
 - $t$ is the record time, in seconds
-- $R_n$ is the total number of records set on the map this week
-- $R$ is the record's position on the map's leaderboard this week (1 for the best time)
-- $\Delta t$ is the average record time on the map this week
+- $n$ is the total number of records set on the map this week
+- $r$ is the record's position on the map's leaderboard this week (1 for the best time)
+- $\bar{t}$ is the average record time on the map this week
 - $M_v$ is the value of that record
 
 In plain words:
 
-- $\log_{10}(1000 \cdot R_n^2)$ is the **popularity part**: the more people played the map, the bigger it gets.
-- $\log_{10}(\max(0, t - \Delta t)^2 + 1)$ is the **time part**. $\max(0, t - \Delta t)$ is how many seconds slower than the average the record is, or 0 if it's at or faster than the average. So this part is 0 for any time at or below the average, since $\log_{10}(0 + 1) = 0$, and only grows for times slower than the average.
-- $\left[\log_{10}(R_n / R + 1)\right]^3$ is the **placement part**: it's largest for 1st place and shrinks quickly down the leaderboard. Because it's cubed, top spots are worth far more than the rest.
+- $\log_{10}(1000 \cdot n^2)$ is the **popularity part**: the more people played the map, the bigger it gets.
+- $\log_{10}(\max(0, \bar{t} - t)^2 + 1)$ is the **time part**. $\max(0, \bar{t} - t)$ is how many seconds faster than the average the record is, or 0 if it's at or slower than the average. So this part is 0 for any time at or above the average, since $\log_{10}(0 + 1) = 0$, and grows the further the record is below the average.
+- $\left[\log_{10}(n / r + 1)\right]^3$ is the **placement part**: it's largest for 1st place and shrinks quickly down the leaderboard. Because it's cubed, top spots are worth far more than the rest.
 
 The map's weekly score is the sum of the values of all its records that week:
 
