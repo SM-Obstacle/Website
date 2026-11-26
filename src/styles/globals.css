@@ -289,18 +289,13 @@
 /*
  * Safari 26 also tints its toolbar and status bar from any fixed element
  * touching those edges, so anything fixed against them brought the flat
- * colour back: the page loader's bar on every navigation, and the backdrop
- * and panel of the drawer and of dialogs while open. On the scrolled pages
- * above, these are positioned on the document instead, offset by the scroll
- * so they land where they would have; backdrops cover the whole document,
- * bleed included. Unlayered so it wins over their own utilities.
+ * colour back: the backdrop and panel of the drawer and of dialogs while
+ * open. On the scrolled pages above, these are positioned on the document
+ * instead, offset by the scroll so they land where they would have; backdrops
+ * cover the whole document, bleed included. Unlayered so it wins over their
+ * own utilities. (The page loader lives in the logo, so it needs none of this.)
  */
 @media (pointer: coarse) {
-  html:has([data-page-shell]) #nprogress .bar {
-    position: absolute;
-    top: var(--toolbar-scroll);
-  }
-
   html:has([data-page-shell]) :is(
       [data-slot="drawer-overlay"],
       [data-slot="dialog-overlay"]

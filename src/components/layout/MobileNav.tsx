@@ -11,6 +11,7 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { cn } from "@/lib/utils";
+import LoadingLogo from "./LoadingLogo";
 import Logo from "./Logo";
 import MappackSearch from "./MappackSearch";
 import { NAV_PAGES, type NavKey } from "./pages";
@@ -34,7 +35,7 @@ export default function MobileNav({ selected }: { selected?: NavKey }) {
         aria-label="Open navigation"
         className="cursor-pointer md:hidden"
       >
-        <Logo />
+        <LoadingLogo />
       </DrawerTrigger>
 
       <DrawerContent className="rounded-r-block data-[swipe-direction=left]:rounded-r-block border-0 bg-card backdrop-blur-sm">
