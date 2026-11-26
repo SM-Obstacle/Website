@@ -5,16 +5,17 @@
  * `String.raw`, so the TeX backslashes don't need escaping.
  */
 
+/**
+ * Split over three lines with `aligned`, so it fits a phone-width dialog. The
+ * first bracket spans a line break, which `\left…\right` can't, so it is sized
+ * by hand with `\Bigl…\Bigr`.
+ */
 const MAP_VALUE = String.raw`$$
-M_v = \left[ \log_{10}\!\left(1000 \cdot R_n^2\right) + \log_{10}\!\left(\left(t - \Delta t\right)^2 + 1\right) \right] \cdot \left[ \log_{10}\!\left(\frac{R_n}{R} + 1\right) \right]^3
-$$`;
-
-const TIME_PART = String.raw`$$
-\log_{10}\!\left(\left(t - \Delta t\right)^2 + 1\right) =
-\begin{cases}
-\log_{10}\!\left(\left(t - \Delta t\right)^2 + 1\right) & \text{if } t > \Delta t \\
-0 & \text{if } t \le \Delta t
-\end{cases}
+\begin{aligned}
+M_v = {} & \Bigl[ \log_{10}\!\left(1000 \cdot R_n^2\right) \\
+& \quad + \log_{10}\!\left(\max\left(0,\ t - \Delta t\right)^2 + 1\right) \Bigr] \\
+& \cdot \left[ \log_{10}\!\left(\frac{R_n}{R} + 1\right) \right]^3
+\end{aligned}
 $$`;
 
 const FINAL_SCORE = String.raw`$$
@@ -48,10 +49,7 @@ where:
 In plain words:
 
 - $\log_{10}(1000 \cdot R_n^2)$ is the **popularity part**: the more people played the map, the bigger it gets.
-- $\log_{10}((t - \Delta t)^2 + 1)$ is the **time part**. It only counts when your time is slower than the average; otherwise it's 0:
-
-${TIME_PART}
-
+- $\log_{10}(\max(0, t - \Delta t)^2 + 1)$ is the **time part**. $\max(0, t - \Delta t)$ is how many seconds slower than the average your time is, or 0 if you're at or faster than the average. So this part is 0 for any time at or below the average, since $\log_{10}(0 + 1) = 0$, and only grows for times slower than the average.
 - $\left[\log_{10}(R_n / R + 1)\right]^3$ is the **placement part**: it's largest for 1st place and shrinks quickly as you go down the leaderboard. Because it's cubed, top spots are worth far more than the rest.
 
 Your weekly score is the sum of your map values:
@@ -90,10 +88,7 @@ where:
 In plain words:
 
 - $\log_{10}(1000 \cdot R_n^2)$ is the **popularity part**: the more people played the map, the bigger it gets.
-- $\log_{10}((t - \Delta t)^2 + 1)$ is the **time part**. It only counts when the record is slower than the average; otherwise it's 0:
-
-${TIME_PART}
-
+- $\log_{10}(\max(0, t - \Delta t)^2 + 1)$ is the **time part**. $\max(0, t - \Delta t)$ is how many seconds slower than the average the record is, or 0 if it's at or faster than the average. So this part is 0 for any time at or below the average, since $\log_{10}(0 + 1) = 0$, and only grows for times slower than the average.
 - $\left[\log_{10}(R_n / R + 1)\right]^3$ is the **placement part**: it's largest for 1st place and shrinks quickly down the leaderboard. Because it's cubed, top spots are worth far more than the rest.
 
 The map's weekly score is the sum of the values of all its records that week:

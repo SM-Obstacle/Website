@@ -42,7 +42,7 @@ export default function RankingHelpDialog({
               widening the dialog; the vertical padding keeps the scrollbar
               from clipping tall fractions and sums. They are set a little
               smaller on phones, so more of each fits before it scrolls. */}
-          <div className="px-3 pb-3 text-base *:first:mt-0 [&_.katex-display]:my-3 [&_.katex-display]:overflow-x-auto [&_.katex-display]:overflow-y-hidden [&_.katex-display]:py-1 [&_.katex-display]:text-[0.8em] sm:[&_.katex-display]:text-[1em]">
+          <div className="px-3 pb-3 text-base *:first:mt-0 [&_.katex-display]:my-3 [&_.katex-display]:overflow-x-auto [&_.katex-display]:overflow-y-hidden [&_.katex-display]:py-1 [&_.katex-display]:text-[0.75em] sm:[&_.katex-display]:text-[1em]">
             {children}
           </div>
         </ScrollArea>
