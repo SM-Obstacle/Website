@@ -11,10 +11,12 @@ import TitleBar from "./TitleBar";
 export default function PageShell({
   selectedMenu,
   titleSegments,
+  titleActions,
   className,
   children,
 }: React.PropsWithChildren<{
   titleSegments: React.ReactNode[];
+  titleActions?: React.ReactNode;
   selectedMenu?: NavKey;
   className?: string;
 }>) {
@@ -26,7 +28,8 @@ export default function PageShell({
     // at one screen's height and still reads as a fixed frame.
     <div
       data-page-shell
-      className="flex h-full min-h-0 shrink-0 overflow-hidden p-2 pointer-coarse:sticky pointer-coarse:top-0 pointer-coarse:h-svh pointer-coarse:pt-[max(0.5rem,env(safe-area-inset-top))] pointer-coarse:pr-[max(0.5rem,env(safe-area-inset-right))] pointer-coarse:pb-[max(0.5rem,env(safe-area-inset-bottom))] pointer-coarse:pl-[max(0.5rem,env(safe-area-inset-left))]">
+      className="flex h-full min-h-0 shrink-0 overflow-hidden p-2 pointer-coarse:sticky pointer-coarse:top-0 pointer-coarse:h-svh pointer-coarse:pt-[max(0.5rem,env(safe-area-inset-top))] pointer-coarse:pr-[max(0.5rem,env(safe-area-inset-right))] pointer-coarse:pb-[max(0.5rem,env(safe-area-inset-bottom))] pointer-coarse:pl-[max(0.5rem,env(safe-area-inset-left))]"
+    >
       <SidebarNav selected={selectedMenu} />
 
       {/* `min-h-0` so this column can shrink past its content: without it a
@@ -35,7 +38,11 @@ export default function PageShell({
       <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-2 md:ms-[calc(var(--logo-size)+1.5rem)]">
         {/* In the flow rather than fixed over the page: whatever height the
             bar ends up at, the content starts below it instead of under it. */}
-        <TitleBar segments={titleSegments} selected={selectedMenu} />
+        <TitleBar
+          segments={titleSegments}
+          actions={titleActions}
+          selected={selectedMenu}
+        />
 
         <main className={cn("flex min-h-0 flex-1 flex-col", className)}>
           {children}

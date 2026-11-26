@@ -7,9 +7,12 @@ import type { NavKey } from "./pages";
 export default function TitleBar({
   segments,
   selected,
+  actions,
 }: {
   segments: React.ReactNode[];
   selected?: NavKey;
+  /** Buttons pinned to the right end of the bar. */
+  actions?: React.ReactNode;
 }) {
   return (
     // A fixed height, one logo plus its inset: the title truncates rather than
@@ -27,6 +30,12 @@ export default function TitleBar({
           </Fragment>
         ))}
       </div>
+
+      {actions && (
+        <div className="ms-auto flex shrink-0 items-center gap-1 me-1 md:me-2">
+          {actions}
+        </div>
+      )}
     </div>
   );
 }
