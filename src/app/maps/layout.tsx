@@ -6,7 +6,7 @@ import FilterPanel, {
 import ListPage from "@/components/layout/ListPage";
 import PageShell from "@/components/layout/PageShell";
 import PageTitle from "@/components/layout/PageTitle";
-import RankingHelp from "@/components/layout/RankingHelp";
+import RankingDoc from "@/components/ranking/RankingDoc";
 
 const FILTER_GROUPS: FilterGroup[] = [
   {
@@ -29,7 +29,7 @@ export default function MapsLayout({ children }: LayoutProps<"/maps">) {
   return (
     <PageShell
       titleSegments={[<PageTitle key="title">Maps</PageTitle>]}
-      titleActions={<RankingHelp ranking="maps" />}
+      titleActions={<RankingDoc ranking="maps" />}
       selectedMenu="maps"
     >
       <ListPage
